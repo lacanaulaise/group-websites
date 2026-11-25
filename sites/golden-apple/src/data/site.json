@@ -1,0 +1,26 @@
+{
+  "name": "The Golden Apple",
+  "address": "46 rue Borie, 33300 Bordeaux",
+  "phone": "05 56 79 03 85",
+  "phoneIntl": "+33556790385",
+  "email": "goldenapplebx@gmail.com",
+  "mapsUrl": "https://www.google.com/maps/place/?q=place_id:ChIJk6QdxHsoVQ0RpmREzZMtMEg",
+  "bookingUrl": "",
+  "instagramUrl": "",
+  "facebookUrl": "",
+  "fallbackHours": [
+    "lundi: 17:00 – 00:00",
+    "mardi: 17:00 – 00:00",
+    "mercredi: 17:00 – 00:00",
+    "jeudi: 17:00 – 02:00",
+    "vendredi: 12:00 – 02:00",
+    "samedi: 12:00 – 02:00",
+    "dimanche: 12:00 – 00:00"
+  ],
+  "sisterVenues": [
+    { "name": "La Canaulaise, la brasserie", "url": "https://www.lacanaulaise.fr" },
+    { "name": "Pub La Canaulaise, Lacanau", "url": "" },
+    { "name": "L'Australien, Hourtin-Plage", "url": "" },
+    { "name": "Buvette de la Gaîté", "url": "" }
+  ]
+}

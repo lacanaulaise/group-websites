@@ -1,59 +1,256 @@
 ---
-const title = 'The Golden Apple — Pub, Bordeaux';
+import '../styles/site.css';
+import site from '../data/site.json';
+import beers from '../data/beers.json';
+
+const fmtAbv = (n: number) => n.toFixed(1).replace('.', ',') + ' %';
+const splitHour = (line: string) => {
+  const i = line.indexOf(':');
+  return { day: line.slice(0, i), time: line.slice(i + 1).trim() };
+};
+const hours = site.fallbackHours.map(splitHour);
+const events = [
+  { title: 'Match en direct', line: 'Tous les grands matchs sur écran' },
+  { title: 'Quiz night', line: 'Par équipes, en anglais et en français' },
+  { title: 'Tournoi de fléchettes', line: 'Inscription au comptoir' },
+  { title: 'Concert', line: '[ARTISTE]' },
+];
+const booking = site.bookingUrl || '#infos';
 ---
 <!doctype html>
 <html lang="fr">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="robots" content="noindex, nofollow" />
-    <title>{title}</title>
-    <style>
-      :root { --green: #1f3a2b; --brass: #c9a24b; --cream: #f4efe3; }
-      * { box-sizing: border-box; }
-      body { margin: 0; min-height: 100vh; display: grid; place-items: center;
-             background: var(--green); color: var(--cream);
-             font-family: Georgia, 'Times New Roman', serif; text-align: center; padding: 2rem; }
-      h1 { font-size: clamp(2.5rem, 8vw, 5rem); margin: 0 0 .25em; letter-spacing: .02em; }
-      .since { color: var(--brass); text-transform: uppercase; letter-spacing: .3em; font-size: .85rem; }
-      p { max-width: 32rem; margin: 1.5rem auto 0; line-height: 1.6; opacity: .85; }
-      .tag { display: inline-block; margin-top: 2rem; padding: .4rem .9rem; border: 1px solid var(--brass);
-             color: var(--brass); font-family: system-ui, sans-serif; font-size: .8rem; letter-spacing: .1em; }
-      .hours { margin-top: 2.5rem; font-family: system-ui, sans-serif; }
-      .hours h2 { font-family: Georgia, serif; font-size: 1.4rem; margin: 0 0 .5rem; }
-      .hours small { color: var(--brass); font-size: .8rem; font-family: system-ui, sans-serif; }
-      .hours ul { list-style: none; padding: 0; margin: .5rem auto; max-width: 22rem; text-align: left; line-height: 1.8; }
-      #open-now { color: var(--brass); margin: 0; }
-      #hours-extra { font-size: .9rem; }
-    </style>
-  </head>
-  <body>
-    <main>
-      <div class="since">Bordeaux · depuis 1989</div>
-      <h1>The Golden Apple</h1>
-      <p>Nouveau site en construction. Le site actuel reste en ligne sur golden-apple.fr.</p>
-      <span class="tag">PREVIEW</span>
-      <section class="hours" aria-label="Horaires">
-        <h2>Horaires <small>· depuis Google</small></h2>
-        <p id="open-now"></p>
-        <ul id="hours-list"><li>Chargement…</li></ul>
-        <p id="hours-extra"></p>
-      </section>
-    </main>
-    <script>
-      fetch('/api/hours').then(r => r.json()).then(d => {
-        const list = document.getElementById('hours-list');
-        list.textContent = '';
-        if (d.error) { list.innerHTML = '<li>Horaires indisponibles</li>'; return; }
-        (d.thisWeek.length ? d.thisWeek : d.opening).forEach(line => {
-          const li = document.createElement('li'); li.textContent = line; list.appendChild(li);
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>The Golden Apple — pub et bières artisanales, Bordeaux depuis 1989</title>
+  <meta name="description" content="Le plus ancien pub de Bordeaux : bières La Canaulaise à la pression, cuisine de pub maison, sport en direct, quiz et fléchettes. 46 rue Borie, Chartrons." />
+  <link rel="icon" type="image/png" href="/favicon.png" />
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Zilla+Slab:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="wrap">
+      <a class="brand" href="#top"><img src="/img/apple.png" alt="" width="34" height="34" />The Golden Apple</a>
+      <nav class="site-nav" aria-label="Navigation principale">
+        <a href="#ce-soir">Ce soir</a>
+        <a href="#pression">À la pression</a>
+        <a href="#carte">La carte</a>
+        <a href="#evenements">Événements</a>
+        <a href="#infos">Infos</a>
+        <a class="lang" href="#" aria-label="English version (bientôt)">EN</a>
+        <a class="btn btn-brass" href={booking}>Réserver</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section id="top" class="hero">
+      <div class="wrap">
+        <div class="hero-text">
+          <img src="/img/logo-gold.png" alt="The Golden Apple, Les Brasseurs de l'Océan, est. 1989" width="158" height="216" />
+          <h1>Le plus ancien pub de Bordeaux</h1>
+          <p>Bières artisanales de La Canaulaise, cuisine de pub maison, sport en direct, quiz et fléchettes. Rue Borie, depuis 1989.</p>
+          <div class="hero-actions">
+            <a class="btn btn-brass" href={booking}>Réserver une table</a>
+            <a class="btn btn-ghost" href="#carte">Voir la carte</a>
+          </div>
+        </div>
+        <div class="hero-photo placeholder" role="img" aria-label="Photo à venir : le bar en soirée">[PHOTO : le bar en soirée]</div>
+      </div>
+    </section>
+
+    <section id="ce-soir" class="tonight" aria-label="Ce soir">
+      <div class="wrap">
+        <div class="item">
+          <span class="label">Maintenant</span>
+          <span class="value"><span class="dot" id="status-dot" aria-hidden="true"></span><span id="status-text">Horaires ci-dessous</span></span>
+        </div>
+        <div class="item">
+          <span class="label">Happy hour</span>
+          <span class="value" id="happy-hour">[HORAIRES À AJOUTER SUR GOOGLE]</span>
+        </div>
+        <div class="item">
+          <span class="label">Ce soir</span>
+          <span class="value">[ÉVÉNEMENT DU JOUR, depuis Facebook]</span>
+        </div>
+        <div class="item">
+          <span class="label">À la pression</span>
+          <a class="value" href="#pression">{beers.length} bières La Canaulaise →</a>
+        </div>
+      </div>
+    </section>
+
+    <section id="pression" class="section">
+      <div class="wrap">
+        <div class="section-head">
+          <div>
+            <h2>À la pression</h2>
+            <p>Brassées à Lacanau par La Canaulaise, notre brasserie.</p>
+          </div>
+        </div>
+        <div class="beers">
+          {beers.map((b) => (
+            <article class="beer">
+              <h3>{b.name}</h3>
+              <span class="style">{b.style}</span>
+              <span class="meta">{fmtAbv(b.abv)} · [PRIX] le demi</span>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section id="carte" class="section food">
+      <div class="wrap split">
+        <div class="placeholder" role="img" aria-label="Photo à venir : plat maison">[PHOTO : plat maison et pinte]</div>
+        <div class="food-text">
+          <h2>Cuisine de pub maison</h2>
+          <p>Des plats faits maison, pensés pour aller avec nos bières. La carte en ligne est la même qu'au comptoir, prix compris.</p>
+          <span><strong>Cuisine :</strong> <span id="kitchen-hours">[HORAIRES À AJOUTER SUR GOOGLE]</span></span>
+          <a class="btn btn-green" href="#carte">Voir la carte complète</a>
+        </div>
+      </div>
+    </section>
+
+    <section id="evenements" class="section events">
+      <div class="wrap">
+        <div class="section-head">
+          <h2>Événements</h2>
+          <span class="note">Bientôt synchronisés depuis notre page Facebook</span>
+        </div>
+        <div class="event-grid">
+          {events.map((e) => (
+            <article class="event">
+              <div class="placeholder" role="img" aria-label="Image de l'événement à venir">[IMAGE FACEBOOK]</div>
+              <div class="event-body">
+                <span class="event-date">[DATE] · [HEURE]</span>
+                <h3>{e.title}</h3>
+                <p>{e.line}</p>
+              </div>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section class="section" aria-label="Instagram">
+      <div class="wrap">
+        <div class="section-head">
+          <h2>Au pub, cette semaine</h2>
+          <a href={site.instagramUrl || '#'}>Suivez-nous sur Instagram →</a>
+        </div>
+        <div class="insta-grid">
+          {[1, 2, 3, 4, 5, 6].map((n) => (
+            <div class="placeholder" role="img" aria-label="Photo Instagram à venir">[POST {n}]</div>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section id="infos" class="section visit">
+      <div class="wrap split">
+        <div>
+          <h2>Nous trouver</h2>
+          <div class="contact">
+            <span>{site.address}</span>
+            <a href={`tel:${site.phoneIntl}`}><strong>{site.phone}</strong></a>
+            <a href={`mailto:${site.email}`}>{site.email}</a>
+          </div>
+          <table class="hours">
+            <caption class="label">Horaires · repris de Google</caption>
+            <tbody id="hours-body">
+              {hours.map((h) => (
+                <tr><th scope="row">{h.day}</th><td>{h.time}</td></tr>
+              ))}
+            </tbody>
+          </table>
+          <p class="hours-extra" id="hours-extra"></p>
+        </div>
+        <a class="map placeholder" href={site.mapsUrl} target="_blank" rel="noopener">Ouvrir dans Google Maps : 46 rue Borie, Chartrons</a>
+      </div>
+    </section>
+
+    <section class="newsletter" aria-label="Newsletter">
+      <form class="wrap" onsubmit="return false">
+        <div class="intro">
+          <h2>Les soirées à venir, dans votre boîte mail</h2>
+          <span>Un e-mail par mois, pas plus.</span>
+        </div>
+        <div class="fields">
+          <label>Votre e-mail
+            <input type="email" name="email" placeholder="vous@exemple.fr" autocomplete="email" />
+          </label>
+          <button type="submit">S'inscrire</button>
+        </div>
+      </form>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <div class="footer-top">
+        <div>
+          <strong>Une maison Les Brasseurs de l'Océan</strong>
+          <span>Brasserie La Canaulaise, Lacanau</span>
+        </div>
+        <nav aria-label="Nos autres adresses">
+          {site.sisterVenues.map((v) => (v.url ? <a href={v.url}>{v.name}</a> : <span>{v.name}</span>))}
+        </nav>
+      </div>
+      <div class="footer-bottom">
+        <span>L'abus d'alcool est dangereux pour la santé, à consommer avec modération.</span>
+        <span><a href="#">Mentions légales</a><a href="#">Confidentialité</a></span>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    const parisDay = () => {
+      const name = new Intl.DateTimeFormat('fr-FR', { weekday: 'long', timeZone: 'Europe/Paris' }).format(new Date());
+      return name.toLowerCase();
+    };
+    const split = (line: string) => {
+      const i = line.indexOf(':');
+      return { day: line.slice(0, i).trim().toLowerCase(), time: line.slice(i + 1).trim() };
+    };
+    const short = (t: string) => t.replace(/:00/g, 'h').replace(/:(\d\d)/g, 'h$1');
+
+    fetch('/api/hours')
+      .then((r) => r.json())
+      .then((d) => {
+        if (d.error) return;
+        const lines: string[] = d.thisWeek?.length ? d.thisWeek : d.opening;
+        const today = parisDay();
+        const body = document.getElementById('hours-body')!;
+        body.textContent = '';
+        let todayTime = '';
+        lines.map(split).forEach((h) => {
+          const tr = document.createElement('tr');
+          if (h.day === today) { tr.className = 'today'; todayTime = h.time; }
+          const th = document.createElement('th'); th.scope = 'row'; th.textContent = h.day;
+          const td = document.createElement('td'); td.textContent = h.time;
+          tr.append(th, td); body.appendChild(tr);
         });
-        if (d.openNow !== null) document.getElementById('open-now').textContent = d.openNow ? '● Ouvert maintenant' : '● Fermé pour le moment';
-        const extra = [];
-        if (d.happyHour.length) extra.push('Happy hour : ' + d.happyHour.join(' · '));
-        if (d.kitchen.length) extra.push('Cuisine : ' + d.kitchen.join(' · '));
-        document.getElementById('hours-extra').textContent = extra.join(' — ');
-      }).catch(() => {});
-    </script>
-  </body>
+
+        const dot = document.getElementById('status-dot')!;
+        const text = document.getElementById('status-text')!;
+        const [open, close] = todayTime.split('–').map((s) => s.trim());
+        if (d.openNow === true) {
+          dot.className = 'dot open';
+          text.textContent = close ? `Ouvert jusqu'à ${short(close)}` : 'Ouvert';
+        } else if (d.openNow === false) {
+          dot.className = 'dot closed';
+          text.textContent = open && /\d/.test(open) ? `Fermé · ouvre à ${short(open)}` : 'Fermé aujourd’hui';
+        }
+
+        if (d.happyHour?.length) document.getElementById('happy-hour')!.textContent = d.happyHour.join(' · ');
+        if (d.kitchen?.length) document.getElementById('kitchen-hours')!.textContent = d.kitchen.join(' · ');
+      })
+      .catch(() => {});
+  </script>
+</body>
 </html>
