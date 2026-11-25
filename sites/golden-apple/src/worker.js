@@ -62,7 +62,7 @@ async function privatisation(request, env) {
 
 async function hours(request, env, ctx) {
   const cache = caches.default;
-  const cacheKey = new Request(new URL('/api/hours?v=2', request.url).toString()); // bump v to force a refresh
+  const cacheKey = new Request(new URL('/api/hours?v=3', request.url).toString()); // bump v to force a refresh
   const cached = await cache.match(cacheKey);
   if (cached) return cached;
 
