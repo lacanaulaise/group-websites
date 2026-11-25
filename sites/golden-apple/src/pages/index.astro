@@ -157,7 +157,15 @@ const gallery = [
           </table>
           <p class="hours-extra" id="hours-extra"></p>
         </div>
-        <a class="map placeholder" href={site.mapsUrl} target="_blank" rel="noopener">Ouvrir dans Google Maps : 46 rue Borie, Chartrons</a>
+        <div class="map" id="map">
+          <img src="/img/photos/facade-map.webp" alt="" class="map-bg" loading="lazy" />
+          <div class="map-cta">
+            <strong>46 rue Borie, Chartrons</strong>
+            <button type="button" id="map-load">Afficher la carte</button>
+            <a href={site.mapsUrl} target="_blank" rel="noopener">Itinéraire dans Google Maps</a>
+            <small>La carte est fournie par Google, qui peut déposer des cookies.</small>
+          </div>
+        </div>
       </div>
     </section>
 
@@ -176,6 +184,14 @@ const gallery = [
       </form>
     </section>
   <script slot="scripts">
+    document.getElementById('map-load')?.addEventListener('click', () => {
+      const box = document.getElementById('map')!;
+      const f = document.createElement('iframe');
+      f.src = 'https://www.google.com/maps?q=The+Golden+Apple,+46+rue+Borie,+33300+Bordeaux&z=16&output=embed';
+      f.title = 'Carte : The Golden Apple, 46 rue Borie, Bordeaux';
+      f.loading = 'lazy'; f.referrerPolicy = 'no-referrer-when-downgrade';
+      box.replaceChildren(f);
+    });
     const parisDay = () => {
       const name = new Intl.DateTimeFormat('fr-FR', { weekday: 'long', timeZone: 'Europe/Paris' }).format(new Date());
       return name.toLowerCase();
