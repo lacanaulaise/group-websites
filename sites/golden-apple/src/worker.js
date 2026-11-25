@@ -232,12 +232,18 @@ async function instagramFeed(request, env, ctx) {
     // Facebook-linked route (Page with a linked Instagram account).
     api = `https://graph.facebook.com/${env.IG_USER_ID}/media?fields=${fields}&limit=24` +
       `&access_token=${encodeURIComponent(env.IG_ACCESS_TOKEN)}`;
+  } else if (env.IG_ACCESS_TOKEN && env.IG_HANDLE && env.IG_VIA_ID) {
+    // Business Discovery: reads the public posts of @IG_HANDLE through another Instagram
+    // account that the Facebook token manages (IG_VIA_ID = L'Australien). Needs instagram_basic.
+    api = `https://graph.facebook.com/${env.IG_VIA_ID}?fields=business_discovery.username(${encodeURIComponent(env.IG_HANDLE)})` +
+      `{media.limit(24){id,caption,media_type,media_url,permalink,timestamp}}&access_token=${encodeURIComponent(env.IG_ACCESS_TOKEN)}`;
   } else {
     return { error: 'no Instagram token set' };
   }
   const res = await fetch(api);
   if (!res.ok) return { error: 'instagram request failed', status: res.status };
-  const data = await res.json();
+  let data = await res.json();
+  if (data.business_discovery) data = data.business_discovery.media || {};
   const posts = (data.data || [])
     .filter((p) => !/#nosite\b/i.test(p.caption || ''))
     .map((p) => ({
