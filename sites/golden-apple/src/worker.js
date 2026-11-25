@@ -302,8 +302,18 @@ async function setupCheck(env) {
     out.igTokenShape = { prefix: igt.slice(0, 4), length: igt.length, rawLength: (env.IG_LOGIN_TOKEN || '').length };
     const r = await (await fetch('https://graph.instagram.com/me?fields=user_id,username,account_type,media_count&access_token=' + encodeURIComponent(igt))).json();
     out.instagramLogin = r.error ? { error: r.error.message } : r;
-    const f = await (await fetch('https://graph.facebook.com/me?fields=id,name,username&access_token=' + encodeURIComponent(igt))).json();
-    out.instagramViaFacebook = f.error ? { error: f.error.message } : f;
+    const probe = async (path) => {
+      const d = await (await fetch('https://graph.facebook.com/' + path + (path.includes('?') ? '&' : '?') +
+        'access_token=' + encodeURIComponent(igt))).json();
+      return d.error ? { error: d.error.message } : JSON.stringify(d).slice(0, 400);
+    };
+    out.instagramViaFacebook = {
+      me: await probe('me?fields=id,name'),
+      meMedia: await probe('me/media?fields=id,permalink&limit=2'),
+      accounts: await probe('me/accounts?fields=name,instagram_business_account{id,username}'),
+      igAccounts: await probe('me/instagram_accounts?fields=id,username'),
+      businesses: await probe('me/businesses?fields=id,name'),
+    };
   }
   if (env.IG_ACCESS_TOKEN) {
     const tok = encodeURIComponent(env.IG_ACCESS_TOKEN);
