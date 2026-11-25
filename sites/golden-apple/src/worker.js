@@ -11,6 +11,8 @@ export default {
     if (url.pathname === '/api/hours') return hours(request, env, ctx);
     if (url.pathname === '/api/privatisation' && request.method === 'POST') return privatisation(request, env);
     if (url.pathname === '/api/carte') return carte(request, env, ctx);
+    if (url.pathname === '/api/instagram') return instagram(request, env, ctx);
+    if (url.pathname.startsWith('/api/ig-img/')) return instagramImage(request, env, ctx, url.pathname.slice(12));
     return env.ASSETS.fetch(request);
   },
 };
@@ -193,4 +195,77 @@ function parseCsv(text) {
   }
   if (field !== '' || row.length) { row.push(field); rows.push(row); }
   return rows;
+}
+
+// --- Instagram ------------------------------------------------------------------
+// Latest posts of the pub's Instagram professional account, via the Instagram Graph API
+// (account linked to the Facebook Page). Images are re-served from this site
+// (/api/ig-img/<id>): Instagram CDN links expire and would load Meta trackers.
+// A caption containing #nosite keeps a post off the website.
+// Secret: IG_ACCESS_TOKEN (long-lived Page token) · Variable: IG_USER_ID
+const IG_TTL_SECONDS = 60 * 60;
+const IG_IMG_TTL_SECONDS = 7 * 24 * 60 * 60;
+const IG_COUNT = 6;
+
+async function instagramFeed(request, env, ctx) {
+  const cache = caches.default;
+  const cacheKey = new Request(new URL('/api/instagram-raw?v=1', request.url).toString());
+  const cached = await cache.match(cacheKey);
+  if (cached) return cached.json();
+  if (!env.IG_ACCESS_TOKEN || !env.IG_USER_ID) return { error: 'IG_ACCESS_TOKEN / IG_USER_ID not set' };
+
+  const fields = 'id,caption,media_type,media_url,thumbnail_url,permalink,timestamp';
+  const api = `https://graph.facebook.com/${env.IG_USER_ID}/media?fields=${fields}&limit=24` +
+    `&access_token=${encodeURIComponent(env.IG_ACCESS_TOKEN)}`;
+  const res = await fetch(api);
+  if (!res.ok) return { error: 'instagram request failed', status: res.status };
+  const data = await res.json();
+  const posts = (data.data || [])
+    .filter((p) => !/#nosite\b/i.test(p.caption || ''))
+    .map((p) => ({
+      id: p.id,
+      src: p.media_type === 'VIDEO' ? p.thumbnail_url : p.media_url,
+      permalink: p.permalink,
+      caption: (p.caption || '').split('\n')[0].slice(0, 140),
+      timestamp: p.timestamp,
+    }))
+    .filter((p) => p.src)
+    .slice(0, IG_COUNT);
+  const out = { fetchedAt: new Date().toISOString(), posts };
+  ctx.waitUntil(cache.put(cacheKey, new Response(JSON.stringify(out), {
+    headers: { 'Content-Type': 'application/json', 'Cache-Control': `public, max-age=${IG_TTL_SECONDS}` },
+  })));
+  return out;
+}
+
+async function instagram(request, env, ctx) {
+  const feed = await instagramFeed(request, env, ctx);
+  if (feed.error) return json(feed, 502);
+  return json({
+    fetchedAt: feed.fetchedAt,
+    posts: feed.posts.map(({ id, permalink, caption, timestamp }) =>
+      ({ id, permalink, caption, timestamp, img: `/api/ig-img/${id}` })),
+  }, 200, { 'Cache-Control': 'public, max-age=600' });
+}
+
+async function instagramImage(request, env, ctx, id) {
+  if (!/^\d+$/.test(id)) return new Response('Not found', { status: 404 });
+  const cache = caches.default;
+  const cacheKey = new Request(new URL(`/api/ig-img/${id}?v=1`, request.url).toString());
+  const cached = await cache.match(cacheKey);
+  if (cached) return cached;
+
+  const feed = await instagramFeed(request, env, ctx);
+  const post = (feed.posts || []).find((p) => p.id === id);
+  if (!post) return new Response('Not found', { status: 404 });
+  const img = await fetch(post.src);
+  if (!img.ok) return new Response('Image unavailable', { status: 502 });
+  const response = new Response(img.body, {
+    headers: {
+      'Content-Type': img.headers.get('Content-Type') || 'image/jpeg',
+      'Cache-Control': `public, max-age=${IG_IMG_TTL_SECONDS}`,
+    },
+  });
+  ctx.waitUntil(cache.put(cacheKey, response.clone()));
+  return response;
 }

@@ -182,3 +182,6 @@ h2 { font-size: clamp(26px, 3.2vw, 38px); }
 .carte-price small { font-weight: 500; color: var(--label); font-size: 12px; }
 .carte-desc { margin: 4px 0 0; font-size: 14px; color: var(--muted); }
 .carte-hh { margin: 4px 0 0; font-size: 13px; color: var(--burgundy); }
+
+.insta-grid a { display: block; border-radius: 4px; overflow: hidden; }
+.insta-grid a:hover img { opacity: .85; }

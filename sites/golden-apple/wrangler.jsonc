@@ -1,7 +1,8 @@
 {
   // Golden Apple site — static assets plus a small Worker for live data under /api/.
   // Secrets (Cloudflare dashboard, never in this repo): GOOGLE_PLACES_KEY, FORM_RELAY_URL, FORM_RELAY_SECRET
-  // Variable (Cloudflare dashboard, plain text): CARTE_CSV_URL
+  // Variables (Cloudflare dashboard, plain text): CARTE_CSV_URL, IG_USER_ID
+  // Secret: IG_ACCESS_TOKEN (long-lived Facebook Page token, Instagram linked)
   "name": "golden-apple",
   "main": "src/worker.js",
   "compatibility_date": "2026-11-01",

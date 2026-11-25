@@ -131,7 +131,7 @@ const gallery = [
           <h2>Au pub, cette semaine</h2>
           <a href={site.instagramUrl || '#'}>Suivez-nous sur Instagram →</a>
         </div>
-        <div class="insta-grid">
+        <div class="insta-grid" id="insta-grid">
           {gallery.map((g) => (
             <img src={`/img/photos/${g.img}-sq.webp`} alt={g.alt} width="500" height="500" loading="lazy" />
           ))}
@@ -185,6 +185,21 @@ const gallery = [
       </form>
     </section>
   <script is:inline slot="scripts">
+    // Instagram: replace the shoot photos with the latest posts when the feed is available.
+    fetch('/api/instagram').then((r) => r.ok ? r.json() : null).then((d) => {
+      if (!d || !d.posts || d.posts.length < 3) return;
+      const grid = document.getElementById('insta-grid');
+      grid.textContent = '';
+      for (const p of d.posts) {
+        const a = document.createElement('a');
+        a.href = p.permalink; a.target = '_blank'; a.rel = 'noopener';
+        a.setAttribute('aria-label', 'Voir sur Instagram' + (p.caption ? ' : ' + p.caption : ''));
+        const img = document.createElement('img');
+        img.src = p.img; img.alt = p.caption || 'Photo Instagram du Golden Apple';
+        img.loading = 'lazy'; img.width = 500; img.height = 500;
+        a.appendChild(img); grid.appendChild(a);
+      }
+    }).catch(() => {});
     // Draught prices: refresh from the live menu (till → Sheet) so they never drift.
     fetch('/api/carte').then((r) => r.json()).then((d) => {
       const sec = (d.sections || []).find((s) => s.title === 'Bières à la pression');
