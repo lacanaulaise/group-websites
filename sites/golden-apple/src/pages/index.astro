@@ -11,10 +11,10 @@ const splitHour = (line: string) => {
 };
 const hours = site.fallbackHours.map(splitHour);
 const events = [
-  { title: 'Match en direct', line: 'Tous les grands matchs sur écran', img: 'jersey', alt: 'Maillot des Wallabies signé, encadré au mur' },
-  { title: 'Quiz night', line: 'Par équipes, en anglais et en français', img: 'crowd', alt: 'Clients attablés autour de pintes' },
-  { title: 'Tournoi de fléchettes', line: 'Inscription au comptoir', img: 'darts-player', alt: 'Un joueur vise la cible de fléchettes' },
-  { title: 'Concert', line: '[ARTISTE]', img: 'interior', alt: 'La salle, ses fanions et son lustre' },
+  { title: 'Match en direct', line: 'Tous les grands matchs sur écran', when: 'Rugby · foot', img: 'jersey', alt: 'Maillot des Wallabies signé, encadré au mur' },
+  { title: 'Quiz night', line: 'Par équipes, en anglais et en français', when: 'Quiz', img: 'crowd', alt: 'Clients attablés autour de pintes' },
+  { title: 'Tournoi de fléchettes', line: 'Inscription au comptoir', when: 'Fléchettes', img: 'darts-player', alt: 'Un joueur vise la cible de fléchettes' },
+  { title: 'Concerts', line: 'Groupes et DJ sets au pub', when: 'Live', img: 'interior', alt: 'La salle, ses fanions et son lustre' },
 ];
 const booking = site.bookingUrl || '#infos';
 // Placeholder gallery from the 2025 photo shoot, until the Instagram sync replaces it.
@@ -57,7 +57,7 @@ const gallery = [
         </div>
         <div class="item">
           <span class="label">Ce soir</span>
-          <span class="value">[ÉVÉNEMENT DU JOUR]</span>
+          <span class="value" id="tonight-event">Quiz, matchs et concerts</span>
         </div>
         <div class="item">
           <span class="label">À la pression</span>
@@ -110,12 +110,12 @@ const gallery = [
           <h2>Événements</h2>
           
         </div>
-        <div class="event-grid">
+        <div class="event-grid" id="event-grid">
           {events.map((e) => (
             <article class="event">
               <img src={`/img/photos/${e.img}-card.webp`} alt={e.alt} width="640" height="400" loading="lazy" />
               <div class="event-body">
-                <span class="event-date">[DATE] · [HEURE]</span>
+                <span class="event-date">{e.when}</span>
                 <h3>{e.title}</h3>
                 <p>{e.line}</p>
               </div>
@@ -185,6 +185,34 @@ const gallery = [
       </form>
     </section>
   <script is:inline slot="scripts">
+    // Facebook events: real upcoming events replace the generic cards; "Ce soir" shows today's or the next one.
+    fetch('/api/events').then((r) => r.ok ? r.json() : null).then((d) => {
+      if (!d || !d.events || !d.events.length) return;
+      const tz = { timeZone: 'Europe/Paris' };
+      const day = (iso) => new Date(iso).toLocaleDateString('fr-FR', { ...tz, weekday: 'short', day: 'numeric', month: 'short' });
+      const hour = (iso) => new Date(iso).toLocaleTimeString('fr-FR', { ...tz, hour: '2-digit', minute: '2-digit' }).replace(':00', 'h').replace(':', 'h');
+      const ymd = (dt) => dt.toLocaleDateString('en-CA', tz);
+      const today = ymd(new Date());
+      const tonight = d.events.find((e) => ymd(new Date(e.start)) === today);
+      const slot = document.getElementById('tonight-event');
+      if (tonight) slot.textContent = tonight.name + ' · ' + hour(tonight.start);
+      else slot.textContent = 'Prochain : ' + day(d.events[0].start) + ' · ' + d.events[0].name;
+
+      const grid = document.getElementById('event-grid');
+      const fallbacks = [...grid.querySelectorAll('img')].map((i) => i.getAttribute('src'));
+      grid.textContent = '';
+      d.events.slice(0, 4).forEach((e, i) => {
+        const a = document.createElement('a');
+        a.className = 'event'; a.href = e.ticket || e.url; a.target = '_blank'; a.rel = 'noopener';
+        const img = document.createElement('img');
+        img.src = e.img || fallbacks[i % fallbacks.length]; img.alt = ''; img.loading = 'lazy'; img.width = 640; img.height = 400;
+        const body = document.createElement('div'); body.className = 'event-body';
+        const when = document.createElement('span'); when.className = 'event-date'; when.textContent = day(e.start) + ' · ' + hour(e.start);
+        const h = document.createElement('h3'); h.textContent = e.name;
+        const p = document.createElement('p'); p.textContent = e.ticket ? 'Billets en ligne →' : 'Voir sur Facebook →';
+        body.append(when, h, p); a.append(img, body); grid.appendChild(a);
+      });
+    }).catch(() => {});
     // Instagram: replace the shoot photos with the latest posts when the feed is available.
     fetch('/api/instagram').then((r) => r.ok ? r.json() : null).then((d) => {
       if (!d || !d.posts || d.posts.length < 3) return;

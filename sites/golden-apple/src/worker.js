@@ -12,6 +12,8 @@ export default {
     if (url.pathname === '/api/privatisation' && request.method === 'POST') return privatisation(request, env);
     if (url.pathname === '/api/carte') return carte(request, env, ctx);
     if (url.pathname === '/api/instagram') return instagram(request, env, ctx);
+    if (url.pathname === '/api/events') return events(request, env, ctx);
+    if (url.pathname.startsWith('/api/ev-img/')) return eventImage(request, env, ctx, url.pathname.slice(12));
     if (url.pathname === '/api/setup-check') return setupCheck(env); // TEMPORARY: remove once IG_USER_ID is set
     if (url.pathname.startsWith('/api/ig-img/')) return instagramImage(request, env, ctx, url.pathname.slice(12));
     return env.ASSETS.fetch(request);
@@ -303,4 +305,75 @@ async function setupCheck(env) {
     }
   }
   return json(out);
+}
+
+// --- Facebook events ------------------------------------------------------------------
+// Upcoming events of the pub's Facebook Page. The Meta token (secret META_TOKEN, or the older
+// IG_ACCESS_TOKEN) is a user token that can see the Page; the Page token is derived from it.
+// Cover images are re-served from this site (/api/ev-img/<id>). Cached 1 hour.
+const FB_PAGE_ID = '32013519230'; // The Golden Apple Craft Beer House
+const EV_TTL_SECONDS = 60 * 60;
+
+async function eventsFeed(request, env, ctx) {
+  const cache = caches.default;
+  const cacheKey = new Request(new URL('/api/events-raw?v=1', request.url).toString());
+  const cached = await cache.match(cacheKey);
+  if (cached) return cached.json();
+  const token = env.META_TOKEN || env.IG_ACCESS_TOKEN;
+  if (!token) return { error: 'META_TOKEN not set' };
+
+  // Page token for our Page (a user token lists the Pages it manages with their tokens).
+  let pageToken = token;
+  const acc = await (await fetch('https://graph.facebook.com/me/accounts?fields=id,access_token&limit=50&access_token=' +
+    encodeURIComponent(token))).json();
+  const mine = (acc.data || []).find((p) => p.id === FB_PAGE_ID);
+  if (mine && mine.access_token) pageToken = mine.access_token;
+
+  const fields = 'id,name,description,start_time,end_time,cover,ticket_uri,is_canceled';
+  const res = await fetch(`https://graph.facebook.com/${FB_PAGE_ID}/events?time_filter=upcoming&fields=${fields}` +
+    `&limit=25&access_token=${encodeURIComponent(pageToken)}`);
+  const data = await res.json();
+  if (data.error) return { error: data.error.message };
+  const list = (data.data || [])
+    .filter((e) => !e.is_canceled)
+    .map((e) => ({
+      id: e.id, name: e.name, start: e.start_time, end: e.end_time || null,
+      description: (e.description || '').slice(0, 400),
+      cover: e.cover && e.cover.source ? e.cover.source : null,
+      ticket: e.ticket_uri || null,
+      url: 'https://www.facebook.com/events/' + e.id,
+    }))
+    .sort((a, b) => a.start.localeCompare(b.start));
+  const out = { fetchedAt: new Date().toISOString(), events: list };
+  ctx.waitUntil(cache.put(cacheKey, new Response(JSON.stringify(out), {
+    headers: { 'Content-Type': 'application/json', 'Cache-Control': `public, max-age=${EV_TTL_SECONDS}` },
+  })));
+  return out;
+}
+
+async function events(request, env, ctx) {
+  const feed = await eventsFeed(request, env, ctx);
+  if (feed.error) return json(feed, 502);
+  return json({
+    fetchedAt: feed.fetchedAt,
+    events: feed.events.map(({ cover, ...e }) => ({ ...e, img: cover ? `/api/ev-img/${e.id}` : null })),
+  }, 200, { 'Cache-Control': 'public, max-age=600' });
+}
+
+async function eventImage(request, env, ctx, id) {
+  if (!/^\d+$/.test(id)) return new Response('Not found', { status: 404 });
+  const cache = caches.default;
+  const cacheKey = new Request(new URL(`/api/ev-img/${id}?v=1`, request.url).toString());
+  const cached = await cache.match(cacheKey);
+  if (cached) return cached;
+  const feed = await eventsFeed(request, env, ctx);
+  const ev = (feed.events || []).find((e) => e.id === id);
+  if (!ev || !ev.cover) return new Response('Not found', { status: 404 });
+  const img = await fetch(ev.cover);
+  if (!img.ok) return new Response('Image unavailable', { status: 502 });
+  const response = new Response(img.body, {
+    headers: { 'Content-Type': img.headers.get('Content-Type') || 'image/jpeg', 'Cache-Control': 'public, max-age=604800' },
+  });
+  ctx.waitUntil(cache.put(cacheKey, response.clone()));
+  return response;
 }

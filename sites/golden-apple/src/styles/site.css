@@ -185,3 +185,6 @@ h2 { font-size: clamp(26px, 3.2vw, 38px); }
 
 .insta-grid a { display: block; border-radius: 4px; overflow: hidden; }
 .insta-grid a:hover img { opacity: .85; }
+
+a.event { text-decoration: none; color: inherit; }
+a.event:hover h3 { color: var(--brass); }
