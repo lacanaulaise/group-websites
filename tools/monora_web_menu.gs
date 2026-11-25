@@ -127,6 +127,8 @@ function wmExportAll() {
   if (!token) throw new Error('Propriété ' + WM_PROP_TOKEN + ' absente : créez un token Monora ' +
                               '(Integrations > My tokens, accès read:programmation) et collez-le ' +
                               'dans Paramètres du projet > Propriétés du script.');
+  Logger.log('Token utilisé : propriété ' + WM_PROP_TOKEN + ' (' + token.length + ' caractères, se termine par …' +
+             token.slice(-6) + ')');
   WM_SITES.forEach(function (s) { wmExportSite_(ss, s, token); });
 }
 
@@ -237,6 +239,11 @@ function wmFetchArticles_(s, token) {
       method: 'get', muteHttpExceptions: true,
       headers: { Authorization: 'Bearer ' + token, 'x-brand-id': s.brand, 'x-site-id': s.site }
     });
+    if (res.getResponseCode() === 403) {
+      throw new Error('Monora refuse le token ' + WM_PROP_TOKEN + ' (HTTP 403). Vérifiez dans Monora > ' +
+                      'Intégrations > Mes tokens que ce token a bien l\'accès Programmation. Réponse : ' +
+                      res.getContentText().substring(0, 200));
+    }
     if (res.getResponseCode() !== 200) {
       throw new Error('Monora pos-articles HTTP ' + res.getResponseCode() + ' : ' +
                       res.getContentText().substring(0, 200));
