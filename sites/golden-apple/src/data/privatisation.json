@@ -19,7 +19,12 @@
     "Formules boissons au fût, au verre ou en open bar",
     "Planches et finger food maison, ou buffet sur devis"
   ],
-  "conditions": "[CONDITIONS : minimum de dépense, acompte, horaires possibles, délai de réservation]",
+  "conditions": [
+    "Minimum de consommation : 1 000 €",
+    "Acompte de 30 % à la réservation",
+    "Horaires : à votre convenance",
+    "Délai : appelez-nous, on trouve une solution"
+  ],
   "photo": "crowd",
   "photoAlt": "Clients attablés autour de pintes au Golden Apple"
 }

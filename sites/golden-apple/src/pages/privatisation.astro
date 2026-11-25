@@ -44,7 +44,10 @@ import priv from '../data/privatisation.json';
       </div>
       <div class="food-text">
         <h2>Conditions</h2>
-        <p>{priv.conditions}</p>
+        <ul class="included">
+          {priv.conditions.map((c) => <li>{c}</li>)}
+        </ul>
+        <a class="btn btn-green" href={`tel:${site.phoneIntl}`}>Appeler le {site.phone}</a>
       </div>
     </div>
   </section>
