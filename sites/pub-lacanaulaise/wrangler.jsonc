@@ -1,0 +1,25 @@
+{
+  // Pub La Canaulaise website — static Astro site + Worker for /api/*.
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "pub-lacanaulaise",
+  "main": "src/worker.js",
+  "compatibility_date": "2026-11-01",
+  // Keep variables and secrets set in the Cloudflare dashboard when deploying from GitHub.
+  "keep_vars": true,
+  // Public, non-secret settings live here (secrets stay in the Cloudflare dashboard):
+  //   GOOGLE_PLACES_KEY, FORM_RELAY_URL, FORM_RELAY_SECRET, META_TOKEN (Facebook user token
+  //   that can see the "Bière et Pub La Canaulaise" Page, for events and Instagram).
+  "vars": {
+    // @biere.lacanaulaise, linked to the Facebook Page
+    "IG_USER_ID": "17841414626793223"
+    // EVENTS_CSV_URL: tab EVENEMENTS LA CANAULAISE of "Carte site web" (tools/web_events.gs)
+    // CARTE_CSV_URL: tab LA CANAULAISE of "Carte site web" (tools/monora_web_menu.gs)
+  },
+  "assets": {
+    "directory": "./dist",
+    "binding": "ASSETS",
+    "not_found_handling": "404-page",
+    "run_worker_first": ["/api/*"]
+  },
+  "observability": { "enabled": true }
+}

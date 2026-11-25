@@ -18,7 +18,7 @@
 var LOG_SHEET = 'Privatisations';
 var HEADERS = ['Reçu le', 'Pub', 'Nom', 'E-mail', 'Téléphone', 'Date souhaitée',
                'Personnes', 'Type', 'Budget', 'Message', 'Envoyé à'];
-var VENUE_NAMES = { 'golden-apple': 'The Golden Apple' };
+var VENUE_NAMES = { 'golden-apple': 'The Golden Apple', 'la-canaulaise': 'Pub La Canaulaise' };
 
 function setup() {
   var ss = SpreadsheetApp.getActiveSpreadsheet();

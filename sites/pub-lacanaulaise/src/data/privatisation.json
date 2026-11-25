@@ -1,0 +1,87 @@
+{
+  "intro": "Anniversaire, mariage, séminaire, soirée d'entreprise ou match entre amis : au pub, sur la terrasse ou dans le grand jardin, nous vous accueillons en toute saison avec nos bières La Canaulaise et notre cuisine.",
+  "spaces": [
+    {
+      "name": "Le jardin",
+      "capacity": "Jusqu'à 300 personnes",
+      "text": "Le grand jardin paysager, avec ses terrains de pétanque et ses cibles de fléchettes. Enfants, chiens et vélos bienvenus."
+    },
+    {
+      "name": "Le pub",
+      "capacity": "40 personnes",
+      "text": "La salle et son bar, ambiance cosy, en plein centre de Lacanau."
+    },
+    {
+      "name": "La terrasse",
+      "capacity": "40 personnes",
+      "text": "La terrasse couverte, entre le pub et le jardin."
+    },
+    {
+      "name": "La brasserie",
+      "capacity": "40 personnes",
+      "text": "Au milieu des cuves, là où nous brassons La Canaulaise."
+    },
+    {
+      "name": "Salle de réunion",
+      "capacity": "12 personnes",
+      "text": "Pour un séminaire ou une réunion au calme, avant l'apéro."
+    }
+  ],
+  "included": [
+    "Bières La Canaulaise au fût, au verre ou en open bar",
+    "Tapas, planches et buffet maison sur devis",
+    "Écrans pour vos matchs ou une présentation",
+    "Pétanque et fléchettes",
+    "Musique : votre playlist, un DJ ou un groupe"
+  ],
+  "conditions": [
+    "Devis sur mesure selon l'espace et la formule",
+    "Ouvert toute l'année",
+    "Appelez-nous pour en parler"
+  ],
+  "photo": "love-table",
+  "photoAlt": "Table de fête décorée dans le jardin du Pub La Canaulaise",
+  "en": {
+    "intro": "Birthday, wedding, seminar, company party or a match with friends: in the pub, on the terrace or in the big garden, we host you all year round with our La Canaulaise beers and our food.",
+    "spaces": [
+      {
+        "name": "The garden",
+        "capacity": "Up to 300 guests",
+        "text": "The big landscaped garden, with pétanque courts and darts. Children, dogs and bikes welcome."
+      },
+      {
+        "name": "The pub",
+        "capacity": "40 guests",
+        "text": "The room and its bar, cosy, right in the centre of Lacanau."
+      },
+      {
+        "name": "The terrace",
+        "capacity": "40 guests",
+        "text": "The covered terrace, between the pub and the garden."
+      },
+      {
+        "name": "The brewery",
+        "capacity": "40 guests",
+        "text": "Among the tanks where we brew La Canaulaise."
+      },
+      {
+        "name": "Meeting room",
+        "capacity": "12 guests",
+        "text": "For a quiet seminar or meeting, before drinks."
+      }
+    ],
+    "included": [
+      "La Canaulaise beer by the keg, by the glass or open bar",
+      "Homemade tapas, boards and buffet on request",
+      "Screens for your matches or a presentation",
+      "Pétanque and darts",
+      "Music: your playlist, a DJ or a band"
+    ],
+    "conditions": [
+      "Tailor-made quote depending on the space and package",
+      "Open all year round",
+      "Give us a call to talk it through"
+    ],
+    "photoAlt": "A decorated party table in the garden of Pub La Canaulaise"
+  }
+}

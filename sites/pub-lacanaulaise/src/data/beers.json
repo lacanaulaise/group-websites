@@ -1,0 +1,137 @@
+[
+  {
+    "easybeerId": 15051,
+    "name": "Pils Session",
+    "style": "Blonde · Kölsch",
+    "abv": 4.4,
+    "prices": {
+      "demi": 350,
+      "pinte": 600,
+      "pinteHH": 450
+    },
+    "easybeerImg": "1769615614267",
+    "styleEn": "Blonde · Kölsch"
+  },
+  {
+    "easybeerId": 1369,
+    "name": "Blanche",
+    "style": "Witbier",
+    "abv": 4.6,
+    "prices": {
+      "demi": 350,
+      "pinte": 600,
+      "pinteHH": 450
+    },
+    "easybeerImg": "1769615505574",
+    "styleEn": "Witbier"
+  },
+  {
+    "easybeerId": 1367,
+    "name": "Blonde",
+    "style": "Pale ale",
+    "abv": 6.2,
+    "prices": {
+      "demi": 350,
+      "pinte": 600,
+      "pinteHH": 450
+    },
+    "easybeerImg": "1769615533397",
+    "styleEn": "Pale ale"
+  },
+  {
+    "easybeerId": 1368,
+    "name": "English IPA",
+    "style": "IPA ambrée",
+    "abv": 6.1,
+    "prices": {
+      "demi": 350,
+      "pinte": 600,
+      "pinteHH": 450
+    },
+    "easybeerImg": "1769615558767",
+    "styleEn": "Amber IPA"
+  },
+  {
+    "easybeerId": 30275,
+    "name": "Ouest Coast IPA",
+    "style": "IPA blonde",
+    "abv": 7.0,
+    "prices": {
+      "demi": 400,
+      "pinte": 700,
+      "pinteHH": 450
+    },
+    "easybeerImg": "1769615586423",
+    "styleEn": "Blonde IPA"
+  },
+  {
+    "easybeerId": 37687,
+    "name": "Triple",
+    "style": "Ale blonde",
+    "abv": 7.8,
+    "prices": {
+      "demi": 400,
+      "pinte": 700,
+      "pinteHH": 450
+    },
+    "easybeerImg": "1769615680646",
+    "styleEn": "Blonde ale"
+  },
+  {
+    "easybeerId": 16015,
+    "name": "Stout Orange",
+    "style": "Stout",
+    "abv": 4.5,
+    "prices": {
+      "demi": 350,
+      "pinte": 600,
+      "pinteHH": 450
+    },
+    "easybeerImg": "1769615478694",
+    "styleEn": "Stout"
+  },
+  {
+    "name": "La Grimace",
+    "easybeerId": 43627,
+    "easybeerImg": "1769616048790",
+    "style": "Sour ale",
+    "styleEn": "Sour ale",
+    "abv": 3.8,
+    "prices": {
+      "demi": 350,
+      "pinte": 600,
+      "pinteHH": 450
+    }
+  },
+  {
+    "easybeerId": 58717,
+    "name": "Milky Mango",
+    "style": "Bière spéciale · mangue",
+    "abv": 5.1,
+    "prices": {
+      "demi": 400,
+      "pinte": 450
+    },
+    "styleEn": "Speciality beer · mango"
+  },
+  {
+    "name": "Goudale Ambrée",
+    "style": "Bière invitée · ambrée",
+    "styleEn": "Guest beer · amber",
+    "prices": {
+      "demi": 400,
+      "pinte": 700
+    },
+    "abv": null
+  },
+  {
+    "name": "Bacchus",
+    "style": "Bière invitée",
+    "styleEn": "Guest beer",
+    "prices": {
+      "demi": 400,
+      "pinte": 700
+    },
+    "abv": null
+  }
+]

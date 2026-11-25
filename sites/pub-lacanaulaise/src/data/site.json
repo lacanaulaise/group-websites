@@ -1,0 +1,34 @@
+{
+  "key": "la-canaulaise",
+  "name": "Pub La Canaulaise",
+  "address": "7-9 rue du Maréchal Leclerc, 33680 Lacanau",
+  "phone": "05 40 43 00 16",
+  "phoneIntl": "+33540430016",
+  "phoneEn": "+33 5 40 43 00 16",
+  "email": "info@lacanaulaise.fr",
+  "mapsUrl": "https://www.google.com/maps/search/?api=1&query=Pub+La+Canaulaise+7+rue+du+Mar%C3%A9chal+Leclerc+Lacanau",
+  "mapQuery": "Pub+La+Canaulaise,+7+rue+du+Maréchal+Leclerc,+33680+Lacanau",
+  "mapLabel": "7-9 rue du Maréchal Leclerc, Lacanau",
+  "bookingUrl": "",
+  "instagramUrl": "https://www.instagram.com/biere.lacanaulaise/",
+  "facebookUrl": "https://www.facebook.com/p/Bi%C3%A8re-et-Pub-La-Canaulaise-100063539292829/",
+  "fallbackHours": [],
+  "sisterVenues": [
+    {
+      "name": "La Canaulaise, la brasserie",
+      "url": "https://www.lacanaulaise.fr"
+    },
+    {
+      "name": "The Golden Apple, Bordeaux",
+      "url": "https://www.golden-apple.fr"
+    },
+    {
+      "name": "L'Australien, Hourtin-Plage",
+      "url": ""
+    },
+    {
+      "name": "Buvette de la Gaîté",
+      "url": ""
+    }
+  ]
+}

@@ -244,7 +244,7 @@ const S = {
       const dayOf = (e) => e.date || ymd(new Date(e.start));
       const dayLabel = (s) => new Date(s + 'T12:00:00').toLocaleDateString(S.locale, { weekday: 'long', day: 'numeric', month: 'long' });
       const shortDay = (s) => new Date(s + 'T12:00:00').toLocaleDateString(S.locale, { weekday: 'short', day: 'numeric', month: 'short' });
-      const hour = (e) => e.allDay ? S.allDay : hm(e.time || new Date(e.start).toLocaleTimeString('fr-FR', { ...tz, hour: '2-digit', minute: '2-digit' }));
+      const hour = (e) => e.allDay ? '' : hm(e.time || new Date(e.start).toLocaleTimeString('fr-FR', { ...tz, hour: '2-digit', minute: '2-digit' }));
       const label = (e) => S.cat[e.category] || e.label || '';
       // Generic calendar titles get translated; match and event names stay as written.
       for (const e of d.events) e.name = S.titles[e.name] || e.name;
@@ -252,7 +252,7 @@ const S = {
 
       const tonight = d.events.filter((e) => dayOf(e) === today);
       const slot = document.getElementById('tonight-event');
-      if (tonight.length) slot.textContent = tonight.slice(0, 2).map((e) => e.name + ' · ' + hour(e)).join(' — ');
+      if (tonight.length) slot.textContent = tonight.slice(0, 2).map((e) => e.name + (hour(e) ? ' · ' + hour(e) : '')).join(' — ');
       else slot.textContent = S.next + ' ' + shortDay(dayOf(d.events[0])) + ' · ' + d.events[0].name;
 
       // Highlight cards: the next event of each kind, most special first.
@@ -273,7 +273,7 @@ const S = {
         img.src = e.img || '/img/photos/interior-card.webp'; img.alt = ''; img.loading = 'lazy'; img.width = 640; img.height = 400;
         const body = document.createElement('div'); body.className = 'event-body';
         const when = document.createElement('span'); when.className = 'event-date';
-        when.textContent = (dayOf(e) === today ? S.tonightShort : shortDay(dayOf(e))) + ' · ' + hour(e);
+        when.textContent = (dayOf(e) === today ? S.tonightShort : shortDay(dayOf(e))) + (hour(e) ? ' · ' + hour(e) : '');
         const h3 = document.createElement('h3'); h3.textContent = e.name;
         const p = document.createElement('p'); const l = label(e); p.textContent = l && l !== e.name ? l : '';
         body.append(when, h3, p); card.append(img, body); grid.appendChild(card);
@@ -293,7 +293,7 @@ const S = {
         const ul = document.createElement('ul');
         for (const e of items) {
           const li = document.createElement('li');
-          const tm = document.createElement('span'); tm.className = 'agenda-time'; tm.textContent = e.allDay ? S.allDayShort : hour(e);
+          const tm = document.createElement('span'); tm.className = 'agenda-time'; tm.textContent = hour(e);
           const n = document.createElement('span'); n.className = 'agenda-name'; n.textContent = e.name;
           const tag = document.createElement('span'); tag.className = 'agenda-tag tag-' + e.category; tag.textContent = label(e);
           li.append(tm, n, tag); ul.appendChild(li);

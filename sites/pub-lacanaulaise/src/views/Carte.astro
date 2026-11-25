@@ -1,0 +1,100 @@
+---
+import Base from '../layouts/Base.astro';
+import site from '../data/site.json';
+import { T } from '../i18n.js';
+
+interface Props { lang: 'fr' | 'en'; }
+const { lang } = Astro.props;
+const c = T[lang].carte;
+const S = { lang, food: c.food, drinks: c.drinks, sections: c.sections, error: c.error, phone: lang === 'en' ? site.phoneEn : site.phone };
+---
+<Base title={c.title} description={c.description} lang={lang} page="/carte">
+  <section class="hero carte-hero">
+    <div class="wrap">
+      <div class="hero-text">
+        <span class="label" style="color: var(--brass)">{c.label}</span>
+        <h1>{c.h1}</h1>
+        <p>{c.intro}</p>
+        {c.note && <p class="carte-note">{c.note}</p>}
+        <nav class="carte-jump" aria-label={c.jump}>
+          <a class="btn btn-brass" href="#a-manger">{c.food}</a>
+          <a class="btn btn-ghost" href="#a-boire">{c.drinks}</a>
+        </nav>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap">
+      <div id="carte-root" aria-live="polite">
+        <p class="lead">{c.loading}</p>
+      </div>
+      <noscript>
+        <p class="lead">{c.noscript} {S.phone}.</p>
+      </noscript>
+    </div>
+  </section>
+
+  <script is:inline slot="scripts" define:vars={{ S }}>
+    const EN = S.lang === 'en';
+    const root = document.getElementById('carte-root');
+    const eur = (n) => { const v = Number.isInteger(n) ? String(n) : n.toFixed(2); return EN ? '€' + v : v.replace('.', ',') + ' €'; };
+    const fmt = (f) => EN ? f.replace(/(\d),(\d)/, '$1.$2') : f;
+    const el = (tag, cls, text) => {
+      const e = document.createElement(tag);
+      if (cls) e.className = cls;
+      if (text != null) e.textContent = text;
+      return e;
+    };
+
+    function renderGroup(id, heading, sections) {
+      if (!sections.length) return;
+      const group = el('div', 'carte-group');
+      group.id = id;
+      group.appendChild(el('h2', '', heading));
+      for (const s of sections) {
+        const block = el('section', 'carte-section');
+        block.appendChild(el('h3', '', S.sections[s.title] || s.title));
+        const list = el('ul', 'carte-list');
+        for (const it of s.items) {
+          const li = el('li', 'carte-item');
+          const head = el('div', 'carte-line');
+          head.appendChild(el('span', 'carte-name', it.name));
+          head.appendChild(el('span', 'carte-dots'));
+          const prices = el('span', 'carte-prices');
+          for (const p of it.prices) {
+            const pe = el('span', 'carte-price');
+            if (p.format) pe.appendChild(el('small', '', fmt(p.format) + ' '));
+            pe.appendChild(document.createTextNode(eur(p.price)));
+            prices.appendChild(pe);
+          }
+          head.appendChild(prices);
+          li.appendChild(head);
+          if (it.desc) li.appendChild(el('p', 'carte-desc', it.desc));
+          const hh = it.prices.filter((p) => p.hh != null && p.hh < p.price);
+          if (hh.length) {
+            li.appendChild(el('p', 'carte-hh', 'Happy hour' + (EN ? ': ' : ' : ') + hh.map((p) => (p.format ? fmt(p.format) + ' ' : '') + eur(p.hh)).join(' · ')));
+          }
+          list.appendChild(li);
+        }
+        block.appendChild(list);
+        group.appendChild(block);
+      }
+      root.appendChild(group);
+    }
+
+    fetch('/api/carte')
+      .then((r) => r.json())
+      .then((d) => {
+        if (d.error || !d.sections?.length) throw new Error(d.error || 'empty');
+        root.textContent = '';
+        renderGroup('a-manger', S.food, d.sections.filter((s) => s.food));
+        renderGroup('a-boire', S.drinks, d.sections.filter((s) => !s.food));
+        if (location.hash) document.querySelector(location.hash)?.scrollIntoView();
+      })
+      .catch(() => {
+        root.innerHTML = '';
+        root.appendChild(el('p', 'lead', S.error + ' ' + S.phone + '.'));
+      });
+  </script>
+</Base>

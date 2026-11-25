@@ -34,7 +34,11 @@
 // has a key, or sits in a folder (window) that has a key, at any depth.
 var WM_SITES = [
   { key: 'golden-apple', tab: 'GOLDEN APPLE', site: '45304', carte: '384', brand: '44772',
-    keyboard: 1002, pages: [11339, 11341, 11343, 11344, 11345] }
+    keyboard: 1002, pages: [11339, 11341, 11343, 11344, 11345] },
+  // Pub La Canaulaise (Lacanau). tokenProp: its own Monora token if the main one can't read
+  // this organisation (falls back to MONORA_PROG_TOKEN).
+  { key: 'la-canaulaise', tab: 'LA CANAULAISE', site: '45196', carte: '200', brand: '44687',
+    keyboard: 6139, pages: [69071, 69073, 69075, 69076], tokenProp: 'MONORA_PROG_TOKEN_LC' }
 ];
 var WM_PROP_SHEET = 'WEB_MENU_SHEET_ID';
 var WM_PROP_TOKEN = 'MONORA_PROG_TOKEN';
@@ -44,7 +48,7 @@ var WM_HEADERS = ['posId', 'Rubrique', 'Nom caisse', 'Prix TTC', 'Prix happy hou
 
 // Familles / sous-familles jamais affichées sur le site.
 var WM_HIDDEN_FAMILIES = ['TABAC', 'BOUTIQUE', 'MESSAGE'];
-var WM_HIDDEN_TITLES = /^(ADI |DIVERS|BIP |\+ )|FORMULE|3 EURO SHOT|4 EURO SHOOTER/;
+var WM_HIDDEN_TITLES = /^(ADI |DIVERS|BIP |\+ |\*)|FORMULE|3 EURO SHOT|4 EURO SHOOTER|PICON|DEGUST|VRAC|FUTS|FLIGHT|\^\^/;
 
 // Sous-famille caisse -> rubrique du site.
 var WM_RUBRIQUES = {
@@ -59,7 +63,16 @@ var WM_RUBRIQUES = {
   'TAPAS': 'À partager',
   'PLATS': 'Burgers & plats',
   'DESSERT': 'Desserts',
-  'BIERES EMPORTER': 'À emporter'
+  'BIERES EMPORTER': 'À emporter',
+  // Pub La Canaulaise (its till uses different sub-families)
+  'Tapas': 'À partager',
+  'Plat': 'Burgers & plats',
+  'Desserts': 'Desserts',
+  'Menu': 'Formules',
+  'Cocktails': 'Cocktails',
+  'Mocktails': 'Sans alcool',
+  'APERITIFS': 'Apéritifs',
+  'EAUX': 'Softs'
 };
 
 // Noms de caisse -> nom suggéré pour le site (appliqué seulement aux nouvelles lignes).
@@ -67,7 +80,8 @@ var WM_RUBRIQUES = {
 var WM_BEER_FIXES = [
   [/\bENG IPA\b/, 'English IPA'], [/\bOUEST IPA\b/, 'Ouest Coast IPA'],
   [/^PALE ALE\b/, 'Blonde'], [/^PILS\b/, 'Pils Session'], [/^SOUR\b/, 'La Grimace'],
-  [/^MILKSHAKE\b/, 'Milky Mango'], [/^CIDER\b/, 'Cidre'], [/^STOUT\b/, 'Stout Orange']
+  [/^MILKSHAKE\b/, 'Milky Mango'], [/^CIDER\b/, 'Cidre'], [/^STOUT\b/, 'Stout Orange'],
+  [/^SESSION\b/, 'Pils Session'], [/^GOUDALE AMBREE\b/, 'Goudale Ambrée']
 ];
 var WM_NAME_FIXES = [
   [/\bDEVILS\b/, "DEVIL'S"], [/\bCAPTAINS\b/, "CAPTAIN'S"], [/^BTL\s*\.?/, 'BOUTEILLE '],
@@ -129,7 +143,12 @@ function wmExportAll() {
                               'dans Paramètres du projet > Propriétés du script.');
   Logger.log('Token utilisé : propriété ' + WM_PROP_TOKEN + ' (' + token.length + ' caractères, se termine par …' +
              token.slice(-6) + ')');
-  WM_SITES.forEach(function (s) { wmExportSite_(ss, s, token); });
+  WM_SITES.forEach(function (s) {
+    var own = s.tokenProp && (PropertiesService.getScriptProperties().getProperty(s.tokenProp) || '').trim()
+              .replace(/^["']|["']$/g, '');
+    try { wmExportSite_(ss, s, own || token); }
+    catch (e) { Logger.log(s.tab + ' : ÉCHEC — ' + e.message); }  // one pub failing doesn't stop the others
+  });
 }
 
 function wmExportSite_(ss, s, token) {
@@ -272,6 +291,7 @@ var WM_TITLE_RUBRIQUES = { 'COFFEE': 'Boissons chaudes', 'TEA': 'Boissons chaude
 
 function wmRubrique_(fam, sub, format, title) {
   if (!sub && title && WM_TITLE_RUBRIQUES[title]) return WM_TITLE_RUBRIQUES[title];
+  if (sub === 'BIERES' && fam === 'SS ALCOOL') return 'Sans alcool';
   if (sub === 'BIERES') return format ? 'Bières à la pression' : 'Bières en bouteille';
   return WM_RUBRIQUES[sub] || '';
 }
