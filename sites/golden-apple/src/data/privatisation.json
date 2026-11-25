@@ -1,5 +1,5 @@
 {
-  "intro": "Anniversaire, pot de départ, soirée d'entreprise ou match entre amis : réservez un espace ou tout le pub, avec nos bières La Canaulaise à la pression et la cuisine maison.",
+  "intro": "Anniversaire, pot de départ, soirée d'entreprise ou match entre amis : réservez un espace ou tout le pub, avec nos bières La Canaulaise à la pression et nos craft burgers.",
   "spaces": [
     {
       "name": "Tout le pub",
@@ -28,7 +28,7 @@
   "photo": "crowd",
   "photoAlt": "Clients attablés autour de pintes au Golden Apple",
   "en": {
-    "intro": "Birthday, leaving drinks, company party or a match with friends: book an area or the whole pub, with our La Canaulaise beers on tap and homemade food.",
+    "intro": "Birthday, leaving drinks, company party or a match with friends: book an area or the whole pub, with our La Canaulaise beers on tap and our craft burgers.",
     "spaces": [
       {
         "name": "The whole pub",
