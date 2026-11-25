@@ -2,13 +2,16 @@
   // Golden Apple site — static assets plus a small Worker for live data under /api/.
   // Secrets (Cloudflare dashboard, never in this repo): GOOGLE_PLACES_KEY, FORM_RELAY_URL, FORM_RELAY_SECRET
   // Variables (Cloudflare dashboard, plain text): CARTE_CSV_URL, IG_USER_ID
-  // Secret: IG_ACCESS_TOKEN (long-lived Facebook Page token, Instagram linked)
+  // Secrets: META_TOKEN or IG_ACCESS_TOKEN (Facebook token: Page events), IG_LOGIN_TOKEN (Instagram Login)
+  // KV binding (dashboard): STATE — keeps the renewed Instagram token
   "name": "golden-apple",
   "main": "src/worker.js",
   "compatibility_date": "2026-11-01",
   // Keep the plain-text variables set in the Cloudflare dashboard (CARTE_CSV_URL, IG_USER_ID)
   // when deploying from GitHub; without this, a deploy can remove them.
   "keep_vars": true,
+  // Weekly (Monday 04:00 UTC): renew the Instagram token.
+  "triggers": { "crons": ["0 4 * * 1"] },
   "assets": {
     "directory": "./dist",
     "binding": "ASSETS",

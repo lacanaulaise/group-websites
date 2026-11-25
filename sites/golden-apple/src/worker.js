@@ -6,6 +6,10 @@ const PLACE_ID = 'ChIJk6QdxHsoVQ0RpmREzZMtMEg'; // The Golden Apple, 46 rue Bori
 const HOURS_TTL_SECONDS = 6 * 60 * 60;
 
 export default {
+  // Weekly: renew the Instagram Login token (valid 60 days) and keep it in KV.
+  async scheduled(event, env, ctx) {
+    ctx.waitUntil(refreshInstagramToken(env));
+  },
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
     if (url.pathname === '/api/hours') return hours(request, env, ctx);
@@ -215,11 +219,19 @@ async function instagramFeed(request, env, ctx) {
   const cacheKey = new Request(new URL('/api/instagram-raw?v=1', request.url).toString());
   const cached = await cache.match(cacheKey);
   if (cached) return cached.json();
-  if (!env.IG_ACCESS_TOKEN || !env.IG_USER_ID) return { error: 'IG_ACCESS_TOKEN / IG_USER_ID not set' };
-
   const fields = 'id,caption,media_type,media_url,thumbnail_url,permalink,timestamp';
-  const api = `https://graph.facebook.com/${env.IG_USER_ID}/media?fields=${fields}&limit=24` +
-    `&access_token=${encodeURIComponent(env.IG_ACCESS_TOKEN)}`;
+  let api;
+  const igToken = await instagramToken(env);
+  if (igToken) {
+    // "Instagram API with Instagram Login": token from the Instagram professional account itself.
+    api = `https://graph.instagram.com/me/media?fields=${fields}&limit=24&access_token=${encodeURIComponent(igToken)}`;
+  } else if (env.IG_ACCESS_TOKEN && env.IG_USER_ID) {
+    // Facebook-linked route (Page with a linked Instagram account).
+    api = `https://graph.facebook.com/${env.IG_USER_ID}/media?fields=${fields}&limit=24` +
+      `&access_token=${encodeURIComponent(env.IG_ACCESS_TOKEN)}`;
+  } else {
+    return { error: 'no Instagram token set' };
+  }
   const res = await fetch(api);
   if (!res.ok) return { error: 'instagram request failed', status: res.status };
   const data = await res.json();
@@ -281,8 +293,15 @@ async function setupCheck(env) {
       GOOGLE_PLACES_KEY: !!env.GOOGLE_PLACES_KEY, CARTE_CSV_URL: !!env.CARTE_CSV_URL,
       FORM_RELAY_URL: !!env.FORM_RELAY_URL, FORM_RELAY_SECRET: !!env.FORM_RELAY_SECRET,
       IG_ACCESS_TOKEN: !!env.IG_ACCESS_TOKEN, IG_USER_ID: env.IG_USER_ID || null,
+      IG_LOGIN_TOKEN: !!env.IG_LOGIN_TOKEN, STATE_KV: !!env.STATE,
+      igTokenRefreshed: env.STATE ? await env.STATE.get('ig_login_token_refreshed') : null,
     },
   };
+  const igt = await instagramToken(env);
+  if (igt) {
+    const r = await (await fetch('https://graph.instagram.com/me?fields=user_id,username,account_type,media_count&access_token=' + encodeURIComponent(igt))).json();
+    out.instagramLogin = r.error ? { error: r.error.message } : r;
+  }
   if (env.IG_ACCESS_TOKEN) {
     const tok = encodeURIComponent(env.IG_ACCESS_TOKEN);
     const ig = (p) => p.instagram_business_account
@@ -376,4 +395,28 @@ async function eventImage(request, env, ctx, id) {
   });
   ctx.waitUntil(cache.put(cacheKey, response.clone()));
   return response;
+}
+
+// --- Instagram Login token ----------------------------------------------------------
+// IG_LOGIN_TOKEN (secret) is the long-lived token generated in the Meta app dashboard
+// ("API Instagram avec Connexion Instagram"). It lasts 60 days; the weekly cron renews it
+// and stores the fresh one in the KV namespace bound as STATE (if bound).
+async function instagramToken(env) {
+  if (env.STATE) {
+    const stored = await env.STATE.get('ig_login_token');
+    if (stored) return stored;
+  }
+  return env.IG_LOGIN_TOKEN || null;
+}
+
+async function refreshInstagramToken(env) {
+  const current = await instagramToken(env);
+  if (!current || !env.STATE) return;
+  const r = await fetch('https://graph.instagram.com/refresh_access_token?grant_type=ig_refresh_token&access_token=' +
+    encodeURIComponent(current));
+  const d = await r.json();
+  if (d.access_token) {
+    await env.STATE.put('ig_login_token', d.access_token);
+    await env.STATE.put('ig_login_token_refreshed', new Date().toISOString());
+  }
 }
