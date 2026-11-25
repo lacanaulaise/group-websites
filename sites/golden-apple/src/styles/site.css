@@ -153,3 +153,22 @@ h2 { font-size: clamp(32px, 4vw, 44px); font-weight: 700; }
 .prices dt { font-size: 12px; color: var(--label); text-transform: uppercase; letter-spacing: .08em; }
 .prices dd { margin: 0; font-size: 18px; font-weight: 600; color: var(--green); }
 .beer .hh { margin-top: 6px; font-size: 13px; color: #7a5a12; }
+
+/* La carte */
+.carte-hero .wrap { padding-top: 56px; padding-bottom: 56px; }
+.carte-jump { display: flex; flex-wrap: wrap; gap: 12px; }
+.carte-group { margin-bottom: 56px; scroll-margin-top: 80px; }
+.carte-group > h2 { margin-bottom: 24px; }
+.carte-group { columns: 2 380px; column-gap: 56px; }
+.carte-group > h2 { column-span: all; }
+.carte-section { break-inside: avoid; margin-bottom: 36px; }
+.carte-section h3 { font-size: 24px; font-weight: 700; padding-bottom: 8px; border-bottom: 2px solid var(--brass); margin-bottom: 12px; }
+.carte-list { list-style: none; margin: 0; padding: 0; }
+.carte-item { padding: 8px 0; border-bottom: 1px solid var(--line); }
+.carte-line { display: flex; align-items: baseline; gap: 8px; }
+.carte-name { font-weight: 600; }
+.carte-dots { flex: 1; border-bottom: 1px dotted #bfb28e; transform: translateY(-4px); min-width: 16px; }
+.carte-prices { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 4px 14px; font-weight: 600; color: var(--green); white-space: nowrap; }
+.carte-price small { font-weight: 500; color: var(--label); font-size: 12px; }
+.carte-desc { margin: 4px 0 0; font-size: 14px; color: var(--muted); }
+.carte-hh { margin: 4px 0 0; font-size: 13px; color: #7a5a12; }

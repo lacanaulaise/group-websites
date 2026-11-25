@@ -36,7 +36,7 @@ const gallery = [
           <p>Bières artisanales de La Canaulaise, cuisine de pub maison, sport en direct, quiz et fléchettes. Rue Borie, depuis 1989.</p>
           <div class="hero-actions">
             <a class="btn btn-brass" href={booking}>Réserver une table</a>
-            <a class="btn btn-ghost" href="#carte">Voir la carte</a>
+            <a class="btn btn-ghost" href="/carte">Voir la carte</a>
             <a class="btn btn-ghost" href="/privatisation">Privatiser le pub</a>
           </div>
         </div>
@@ -98,7 +98,7 @@ const gallery = [
           <h2>Cuisine de pub maison</h2>
           <p>Des plats faits maison, pensés pour aller avec nos bières. La carte en ligne est la même qu'au comptoir, prix compris.</p>
           <span><strong>Cuisine :</strong> <span id="kitchen-hours">—</span></span>
-          <a class="btn btn-green" href="#carte">Voir la carte complète</a>
+          <a class="btn btn-green" href="/carte">Voir la carte complète</a>
         </div>
       </div>
     </section>
@@ -183,9 +183,9 @@ const gallery = [
         </div>
       </form>
     </section>
-  <script slot="scripts">
+  <script is:inline slot="scripts">
     document.getElementById('map-load')?.addEventListener('click', () => {
-      const box = document.getElementById('map')!;
+      const box = document.getElementById('map');
       const f = document.createElement('iframe');
       f.src = 'https://www.google.com/maps?q=The+Golden+Apple,+46+rue+Borie,+33300+Bordeaux&z=16&output=embed';
       f.title = 'Carte : The Golden Apple, 46 rue Borie, Bordeaux';
@@ -196,19 +196,19 @@ const gallery = [
       const name = new Intl.DateTimeFormat('fr-FR', { weekday: 'long', timeZone: 'Europe/Paris' }).format(new Date());
       return name.toLowerCase();
     };
-    const split = (line: string) => {
+    const split = (line) => {
       const i = line.indexOf(':');
       return { day: line.slice(0, i).trim().toLowerCase(), time: line.slice(i + 1).trim() };
     };
-    const short = (t: string) => t.replace(/:00/g, 'h').replace(/:(\d\d)/g, 'h$1');
+    const short = (t) => t.replace(/:00/g, 'h').replace(/:(\d\d)/g, 'h$1');
 
     fetch('/api/hours')
       .then((r) => r.json())
       .then((d) => {
         if (d.error) return;
-        const lines: string[] = d.thisWeek?.length ? d.thisWeek : d.opening;
+        const lines = d.thisWeek?.length ? d.thisWeek : d.opening;
         const today = parisDay();
-        const body = document.getElementById('hours-body')!;
+        const body = document.getElementById('hours-body');
         body.textContent = '';
         let todayTime = '';
         lines.map(split).forEach((h) => {
@@ -219,8 +219,8 @@ const gallery = [
           tr.append(th, td); body.appendChild(tr);
         });
 
-        const dot = document.getElementById('status-dot')!;
-        const text = document.getElementById('status-text')!;
+        const dot = document.getElementById('status-dot');
+        const text = document.getElementById('status-text');
         const [open, close] = todayTime.split('–').map((s) => s.trim());
         if (d.openNow === true) {
           dot.className = 'dot open';
@@ -230,8 +230,8 @@ const gallery = [
           text.textContent = open && /\d/.test(open) ? `Fermé · ouvre à ${short(open)}` : 'Fermé aujourd’hui';
         }
 
-        if (d.happyHour?.length) document.getElementById('happy-hour')!.textContent = d.happyHour.join(' · ');
-        if (d.kitchen?.length) document.getElementById('kitchen-hours')!.textContent = d.kitchen.join(' · ');
+        if (d.happyHour?.length) document.getElementById('happy-hour').textContent = d.happyHour.join(' · ');
+        if (d.kitchen?.length) document.getElementById('kitchen-hours').textContent = d.kitchen.join(' · ');
       })
       .catch(() => {});
   </script>

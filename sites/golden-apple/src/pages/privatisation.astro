@@ -83,12 +83,12 @@ import priv from '../data/privatisation.json';
     </div>
   </section>
 
-  <script slot="scripts">
-    const form = document.getElementById('priv-form') as HTMLFormElement;
-    const status = document.getElementById('priv-status')!;
+  <script is:inline slot="scripts">
+    const form = document.getElementById('priv-form');
+    const status = document.getElementById('priv-status');
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
-      const btn = form.querySelector('button')!;
+      const btn = form.querySelector('button');
       btn.disabled = true; status.textContent = 'Envoi en cours…';
       try {
         const res = await fetch('/api/privatisation', { method: 'POST', body: new FormData(form) });
