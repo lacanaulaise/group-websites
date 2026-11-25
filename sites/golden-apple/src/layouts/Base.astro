@@ -1,0 +1,63 @@
+---
+import '../styles/site.css';
+import site from '../data/site.json';
+
+interface Props { title: string; description: string; }
+const { title, description } = Astro.props;
+const booking = site.bookingUrl || '/#infos';
+---
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>{title}</title>
+  <meta name="description" content={description} />
+  <link rel="icon" type="image/png" href="/favicon.png" />
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Zilla+Slab:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="wrap">
+      <a class="brand" href="/"><img src="/img/apple.png" alt="" width="34" height="34" />The Golden Apple</a>
+      <nav class="site-nav" aria-label="Navigation principale">
+        <a href="/#ce-soir">Ce soir</a>
+        <a href="/#pression">À la pression</a>
+        <a href="/#carte">La carte</a>
+        <a href="/#evenements">Événements</a>
+        <a href="/privatisation">Privatisation</a>
+        <a href="/#infos">Infos</a>
+        <a class="lang" href="#" aria-label="English version (bientôt)">EN</a>
+        <a class="btn btn-brass" href={booking}>Réserver</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <slot />
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <div class="footer-top">
+        <div>
+          <strong>Une maison Les Brasseurs de l'Océan</strong>
+          <span>Brasserie La Canaulaise, Lacanau</span>
+        </div>
+        <nav aria-label="Nos autres adresses">
+          {site.sisterVenues.map((v) => (v.url ? <a href={v.url}>{v.name}</a> : <span>{v.name}</span>))}
+        </nav>
+      </div>
+      <div class="footer-bottom">
+        <span>L'abus d'alcool est dangereux pour la santé, à consommer avec modération.</span>
+        <span><a href="#">Mentions légales</a><a href="#">Confidentialité</a></span>
+      </div>
+    </div>
+  </footer>
+  <slot name="scripts" />
+</body>
+</html>

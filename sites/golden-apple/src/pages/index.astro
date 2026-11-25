@@ -1,5 +1,5 @@
 ---
-import '../styles/site.css';
+import Base from '../layouts/Base.astro';
 import site from '../data/site.json';
 import beers from '../data/beers.json';
 
@@ -26,37 +26,7 @@ const gallery = [
   { img: 'interior', alt: 'La salle, ses fanions et son lustre' },
 ];
 ---
-<!doctype html>
-<html lang="fr">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="robots" content="noindex, nofollow" />
-  <title>The Golden Apple — pub et bières artisanales, Bordeaux depuis 1989</title>
-  <meta name="description" content="Le plus ancien pub de Bordeaux : bières La Canaulaise à la pression, cuisine de pub maison, sport en direct, quiz et fléchettes. 46 rue Borie, Chartrons." />
-  <link rel="icon" type="image/png" href="/favicon.png" />
-  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Zilla+Slab:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
-</head>
-<body>
-  <header class="site-header">
-    <div class="wrap">
-      <a class="brand" href="#top"><img src="/img/apple.png" alt="" width="34" height="34" />The Golden Apple</a>
-      <nav class="site-nav" aria-label="Navigation principale">
-        <a href="#ce-soir">Ce soir</a>
-        <a href="#pression">À la pression</a>
-        <a href="#carte">La carte</a>
-        <a href="#evenements">Événements</a>
-        <a href="#infos">Infos</a>
-        <a class="lang" href="#" aria-label="English version (bientôt)">EN</a>
-        <a class="btn btn-brass" href={booking}>Réserver</a>
-      </nav>
-    </div>
-  </header>
-
-  <main>
+<Base title="The Golden Apple — pub et bières artisanales, Bordeaux depuis 1989" description="Le plus ancien pub de Bordeaux : bières La Canaulaise à la pression, cuisine de pub maison, sport en direct, quiz et fléchettes. 46 rue Borie, Chartrons.">
     <section id="top" class="hero">
       <div class="wrap">
         <div class="hero-text">
@@ -66,6 +36,7 @@ const gallery = [
           <div class="hero-actions">
             <a class="btn btn-brass" href={booking}>Réserver une table</a>
             <a class="btn btn-ghost" href="#carte">Voir la carte</a>
+            <a class="btn btn-ghost" href="/privatisation">Privatiser le pub</a>
           </div>
         </div>
         <img class="hero-photo" src="/img/photos/facade.webp" alt="La façade verte du Golden Apple, rue Borie, le soir" width="1200" height="1500" fetchpriority="high" />
@@ -197,27 +168,7 @@ const gallery = [
         </div>
       </form>
     </section>
-  </main>
-
-  <footer class="site-footer">
-    <div class="wrap">
-      <div class="footer-top">
-        <div>
-          <strong>Une maison Les Brasseurs de l'Océan</strong>
-          <span>Brasserie La Canaulaise, Lacanau</span>
-        </div>
-        <nav aria-label="Nos autres adresses">
-          {site.sisterVenues.map((v) => (v.url ? <a href={v.url}>{v.name}</a> : <span>{v.name}</span>))}
-        </nav>
-      </div>
-      <div class="footer-bottom">
-        <span>L'abus d'alcool est dangereux pour la santé, à consommer avec modération.</span>
-        <span><a href="#">Mentions légales</a><a href="#">Confidentialité</a></span>
-      </div>
-    </div>
-  </footer>
-
-  <script>
+  <script slot="scripts">
     const parisDay = () => {
       const name = new Intl.DateTimeFormat('fr-FR', { weekday: 'long', timeZone: 'Europe/Paris' }).format(new Date());
       return name.toLowerCase();
@@ -261,5 +212,4 @@ const gallery = [
       })
       .catch(() => {});
   </script>
-</body>
-</html>
+</Base>

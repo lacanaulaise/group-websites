@@ -1,0 +1,17 @@
+{
+  "intro": "Anniversaire, pot de départ, soirée d'entreprise ou match entre amis : réservez un espace ou tout le pub, avec nos bières La Canaulaise à la pression et la cuisine maison.",
+  "spaces": [
+    { "name": "Tout le pub", "capacity": "[CAPACITÉ] personnes debout · [CAPACITÉ] assises", "text": "Le Golden Apple rien que pour vous, bar, salle et coin fléchettes compris." },
+    { "name": "[ESPACE PARTIEL]", "capacity": "[CAPACITÉ] personnes", "text": "[DESCRIPTION : salle du fond, coin fléchettes…]" }
+  ],
+  "included": [
+    "Écrans pour vos matchs ou une présentation",
+    "Cibles de fléchettes",
+    "Musique : votre playlist ou la nôtre",
+    "Formules boissons au fût, au verre ou en open bar",
+    "Planches et finger food maison, ou buffet sur devis"
+  ],
+  "conditions": "[CONDITIONS : minimum de dépense, acompte, horaires possibles, délai de réservation]",
+  "photo": "crowd",
+  "photoAlt": "Clients attablés autour de pintes au Golden Apple"
+}

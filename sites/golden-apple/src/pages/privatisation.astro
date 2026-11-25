@@ -1,0 +1,105 @@
+---
+import Base from '../layouts/Base.astro';
+import site from '../data/site.json';
+import priv from '../data/privatisation.json';
+---
+<Base title="Privatiser The Golden Apple — pub à Bordeaux" description="Privatisez le Golden Apple, le plus ancien pub de Bordeaux, pour un anniversaire, une soirée d'entreprise ou un match entre amis. Demande de devis en ligne.">
+  <section class="hero">
+    <div class="wrap">
+      <div class="hero-text">
+        <span class="label" style="color: var(--brass)">Privatisation</span>
+        <h1>Le pub rien que pour vous</h1>
+        <p>{priv.intro}</p>
+        <div class="hero-actions">
+          <a class="btn btn-brass" href="#demande">Demander un devis</a>
+          <a class="btn btn-ghost" href={`tel:${site.phoneIntl}`}>Appeler le {site.phone}</a>
+        </div>
+      </div>
+      <img class="hero-photo" src={`/img/photos/${priv.photo}-card.webp`} alt={priv.photoAlt} width="640" height="400" />
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap">
+      <h2>Les espaces</h2>
+      <div class="beers" style="margin-top: 32px">
+        {priv.spaces.map((s) => (
+          <article class="beer">
+            <h3>{s.name}</h3>
+            <span class="meta">{s.capacity}</span>
+            <span class="style">{s.text}</span>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section food">
+    <div class="wrap split" style="align-items: flex-start">
+      <div>
+        <h2>Ce qui est prévu</h2>
+        <ul class="included">
+          {priv.included.map((i) => <li>{i}</li>)}
+        </ul>
+      </div>
+      <div class="food-text">
+        <h2>Conditions</h2>
+        <p>{priv.conditions}</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="demande" class="section">
+    <div class="wrap">
+      <h2>Demande de privatisation</h2>
+      <p class="lead">Dites-nous l'essentiel, nous revenons vers vous avec une proposition.</p>
+      <form class="priv-form" id="priv-form" method="post" action="/api/privatisation">
+        <label>Nom<input name="name" required autocomplete="name" /></label>
+        <label>E-mail<input name="email" type="email" required autocomplete="email" /></label>
+        <label>Téléphone<input name="phone" type="tel" autocomplete="tel" /></label>
+        <label>Date souhaitée<input name="date" type="date" required /></label>
+        <label>Nombre de personnes<input name="guests" type="number" min="1" required /></label>
+        <label>Type d'événement
+          <select name="type">
+            <option>Anniversaire</option>
+            <option>Soirée d'entreprise</option>
+            <option>Pot de départ</option>
+            <option>Match / sport</option>
+            <option>Autre</option>
+          </select>
+        </label>
+        <label>Budget indicatif (facultatif)<input name="budget" placeholder="ex. 30 € par personne" /></label>
+        <label class="full">Votre message<textarea name="message" rows="5" placeholder="Horaires, formule boissons, nourriture, musique…"></textarea></label>
+        <label class="hp" aria-hidden="true">Ne pas remplir<input name="website" tabindex="-1" autocomplete="off" /></label>
+        <input type="hidden" name="venue" value="golden-apple" />
+        <div class="full form-actions">
+          <button type="submit">Envoyer la demande</button>
+          <p id="priv-status" role="status" aria-live="polite"></p>
+        </div>
+      </form>
+    </div>
+  </section>
+
+  <script slot="scripts">
+    const form = document.getElementById('priv-form') as HTMLFormElement;
+    const status = document.getElementById('priv-status')!;
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const btn = form.querySelector('button')!;
+      btn.disabled = true; status.textContent = 'Envoi en cours…';
+      try {
+        const res = await fetch('/api/privatisation', { method: 'POST', body: new FormData(form) });
+        const data = await res.json().catch(() => ({}));
+        if (res.ok && data.ok) {
+          form.reset();
+          status.textContent = 'Merci ! Votre demande est bien partie, nous revenons vers vous rapidement.';
+        } else {
+          status.textContent = `L'envoi n'a pas fonctionné. Écrivez-nous à ${'goldenapplebx@gmail.com'} ou appelez le 05 56 79 03 85.`;
+        }
+      } catch {
+        status.textContent = "L'envoi n'a pas fonctionné. Écrivez-nous à goldenapplebx@gmail.com ou appelez le 05 56 79 03 85.";
+      }
+      btn.disabled = false;
+    });
+  </script>
+</Base>
