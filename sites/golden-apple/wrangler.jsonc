@@ -6,6 +6,9 @@
   "name": "golden-apple",
   "main": "src/worker.js",
   "compatibility_date": "2026-11-01",
+  // Keep the plain-text variables set in the Cloudflare dashboard (CARTE_CSV_URL, IG_USER_ID)
+  // when deploying from GitHub; without this, a deploy can remove them.
+  "keep_vars": true,
   "assets": {
     "directory": "./dist",
     "binding": "ASSETS",

@@ -12,6 +12,7 @@ export default {
     if (url.pathname === '/api/privatisation' && request.method === 'POST') return privatisation(request, env);
     if (url.pathname === '/api/carte') return carte(request, env, ctx);
     if (url.pathname === '/api/instagram') return instagram(request, env, ctx);
+    if (url.pathname === '/api/setup-check') return setupCheck(env); // TEMPORARY: remove once IG_USER_ID is set
     if (url.pathname.startsWith('/api/ig-img/')) return instagramImage(request, env, ctx, url.pathname.slice(12));
     return env.ASSETS.fetch(request);
   },
@@ -268,4 +269,26 @@ async function instagramImage(request, env, ctx, id) {
   });
   ctx.waitUntil(cache.put(cacheKey, response.clone()));
   return response;
+}
+
+// TEMPORARY setup helper: shows which settings are present (never their values) and, with the
+// Meta token, lists the Facebook Pages it can read and their linked Instagram account IDs.
+async function setupCheck(env) {
+  const out = {
+    settings: {
+      GOOGLE_PLACES_KEY: !!env.GOOGLE_PLACES_KEY, CARTE_CSV_URL: !!env.CARTE_CSV_URL,
+      FORM_RELAY_URL: !!env.FORM_RELAY_URL, FORM_RELAY_SECRET: !!env.FORM_RELAY_SECRET,
+      IG_ACCESS_TOKEN: !!env.IG_ACCESS_TOKEN, IG_USER_ID: env.IG_USER_ID || null,
+    },
+  };
+  if (env.IG_ACCESS_TOKEN) {
+    const r = await fetch('https://graph.facebook.com/me/accounts?fields=name,id,instagram_business_account{id,username}' +
+      '&limit=50&access_token=' + encodeURIComponent(env.IG_ACCESS_TOKEN));
+    const d = await r.json();
+    out.meta = d.error ? { error: d.error.message } : (d.data || []).map((p) => ({
+      page: p.name, pageId: p.id,
+      instagram: p.instagram_business_account ? { id: p.instagram_business_account.id, username: p.instagram_business_account.username } : null,
+    }));
+  }
+  return json(out);
 }
