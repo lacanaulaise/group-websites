@@ -241,7 +241,10 @@ async function instagramFeed(request, env, ctx) {
     return { error: 'no Instagram token set' };
   }
   const res = await fetch(api);
-  if (!res.ok) return { error: 'instagram request failed', status: res.status };
+  if (!res.ok) {
+    const e = await res.json().catch(() => ({}));
+    return { error: 'instagram request failed', status: res.status, detail: e.error?.message };
+  }
   let data = await res.json();
   if (data.business_discovery) data = data.business_discovery.media || {};
   const posts = (data.data || [])
