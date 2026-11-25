@@ -383,7 +383,63 @@ async function eventsFeed(request, env, ctx) {
   return out;
 }
 
+// --- Events from the pub's calendar Sheet --------------------------------------------
+// tools/web_events.gs flattens "CALENDRIER The Golden Apple" into the tab EVENEMENTS GOLDEN APPLE
+// (Date, Heure, Début, Titre, Catégorie), published as CSV → EVENTS_CSV_URL.
+// Each category gets a photo from the 2025 shoot (public/img/photos/<name>-card.webp).
+const EV_PHOTO = {
+  quiz: 'crowd', flechettes: 'darts-player', tournoi: 'darts-board', rugby: 'jersey',
+  foot: 'cheers', nfl: 'interior', special: 'back-bar', soiree: 'espresso-martini',
+};
+const EV_LABEL = {
+  quiz: 'Quiz', flechettes: 'Fléchettes', tournoi: 'Tournoi', rugby: 'Rugby', foot: 'Foot',
+  nfl: 'NFL', special: 'Soirée', soiree: 'Soirée',
+};
+
+async function calendarFeed(request, env, ctx) {
+  const cache = caches.default;
+  const cacheKey = new Request(new URL('/api/events-cal?v=1', request.url).toString());
+  const lastKey = new Request(new URL('/api/events-cal-last?v=1', request.url).toString());
+  const cached = await cache.match(cacheKey);
+  if (cached) return cached.json();
+  const res = await fetch(env.EVENTS_CSV_URL, { redirect: 'follow' });
+  if (!res.ok) {
+    const last = await cache.match(lastKey);
+    return last ? last.json() : { error: 'events sheet unavailable', status: res.status };
+  }
+  const rows = parseCsv(await res.text());
+  const head = rows.shift() || [];
+  const col = (n) => head.indexOf(n);
+  const c = { date: col('Date'), time: col('Heure'), start: col('Début'), title: col('Titre'), cat: col('Catégorie') };
+  const list = rows.filter((r) => r[c.date] && r[c.title]).map((r, i) => {
+    const title = r[c.title].trim();
+    let cat = (r[c.cat] || 'special').trim();
+    if (/nfl/i.test(title)) cat = 'nfl';
+    else if (cat === 'special' && /tourn/i.test(title) && /dart|fl[eé]ch/i.test(title)) cat = 'tournoi';
+    else if (cat === 'special' && /concert|blind|halloween|xmas|no[eë]l|new year|soir/i.test(title)) cat = 'soiree';
+    return {
+      id: 'cal' + i, name: title, date: r[c.date], time: r[c.time] || '',
+      start: r[c.start] || r[c.date] + 'T12:00:00', allDay: !r[c.time],
+      category: cat, label: EV_LABEL[cat] || 'Au pub',
+      img: `/img/photos/${EV_PHOTO[cat] || 'interior'}-card.webp`,
+    };
+  });
+  const out = { fetchedAt: new Date().toISOString(), source: 'calendar', events: list };
+  const body = JSON.stringify(out);
+  ctx.waitUntil(cache.put(cacheKey, new Response(body, { headers: { 'Content-Type': 'application/json', 'Cache-Control': `public, max-age=${EV_TTL_SECONDS}` } })));
+  ctx.waitUntil(cache.put(lastKey, new Response(body, { headers: { 'Content-Type': 'application/json', 'Cache-Control': 'public, max-age=2592000' } })));
+  return out;
+}
+
 async function events(request, env, ctx) {
+  if (env.EVENTS_CSV_URL) {
+    const cal = await calendarFeed(request, env, ctx);
+    if (cal.error) return json(cal, 502);
+    // Drop what has already finished (events are listed until ~3 h after they start).
+    const now = Date.now();
+    const upcoming = cal.events.filter((e) => new Date(e.start).getTime() + (e.allDay ? 12 : 3) * 3600e3 > now);
+    return json({ fetchedAt: cal.fetchedAt, source: 'calendar', events: upcoming.slice(0, 40) }, 200, { 'Cache-Control': 'public, max-age=300' });
+  }
   const feed = await eventsFeed(request, env, ctx);
   if (feed.error) return json(feed, 502);
   return json({

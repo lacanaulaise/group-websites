@@ -123,6 +123,10 @@ const gallery = [
             </article>
           ))}
         </div>
+        <div class="agenda" id="agenda" hidden>
+          <h3>Cette semaine au pub</h3>
+          <div class="agenda-days"></div>
+        </div>
       </div>
     </section>
 
@@ -203,33 +207,69 @@ const gallery = [
         .catch(() => { status.textContent = 'Désolé, l’inscription n’a pas fonctionné. Réessayez plus tard.'; })
         .finally(() => { btn.disabled = false; });
     });
-    // Facebook events: real upcoming events replace the generic cards; "Ce soir" shows today's or the next one.
+    // Events: from the pub's calendar (or Facebook later). Cards = one highlight per kind, then the week's agenda.
     fetch('/api/events').then((r) => r.ok ? r.json() : null).then((d) => {
       if (!d || !d.events || !d.events.length) return;
       const tz = { timeZone: 'Europe/Paris' };
-      const day = (iso) => new Date(iso).toLocaleDateString('fr-FR', { ...tz, weekday: 'short', day: 'numeric', month: 'short' });
-      const hour = (iso) => new Date(iso).toLocaleTimeString('fr-FR', { ...tz, hour: '2-digit', minute: '2-digit' }).replace(':00', 'h').replace(':', 'h');
       const ymd = (dt) => dt.toLocaleDateString('en-CA', tz);
+      const dayOf = (e) => e.date || ymd(new Date(e.start));
+      const dayLabel = (s) => new Date(s + 'T12:00:00').toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' });
+      const shortDay = (s) => new Date(s + 'T12:00:00').toLocaleDateString('fr-FR', { weekday: 'short', day: 'numeric', month: 'short' });
+      const hour = (e) => e.allDay ? 'toute la journée' : (e.time || new Date(e.start).toLocaleTimeString('fr-FR', { ...tz, hour: '2-digit', minute: '2-digit' })).replace(':', 'h').replace(/h00$/, 'h');
       const today = ymd(new Date());
-      const tonight = d.events.find((e) => ymd(new Date(e.start)) === today);
-      const slot = document.getElementById('tonight-event');
-      if (tonight) slot.textContent = tonight.name + ' · ' + hour(tonight.start);
-      else slot.textContent = 'Prochain : ' + day(d.events[0].start) + ' · ' + d.events[0].name;
 
+      // "Ce soir" strip.
+      const tonight = d.events.filter((e) => dayOf(e) === today);
+      const slot = document.getElementById('tonight-event');
+      if (tonight.length) slot.textContent = tonight.slice(0, 2).map((e) => e.name + ' · ' + hour(e)).join(' — ');
+      else slot.textContent = 'Prochain : ' + shortDay(dayOf(d.events[0])) + ' · ' + d.events[0].name;
+
+      // Highlight cards: the next event of each kind, most special first.
+      const order = ['soiree', 'tournoi', 'quiz', 'flechettes', 'rugby', 'foot', 'nfl', 'special'];
+      const picks = [];
+      for (const k of order) {
+        const e = d.events.find((x) => x.category === k);
+        if (e && picks.length < 4) picks.push(e);
+      }
+      picks.sort((a, b) => a.start.localeCompare(b.start));
       const grid = document.getElementById('event-grid');
-      const fallbacks = [...grid.querySelectorAll('img')].map((i) => i.getAttribute('src'));
       grid.textContent = '';
-      d.events.slice(0, 4).forEach((e, i) => {
-        const a = document.createElement('a');
-        a.className = 'event'; a.href = e.ticket || e.url; a.target = '_blank'; a.rel = 'noopener';
+      for (const e of picks) {
+        const card = document.createElement(e.url ? 'a' : 'article');
+        card.className = 'event';
+        if (e.url) { card.href = e.ticket || e.url; card.target = '_blank'; card.rel = 'noopener'; }
         const img = document.createElement('img');
-        img.src = e.img || fallbacks[i % fallbacks.length]; img.alt = ''; img.loading = 'lazy'; img.width = 640; img.height = 400;
+        img.src = e.img || '/img/photos/interior-card.webp'; img.alt = ''; img.loading = 'lazy'; img.width = 640; img.height = 400;
         const body = document.createElement('div'); body.className = 'event-body';
-        const when = document.createElement('span'); when.className = 'event-date'; when.textContent = day(e.start) + ' · ' + hour(e.start);
+        const when = document.createElement('span'); when.className = 'event-date';
+        when.textContent = (dayOf(e) === today ? 'Ce soir' : shortDay(dayOf(e))) + ' · ' + hour(e);
         const h = document.createElement('h3'); h.textContent = e.name;
-        const p = document.createElement('p'); p.textContent = e.ticket ? 'Billets en ligne →' : 'Voir sur Facebook →';
-        body.append(when, h, p); a.append(img, body); grid.appendChild(a);
-      });
+        const p = document.createElement('p'); p.textContent = e.label && e.label !== e.name ? e.label : '';
+        body.append(when, h, p); card.append(img, body); grid.appendChild(card);
+      }
+
+      // Agenda: everything in the next 7 days, by day.
+      const limit = ymd(new Date(Date.now() + 7 * 864e5));
+      const week = d.events.filter((e) => dayOf(e) <= limit);
+      const box = document.getElementById('agenda');
+      if (!week.length || !box) return;
+      const days = new Map();
+      for (const e of week) { if (!days.has(dayOf(e))) days.set(dayOf(e), []); days.get(dayOf(e)).push(e); }
+      const list = box.querySelector('.agenda-days');
+      for (const [day, items] of days) {
+        const col = document.createElement('div'); col.className = 'agenda-day';
+        const h = document.createElement('h4'); h.textContent = day === today ? "Aujourd'hui" : dayLabel(day);
+        const ul = document.createElement('ul');
+        for (const e of items) {
+          const li = document.createElement('li');
+          const t = document.createElement('span'); t.className = 'agenda-time'; t.textContent = e.allDay ? 'Journée' : hour(e);
+          const n = document.createElement('span'); n.className = 'agenda-name'; n.textContent = e.name;
+          const tag = document.createElement('span'); tag.className = 'agenda-tag tag-' + e.category; tag.textContent = e.label || '';
+          li.append(t, n, tag); ul.appendChild(li);
+        }
+        col.append(h, ul); list.appendChild(col);
+      }
+      box.hidden = false;
     }).catch(() => {});
     // Instagram: replace the shoot photos with the latest posts when the feed is available.
     fetch('/api/instagram').then((r) => r.ok ? r.json() : null).then((d) => {

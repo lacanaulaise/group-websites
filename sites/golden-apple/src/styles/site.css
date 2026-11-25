@@ -211,3 +211,16 @@ a.event:hover h3 { color: var(--brass); }
 .legal p { margin: 0 0 12px; }
 .legal ul { margin: 0 0 12px; padding-left: 20px; }
 .legal a { color: var(--green); }
+
+/* Agenda de la semaine */
+.agenda { margin-top: 36px; }
+.agenda > h3 { color: var(--brass); font-size: 15px; margin-bottom: 16px; }
+.agenda-days { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 12px; }
+.agenda-day { background: var(--green-dark); border-radius: 6px; padding: 14px 16px; }
+.agenda-day h4 { margin: 0 0 8px; font-family: var(--subtitle); font-size: 12px; font-weight: 600; letter-spacing: .075em; text-transform: uppercase; color: var(--cream); }
+.agenda-day h4::first-letter { text-transform: uppercase; }
+.agenda-day ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+.agenda-day li { display: grid; grid-template-columns: 48px 1fr auto; gap: 8px; align-items: baseline; font-size: 14px; color: #d0d9d2; }
+.agenda-time { font-weight: 600; color: var(--brass); font-size: 13px; }
+.agenda-tag { font-size: 11px; text-transform: uppercase; letter-spacing: .06em; color: #9fb3a6; }
+.agenda-tag.tag-quiz, .agenda-tag.tag-soiree, .agenda-tag.tag-tournoi { color: var(--brass-light); }
