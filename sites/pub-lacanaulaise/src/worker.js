@@ -32,7 +32,7 @@ export default {
 // (tools/form-relay.gs) that emails the pub and logs the request in a Sheet.
 // The recipient is fixed here per venue, never taken from the form.
 // Secrets (Cloudflare dashboard): FORM_RELAY_URL, FORM_RELAY_SECRET
-const PRIVATISATION_TO = { 'la-canaulaise': 'info@lacanaulaise.fr' };
+const PRIVATISATION_TO = { 'la-canaulaise': 'pub@lacanaulaise.fr' };
 // Copied on every privatisation request, all venues.
 const PRIVATISATION_CC = ['james@lacanaulaise.fr', 'celine@lacanaulaise.fr'];
 
