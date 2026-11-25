@@ -164,7 +164,7 @@ const FORMAT_ORDER = ['25 cl', '50 cl', '75 cl', '1,5 L'];
 
 async function carte(request, env, ctx) {
   const cache = caches.default;
-  const cacheKey = new Request(new URL('/api/carte?v=1', request.url).toString());
+  const cacheKey = new Request(new URL('/api/carte?v=2', request.url).toString());
   const cached = await cache.match(cacheKey);
   if (cached) return cached;
   if (!env.CARTE_CSV_URL) return json({ error: 'CARTE_CSV_URL is not set' }, 500);
