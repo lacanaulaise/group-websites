@@ -13,9 +13,9 @@
   "vars": {
     // Golden Apple Instagram account (@goldenapplepub)
     "IG_USER_ID": "17841465274001610",
-    // "Carte site web" Sheet, tab GOLDEN APPLE, published as CSV (written daily from the Monora till)
     // Tab EVENEMENTS GOLDEN APPLE of the same Sheet (tools/web_events.gs, hourly from the pub calendar)
     "EVENTS_CSV_URL": "https://docs.google.com/spreadsheets/d/e/2PACX-1vRRO1Z3SSvCM-4lIhzsdQXXCctkZupkQyUnrP6VwTyesFzqKSC5zBCF8DbWGAXPZXonURsmIVvRzE_-/pub?gid=1002493746&single=true&output=csv",
+    // "Carte site web" Sheet, tab GOLDEN APPLE, published as CSV (written daily from the Monora till)
     "CARTE_CSV_URL": "https://docs.google.com/spreadsheets/d/e/2PACX-1vRRO1Z3SSvCM-4lIhzsdQXXCctkZupkQyUnrP6VwTyesFzqKSC5zBCF8DbWGAXPZXonURsmIVvRzE_-/pub?gid=774036668&single=true&output=csv"
   },
   // Weekly (Monday 04:00 UTC): renew the Instagram token.
