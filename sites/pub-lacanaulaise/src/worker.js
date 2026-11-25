@@ -471,8 +471,14 @@ async function events(request, env, ctx) {
     const same = list.find((e) => e.date === day && [...words(e.name)].some((w) => fw.has(w)));
     const extra = { url: f.ticket || f.url, img: f.cover ? `/api/ev-img/${f.id}` : null };
     if (same) Object.assign(same, { url: extra.url, img: extra.img || same.img });
-    else list.push({ id: f.id, name: f.name, date: day, time: '', start: f.start, allDay: false,
-      category: 'soiree', label: EV_LABEL.soiree, url: extra.url, img: extra.img || `/img/photos/${EV_PHOTO.soiree}-card.webp` });
+    else {
+      const n = f.name.toUpperCase();
+      const cat = /FOOT|LIGUE|PSG|OM\b/.test(n) ? 'foot' : /RUGBY|UBB|TOP 14|XV\b|NATIONS/.test(n) ? 'rugby'
+        : /KARAOK/.test(n) ? 'karaoke' : /CONCERT|LIVE|SC[EÈ]NE|DJ\b/.test(n) ? 'concert' : 'soiree';
+      const time = new Date(f.start).toLocaleTimeString('fr-FR', { timeZone: 'Europe/Paris', hour: '2-digit', minute: '2-digit' });
+      list.push({ id: f.id, name: f.name, date: day, time, start: f.start, allDay: false,
+        category: cat, label: EV_LABEL[cat], url: extra.url, img: extra.img || `/img/photos/${EV_PHOTO[cat]}-card.webp` });
+    }
   }
   const now = Date.now();
   const upcoming = list
