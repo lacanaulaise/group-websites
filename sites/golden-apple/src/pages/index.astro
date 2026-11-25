@@ -10,12 +10,21 @@ const splitHour = (line: string) => {
 };
 const hours = site.fallbackHours.map(splitHour);
 const events = [
-  { title: 'Match en direct', line: 'Tous les grands matchs sur écran' },
-  { title: 'Quiz night', line: 'Par équipes, en anglais et en français' },
-  { title: 'Tournoi de fléchettes', line: 'Inscription au comptoir' },
-  { title: 'Concert', line: '[ARTISTE]' },
+  { title: 'Match en direct', line: 'Tous les grands matchs sur écran', img: 'jersey', alt: 'Maillot des Wallabies signé, encadré au mur' },
+  { title: 'Quiz night', line: 'Par équipes, en anglais et en français', img: 'crowd', alt: 'Clients attablés autour de pintes' },
+  { title: 'Tournoi de fléchettes', line: 'Inscription au comptoir', img: 'darts-player', alt: 'Un joueur vise la cible de fléchettes' },
+  { title: 'Concert', line: '[ARTISTE]', img: 'interior', alt: 'La salle, ses fanions et son lustre' },
 ];
 const booking = site.bookingUrl || '#infos';
+// Placeholder gallery from the 2025 photo shoot, until the Instagram sync replaces it.
+const gallery = [
+  { img: 'cheers', alt: 'Trois pintes La Canaulaise qui trinquent' },
+  { img: 'espresso-martini', alt: 'Trois espresso martinis' },
+  { img: 'back-bar', alt: 'Le bar et ses carafes à l’étiquette pomme dorée' },
+  { img: 'darts-board', alt: 'Les cibles de fléchettes éclairées' },
+  { img: 'crowd', alt: 'Clients attablés autour de pintes' },
+  { img: 'interior', alt: 'La salle, ses fanions et son lustre' },
+];
 ---
 <!doctype html>
 <html lang="fr">
@@ -59,7 +68,7 @@ const booking = site.bookingUrl || '#infos';
             <a class="btn btn-ghost" href="#carte">Voir la carte</a>
           </div>
         </div>
-        <div class="hero-photo placeholder" role="img" aria-label="Photo à venir : le bar en soirée">[PHOTO : le bar en soirée]</div>
+        <img class="hero-photo" src="/img/photos/facade.webp" alt="La façade verte du Golden Apple, rue Borie, le soir" width="1200" height="1500" fetchpriority="high" />
       </div>
     </section>
 
@@ -106,7 +115,7 @@ const booking = site.bookingUrl || '#infos';
 
     <section id="carte" class="section food">
       <div class="wrap split">
-        <div class="placeholder" role="img" aria-label="Photo à venir : plat maison">[PHOTO : plat maison et pinte]</div>
+        <img class="food-photo" src="/img/photos/food.webp" alt="Beignets maison et frites sur une table en bois" width="1000" height="800" loading="lazy" />
         <div class="food-text">
           <h2>Cuisine de pub maison</h2>
           <p>Des plats faits maison, pensés pour aller avec nos bières. La carte en ligne est la même qu'au comptoir, prix compris.</p>
@@ -125,7 +134,7 @@ const booking = site.bookingUrl || '#infos';
         <div class="event-grid">
           {events.map((e) => (
             <article class="event">
-              <div class="placeholder" role="img" aria-label="Image de l'événement à venir">[IMAGE FACEBOOK]</div>
+              <img src={`/img/photos/${e.img}-card.webp`} alt={e.alt} width="640" height="400" loading="lazy" />
               <div class="event-body">
                 <span class="event-date">[DATE] · [HEURE]</span>
                 <h3>{e.title}</h3>
@@ -144,8 +153,8 @@ const booking = site.bookingUrl || '#infos';
           <a href={site.instagramUrl || '#'}>Suivez-nous sur Instagram →</a>
         </div>
         <div class="insta-grid">
-          {[1, 2, 3, 4, 5, 6].map((n) => (
-            <div class="placeholder" role="img" aria-label="Photo Instagram à venir">[POST {n}]</div>
+          {gallery.map((g) => (
+            <img src={`/img/photos/${g.img}-sq.webp`} alt={g.alt} width="500" height="500" loading="lazy" />
           ))}
         </div>
       </div>
