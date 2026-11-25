@@ -7,7 +7,8 @@
     "prices": {
       "demi": 350,
       "pinte": 600,
-      "pinteHH": 450
+      "pinteHH": 450,
+      "pichet": 1700
     },
     "easybeerImg": "1769615614267",
     "styleEn": "Blonde · Kölsch"
@@ -20,7 +21,8 @@
     "prices": {
       "demi": 350,
       "pinte": 600,
-      "pinteHH": 450
+      "pinteHH": 450,
+      "pichet": 1700
     },
     "easybeerImg": "1769615505574",
     "styleEn": "Witbier"
@@ -33,7 +35,8 @@
     "prices": {
       "demi": 350,
       "pinte": 600,
-      "pinteHH": 450
+      "pinteHH": 450,
+      "pichet": 1700
     },
     "easybeerImg": "1769615533397",
     "styleEn": "Pale ale"
@@ -59,7 +62,8 @@
     "prices": {
       "demi": 400,
       "pinte": 700,
-      "pinteHH": 450
+      "pinteHH": 450,
+      "pichet": 2000
     },
     "easybeerImg": "1769615586423",
     "styleEn": "Blonde IPA"
@@ -72,7 +76,8 @@
     "prices": {
       "demi": 400,
       "pinte": 700,
-      "pinteHH": 450
+      "pinteHH": 450,
+      "pichet": 2000
     },
     "easybeerImg": "1769615680646",
     "styleEn": "Blonde ale"
@@ -85,7 +90,8 @@
     "prices": {
       "demi": 350,
       "pinte": 600,
-      "pinteHH": 450
+      "pinteHH": 450,
+      "pichet": 1700
     },
     "easybeerImg": "1769615478694",
     "styleEn": "Stout"
@@ -100,7 +106,8 @@
     "prices": {
       "demi": 350,
       "pinte": 600,
-      "pinteHH": 450
+      "pinteHH": 450,
+      "pichet": 1700
     }
   },
   {
@@ -120,7 +127,8 @@
     "styleEn": "Guest beer · amber",
     "prices": {
       "demi": 400,
-      "pinte": 700
+      "pinte": 700,
+      "pichet": 2000
     },
     "abv": null
   },
@@ -130,7 +138,8 @@
     "styleEn": "Guest beer",
     "prices": {
       "demi": 400,
-      "pinte": 700
+      "pinte": 700,
+      "pichet": 2000
     },
     "abv": null
   }

@@ -81,7 +81,7 @@ var WM_BEER_FIXES = [
   [/\bENG IPA\b/, 'English IPA'], [/\bOUEST IPA\b/, 'Ouest Coast IPA'],
   [/^PALE ALE\b/, 'Blonde'], [/^PILS\b/, 'Pils Session'], [/^SOUR\b/, 'La Grimace'],
   [/^MILKSHAKE\b/, 'Milky Mango'], [/^CIDER\b/, 'Cidre'], [/^STOUT\b/, 'Stout Orange'],
-  [/^SESSION\b/, 'Pils Session'], [/^GOUDALE AMBREE\b/, 'Goudale Ambrée']
+  [/^SESSION\b/, 'Pils Session'], [/^GOUDALE( AMBREE)?\b/, 'Goudale Ambrée'], [/^OUEST COAST\b/, 'Ouest Coast IPA']
 ];
 var WM_NAME_FIXES = [
   [/\bDEVILS\b/, "DEVIL'S"], [/\bCAPTAINS\b/, "CAPTAIN'S"], [/^BTL\s*\.?/, 'BOUTEILLE '],
@@ -280,6 +280,7 @@ function wmFetchArticles_(s, token) {
 function wmFormat_(title) {
   var t = title.toUpperCase().replace(',', '.');
   if (/\b1\.5\s*L\b/.test(t)) return '1,5 L';
+  if (/(^|\s)1\s*L\b/.test(t)) return '1 L';
   if (/\b0?\.75\s*(CL|L)?\b|\b75\s*CL\b/.test(t)) return '75 cl';
   var m = t.match(/\b(\d{2})\s*CL\b/);
   return m ? m[1] + ' cl' : '';
@@ -292,13 +293,13 @@ var WM_TITLE_RUBRIQUES = { 'COFFEE': 'Boissons chaudes', 'TEA': 'Boissons chaude
 function wmRubrique_(fam, sub, format, title) {
   if (!sub && title && WM_TITLE_RUBRIQUES[title]) return WM_TITLE_RUBRIQUES[title];
   if (sub === 'BIERES' && fam === 'SS ALCOOL') return 'Sans alcool';
-  if (sub === 'BIERES') return format ? 'Bières à la pression' : 'Bières en bouteille';
+  if (sub === 'BIERES') return format && !/^(33|75) cl$/.test(format) ? 'Bières à la pression' : 'Bières en bouteille';
   return WM_RUBRIQUES[sub] || '';
 }
 
 function wmSuggestName_(title) {
   var isDraught = !!wmFormat_(title);
-  var t = title.replace(/\b(\d{2}\s*CL|1[.,]5\s*L|0?[.,]75\s*(CL|L)?)\b/gi, '').trim();
+  var t = title.replace(/\b(\d{2}\s*CL|1[.,]5\s*L|1\s*L|0?[.,]75\s*(CL|L)?)\b/gi, '').trim();
   if (isDraught) WM_BEER_FIXES.forEach(function (f) { t = t.replace(f[0], f[1]); });
   WM_NAME_FIXES.forEach(function (f) { t = t.replace(f[0], f[1]); });
   return t.toLowerCase().replace(/(^|[\s(-])([a-zàâçéèêëîïôûùüÿ])/g, function (m, a, b) {

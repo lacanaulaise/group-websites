@@ -182,7 +182,7 @@ const CARTE_ORDER = [
   'Spiritueux & long drinks', 'Digestifs', 'Softs', 'Boissons chaudes', 'À emporter',
 ];
 const FOOD = new Set(['À partager', 'Burgers & plats', 'Desserts']);
-const FORMAT_ORDER = ['25 cl', '50 cl', '75 cl', '1,5 L'];
+const FORMAT_ORDER = ['25 cl', '33 cl', '50 cl', '75 cl', '1 L', '1,5 L'];
 
 async function carte(request, env, ctx) {
   const cache = caches.default;

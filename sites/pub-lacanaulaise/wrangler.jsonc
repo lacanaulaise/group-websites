@@ -11,9 +11,11 @@
   //   that can see the "Bière et Pub La Canaulaise" Page, for events and Instagram).
   "vars": {
     // @biere.lacanaulaise, linked to the Facebook Page
-    "IG_USER_ID": "17841414626793223"
-    // EVENTS_CSV_URL: tab EVENEMENTS LA CANAULAISE of "Carte site web" (tools/web_events.gs)
-    // CARTE_CSV_URL: tab LA CANAULAISE of "Carte site web" (tools/monora_web_menu.gs)
+    "IG_USER_ID": "17841414626793223",
+    // Tab EVENEMENTS LA CANAULAISE of "Carte site web" (tools/web_events.gs, hourly from the pub calendar)
+    "EVENTS_CSV_URL": "https://docs.google.com/spreadsheets/d/e/2PACX-1vRRO1Z3SSvCM-4lIhzsdQXXCctkZupkQyUnrP6VwTyesFzqKSC5zBCF8DbWGAXPZXonURsmIVvRzE_-/pub?gid=2111933437&single=true&output=csv",
+    // Tab LA CANAULAISE of "Carte site web" (tools/monora_web_menu.gs, daily from the till)
+    "CARTE_CSV_URL": "https://docs.google.com/spreadsheets/d/e/2PACX-1vRRO1Z3SSvCM-4lIhzsdQXXCctkZupkQyUnrP6VwTyesFzqKSC5zBCF8DbWGAXPZXonURsmIVvRzE_-/pub?gid=2128228337&single=true&output=csv"
   },
   "assets": {
     "directory": "./dist",
