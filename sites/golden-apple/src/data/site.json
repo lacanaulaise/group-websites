@@ -6,8 +6,8 @@
   "email": "goldenapplebx@gmail.com",
   "mapsUrl": "https://www.google.com/maps/place/?q=place_id:ChIJk6QdxHsoVQ0RpmREzZMtMEg",
   "bookingUrl": "",
-  "instagramUrl": "",
-  "facebookUrl": "",
+  "instagramUrl": "https://www.instagram.com/goldenapplepub/",
+  "facebookUrl": "https://www.facebook.com/GOLDEN.APPLE.pub",
   "fallbackHours": [
     "lundi: 17:00 – 00:00",
     "mardi: 17:00 – 00:00",
@@ -18,9 +18,21 @@
     "dimanche: 12:00 – 00:00"
   ],
   "sisterVenues": [
-    { "name": "La Canaulaise, la brasserie", "url": "https://www.lacanaulaise.fr" },
-    { "name": "Pub La Canaulaise, Lacanau", "url": "" },
-    { "name": "L'Australien, Hourtin-Plage", "url": "" },
-    { "name": "Buvette de la Gaîté", "url": "" }
+    {
+      "name": "La Canaulaise, la brasserie",
+      "url": "https://www.lacanaulaise.fr"
+    },
+    {
+      "name": "Pub La Canaulaise, Lacanau",
+      "url": ""
+    },
+    {
+      "name": "L'Australien, Hourtin-Plage",
+      "url": ""
+    },
+    {
+      "name": "Buvette de la Gaîté",
+      "url": ""
+    }
   ]
 }

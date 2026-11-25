@@ -1,7 +1,7 @@
 // =============================================================================
 // FORM RELAY — Les Brasseurs de l'Océan websites
 // Receives form submissions from the Cloudflare Workers (privatisation requests for now),
-// emails the pub and logs each request in this spreadsheet.
+// emails the pub and logs each request in this spreadsheet; also logs newsletter sign-ups.
 //
 // SETUP (once):
 //   1. Create a Google Sheet "Demandes sites web" in the Brasseurs Drive, then
@@ -33,6 +33,7 @@ function doPost(e) {
   try { d = JSON.parse(e.postData.contents); } catch (err) { return out_({ ok: false, error: 'bad json' }); }
   var secret = PropertiesService.getScriptProperties().getProperty('FORM_RELAY_SECRET');
   if (!secret || d.secret !== secret) return out_({ ok: false, error: 'forbidden' });
+  if (d.kind === 'newsletter') return newsletter_(d);
   if (d.kind !== 'privatisation' || !d.to) return out_({ ok: false, error: 'bad request' });
 
   var venue = VENUE_NAMES[d.venue] || d.venue;
@@ -59,6 +60,21 @@ function doPost(e) {
   var sh = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(LOG_SHEET);
   if (sh) sh.appendRow([new Date(), venue, d.name, d.email, d.phone, d.date, d.guests,
                         d.type, d.budget, d.message, d.to]);
+  return out_({ ok: true });
+}
+
+// Newsletter sign-ups: one row per address and pub (a repeat sign-up is ignored).
+function newsletter_(d) {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var sh = ss.getSheetByName('Newsletter') || ss.insertSheet('Newsletter');
+  if (sh.getLastRow() === 0) sh.appendRow(['Inscrit le', 'Pub', 'E-mail']);
+  var email = String(d.email || '').trim().toLowerCase();
+  var venue = VENUE_NAMES[d.venue] || d.venue;
+  var rows = sh.getDataRange().getValues();
+  for (var i = 1; i < rows.length; i++) {
+    if (String(rows[i][2]).toLowerCase() === email && rows[i][1] === venue) return out_({ ok: true });
+  }
+  sh.appendRow([new Date(), venue, email]);
   return out_({ ok: true });
 }
 

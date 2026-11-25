@@ -18,8 +18,9 @@ export default {
     if (url.pathname === '/api/instagram') return instagram(request, env, ctx);
     if (url.pathname === '/api/events') return events(request, env, ctx);
     if (url.pathname.startsWith('/api/ev-img/')) return eventImage(request, env, ctx, url.pathname.slice(12));
-    if (url.pathname === '/api/setup-check') return setupCheck(env, request); // TEMPORARY: remove once IG_USER_ID is set
     if (url.pathname.startsWith('/api/ig-img/')) return instagramImage(request, env, ctx, url.pathname.slice(12));
+    if (url.pathname.startsWith('/api/beer-img/')) return beerImage(request, ctx, url.pathname.slice(14));
+    if (url.pathname === '/api/newsletter' && request.method === 'POST') return newsletter(request, env);
     return env.ASSETS.fetch(request);
   },
 };
@@ -58,6 +59,43 @@ async function privatisation(request, env) {
   });
   const out = await res.json().catch(() => ({}));
   return out.ok ? json({ ok: true }) : json({ ok: false, error: 'relay failed' }, 502);
+}
+
+// --- Newsletter sign-ups -----------------------------------------------------
+// Logged through the same Apps Script relay (tab "Newsletter") until the Brevo list is set up.
+async function newsletter(request, env) {
+  let form;
+  try { form = await request.formData(); } catch { return json({ ok: false, error: 'bad form' }, 400); }
+  if (String(form.get('website') || '')) return json({ ok: true }); // honeypot
+  const email = String(form.get('email') || '').trim().slice(0, 200);
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return json({ ok: false, error: 'email' }, 400);
+  if (!env.FORM_RELAY_URL || !env.FORM_RELAY_SECRET) return json({ ok: false, error: 'not configured' }, 503);
+  const res = await fetch(env.FORM_RELAY_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ secret: env.FORM_RELAY_SECRET, kind: 'newsletter', venue: 'golden-apple', email }),
+    redirect: 'follow',
+  });
+  const out = await res.json().catch(() => ({}));
+  return out.ok ? json({ ok: true }) : json({ ok: false, error: 'relay failed' }, 502);
+}
+
+// --- Beer images (EasyBeer product photos) -------------------------------------
+// /api/beer-img/<EasyBeer product id>?u=<EasyBeer image uid>: fetched once, cached 30 days.
+async function beerImage(request, ctx, id) {
+  if (!/^\d+$/.test(id)) return new Response('Not found', { status: 404 });
+  const u = new URL(request.url).searchParams.get('u') || '';
+  if (!/^\d*$/.test(u)) return new Response('Not found', { status: 404 });
+  const cache = caches.default;
+  const cacheKey = new Request(new URL(`/api/beer-img/${id}?u=${u}`, request.url).toString());
+  const cached = await cache.match(cacheKey);
+  if (cached) return cached;
+  const res = await fetch(`https://api.easybeer.fr/image/produit/${id}?uid=${u}&size=200`);
+  const type = res.headers.get('content-type') || '';
+  if (!res.ok || !type.startsWith('image/')) return new Response('Not found', { status: 404 });
+  const out = new Response(res.body, { headers: { 'Content-Type': type, 'Cache-Control': 'public, max-age=2592000' } });
+  ctx.waitUntil(cache.put(cacheKey, out.clone()));
+  return out;
 }
 
 async function hours(request, env, ctx) {
@@ -129,8 +167,14 @@ async function carte(request, env, ctx) {
   if (cached) return cached;
   if (!env.CARTE_CSV_URL) return json({ error: 'CARTE_CSV_URL is not set' }, 500);
 
+  // Last good copy, kept 30 days: if the Sheet is ever unreachable the site keeps its menu.
+  const lastKey = new Request(new URL('/api/carte-last?v=1', request.url).toString());
   const res = await fetch(env.CARTE_CSV_URL, { redirect: 'follow' });
-  if (!res.ok) return json({ error: 'menu sheet unavailable', status: res.status }, 502);
+  if (!res.ok) {
+    const last = await cache.match(lastKey);
+    if (last) return new Response(last.body, { headers: { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'public, max-age=300' } });
+    return json({ error: 'menu sheet unavailable', status: res.status }, 502);
+  }
   const rows = parseCsv(await res.text());
   const head = rows.shift() || [];
   const col = (name) => head.indexOf(name);
@@ -179,6 +223,8 @@ async function carte(request, env, ctx) {
   const response = json({ fetchedAt: new Date().toISOString(), sections: out }, 200,
     { 'Cache-Control': `public, max-age=${CARTE_TTL_SECONDS}` });
   ctx.waitUntil(cache.put(cacheKey, response.clone()));
+  ctx.waitUntil(cache.put(lastKey, new Response(JSON.stringify({ fetchedAt: new Date().toISOString(), sections: out }), {
+    headers: { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'public, max-age=2592000' } })));
   return response;
 }
 
@@ -232,11 +278,6 @@ async function instagramFeed(request, env, ctx) {
     // Facebook-linked route (Page with a linked Instagram account).
     api = `https://graph.facebook.com/${env.IG_USER_ID}/media?fields=${fields}&limit=24` +
       `&access_token=${encodeURIComponent(env.IG_ACCESS_TOKEN)}`;
-  } else if (env.IG_ACCESS_TOKEN && env.IG_HANDLE && env.IG_VIA_ID) {
-    // Business Discovery: reads the public posts of @IG_HANDLE through another Instagram
-    // account that the Facebook token manages (IG_VIA_ID = L'Australien). Needs instagram_basic.
-    api = `https://graph.facebook.com/${env.IG_VIA_ID}?fields=business_discovery.username(${encodeURIComponent(env.IG_HANDLE)})` +
-      `{media.limit(24){id,caption,media_type,media_url,permalink,timestamp}}&access_token=${encodeURIComponent(env.IG_ACCESS_TOKEN)}`;
   } else {
     return { error: 'no Instagram token set' };
   }
@@ -245,8 +286,7 @@ async function instagramFeed(request, env, ctx) {
     const e = await res.json().catch(() => ({}));
     return { error: 'instagram request failed', status: res.status, detail: e.error?.message };
   }
-  let data = await res.json();
-  if (data.business_discovery) data = data.business_discovery.media || {};
+  const data = await res.json();
   const posts = (data.data || [])
     .filter((p) => !/#nosite\b/i.test(p.caption || ''))
     .map((p) => ({
@@ -295,84 +335,6 @@ async function instagramImage(request, env, ctx, id) {
   });
   ctx.waitUntil(cache.put(cacheKey, response.clone()));
   return response;
-}
-
-// TEMPORARY setup helper: shows which settings are present (never their values) and, with the
-// Meta token, lists the Facebook Pages it can read and their linked Instagram account IDs.
-async function setupCheck(env, request) {
-  const out = {
-    settings: {
-      GOOGLE_PLACES_KEY: !!env.GOOGLE_PLACES_KEY, CARTE_CSV_URL: !!env.CARTE_CSV_URL,
-      FORM_RELAY_URL: !!env.FORM_RELAY_URL, FORM_RELAY_SECRET: !!env.FORM_RELAY_SECRET,
-      IG_ACCESS_TOKEN: !!env.IG_ACCESS_TOKEN, IG_USER_ID: env.IG_USER_ID || null,
-      IG_LOGIN_TOKEN: !!env.IG_LOGIN_TOKEN, STATE_KV: !!env.STATE,
-      igTokenRefreshed: env.STATE ? await env.STATE.get('ig_login_token_refreshed') : null,
-    },
-  };
-  const igt = await instagramToken(env);
-  if (igt) {
-    out.igTokenShape = { prefix: igt.slice(0, 4), length: igt.length, rawLength: (env.IG_LOGIN_TOKEN || '').length };
-    const r = await (await fetch('https://graph.instagram.com/me?fields=user_id,username,account_type,media_count&access_token=' + encodeURIComponent(igt))).json();
-    out.instagramLogin = r.error ? { error: r.error.message } : r;
-    const probe = async (path) => {
-      const d = await (await fetch('https://graph.facebook.com/' + path + (path.includes('?') ? '&' : '?') +
-        'access_token=' + encodeURIComponent(igt))).json();
-      return d.error ? { error: d.error.message } : JSON.stringify(d.data?.granular_scopes || d).slice(0, 1200);
-    };
-    out.instagramViaFacebook = {
-      me: await probe('me?fields=id,name'),
-      meMedia: await probe('me/media?fields=id,permalink&limit=2'),
-      accounts: await probe('me/accounts?fields=name,instagram_business_account{id,username}'),
-      igAccounts: await probe('me/instagram_accounts?fields=id,username'),
-      businesses: await probe('me/businesses?fields=id,name'),
-      // granular_scopes lists the asset IDs (Instagram account, Pages) the token was granted on.
-      scopes: await probe('debug_token?input_token=' + encodeURIComponent(await instagramToken(env))),
-      bizIg: await probe('433750852766721/instagram_accounts?fields=id,username'),
-      bizOwnedIg: await probe('433750852766721/owned_instagram_accounts?fields=id,username'),
-    };
-  }
-  if (env.IG_ACCESS_TOKEN) {
-    const tok = encodeURIComponent(env.IG_ACCESS_TOKEN);
-    // What this token was granted: permissions and the asset IDs (Pages, Instagram accounts) behind each.
-    const dbg = await (await fetch('https://graph.facebook.com/debug_token?input_token=' + tok + '&access_token=' + tok)).json();
-    out.tokenGrant = dbg.error ? { error: dbg.error.message } : {
-      type: dbg.data?.type, valid: dbg.data?.is_valid,
-      expires: dbg.data?.expires_at ? new Date(dbg.data.expires_at * 1000).toISOString().slice(0, 10) : 'never',
-      scopes: dbg.data?.scopes, granular: dbg.data?.granular_scopes,
-    };
-    // Instagram handle linked from the current Wix site, then Business Discovery through
-    // an Instagram account this token does manage (L'Australien) to read Golden Apple's public posts.
-    try {
-      const html = await (await fetch('https://www.golden-apple.fr/')).text();
-      out.wixInstagramLinks = [...new Set(html.match(/instagram\.com\/[A-Za-z0-9_.]+/g) || [])];
-    } catch (e) { out.wixInstagramLinks = String(e); }
-    const handle = new URL(request.url).searchParams.get('u') ||
-      ((out.wixInstagramLinks || [])[0] || '').split('/')[1];
-    if (handle) {
-      const bd = await (await fetch('https://graph.facebook.com/17841466753382868?fields=business_discovery.username(' +
-        encodeURIComponent(handle) + '){id,username,media_count,media.limit(2){id,media_type,permalink}}&access_token=' + tok)).json();
-      out.businessDiscovery = bd.error ? { handle, error: bd.error.message } : { handle, ...bd.business_discovery };
-    }
-    const ig = (p) => p.instagram_business_account
-      ? { id: p.instagram_business_account.id, username: p.instagram_business_account.username } : null;
-    // A Page token: "me" is the Page itself.
-    const me = await (await fetch('https://graph.facebook.com/me?fields=name,id,instagram_business_account{id,username}&access_token=' + tok)).json();
-    out.me = me.error ? { error: me.error.message } : { name: me.name, id: me.id, instagram: ig(me) };
-    // A user / system-user token: list the Pages it can read.
-    const acc = await (await fetch('https://graph.facebook.com/me/accounts?fields=name,id,instagram_business_account{id,username}&limit=50&access_token=' + tok)).json();
-    out.pages = acc.error ? { error: acc.error.message } : (acc.data || []).map((p) => ({ page: p.name, pageId: p.id, instagram: ig(p) }));
-    // Events test for each Page, using that Page's own token (never returned).
-    const pt = await (await fetch('https://graph.facebook.com/me/accounts?fields=name,id,access_token,tasks&limit=50&access_token=' + tok)).json();
-    out.events = [];
-    for (const p of pt.data || []) {
-      const ev = await (await fetch('https://graph.facebook.com/' + p.id + '/events?time_filter=upcoming&fields=name,start_time&limit=3&access_token=' + encodeURIComponent(p.access_token || env.IG_ACCESS_TOKEN))).json();
-      const past = await (await fetch('https://graph.facebook.com/' + p.id + '/events?fields=name,start_time&limit=2&access_token=' + encodeURIComponent(p.access_token || env.IG_ACCESS_TOKEN))).json();
-      out.events.push({ page: p.name, tasks: p.tasks || null, hasPageToken: !!p.access_token,
-        upcoming: ev.error ? { error: ev.error.message } : (ev.data || []).map((e) => e.start_time.slice(0, 10) + ' ' + e.name),
-        recent: past.error ? { error: past.error.message } : (past.data || []).map((e) => e.start_time.slice(0, 10) + ' ' + e.name) });
-    }
-  }
-  return json(out);
 }
 
 // --- Facebook events ------------------------------------------------------------------

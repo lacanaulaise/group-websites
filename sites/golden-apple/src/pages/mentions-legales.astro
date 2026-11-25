@@ -1,0 +1,43 @@
+---
+import Base from '../layouts/Base.astro';
+import site from '../data/site.json';
+import legal from '../data/legal.json';
+---
+<Base title="Mentions légales — The Golden Apple" description="Mentions légales du site du Golden Apple, pub à Bordeaux.">
+  <section class="section">
+    <div class="wrap legal">
+      <h1>Mentions légales</h1>
+
+      <h2>Éditeur du site</h2>
+      <p>
+        {legal.company}, {legal.form} au capital de {legal.capital}<br />
+        Siège social : {legal.address}<br />
+        {legal.rcs} · SIRET {legal.siret}<br />
+        TVA intracommunautaire : {legal.vat}<br />
+        Téléphone : {legal.phone} · E-mail : <a href={`mailto:${legal.email}`}>{legal.email}</a>
+      </p>
+      <p>Directeur de la publication : {legal.publisher}.</p>
+
+      <h2>Établissement</h2>
+      <p>
+        {site.name}, {site.address}<br />
+        Téléphone : <a href={`tel:${site.phoneIntl}`}>{site.phone}</a> · E-mail : <a href={`mailto:${site.email}`}>{site.email}</a>
+      </p>
+
+      <h2>Hébergement</h2>
+      <p>{legal.host}</p>
+
+      <h2>Propriété intellectuelle</h2>
+      <p>Les textes, photos, logos et la marque The Golden Apple appartiennent à {legal.company}. Toute reproduction sans autorisation écrite est interdite. Les publications Instagram affichées sur le site proviennent de notre compte <a href={site.instagramUrl}>@goldenapplepub</a>.</p>
+
+      <h2>Prix et carte</h2>
+      <p>Les prix affichés sont en euros TTC et repris de la caisse du pub. En cas d'écart, le prix affiché au comptoir fait foi.</p>
+
+      <h2>Alcool</h2>
+      <p>L'abus d'alcool est dangereux pour la santé, à consommer avec modération. La vente d'alcool aux mineurs est interdite.</p>
+
+      <h2>Données personnelles</h2>
+      <p>Voir notre <a href="/confidentialite">politique de confidentialité</a>.</p>
+    </div>
+  </section>
+</Base>

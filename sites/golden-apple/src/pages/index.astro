@@ -71,12 +71,13 @@ const gallery = [
         <div class="section-head">
           <div>
             <h2>À la pression</h2>
-            <p>Nos bières La Canaulaise, brassées à Lacanau, et un cidre. Prix TTC.</p>
+            <p>Nos bières La Canaulaise, brassées à Lacanau. Prix TTC.</p>
           </div>
         </div>
         <div class="beers">
           {beers.map((b) => (
             <article class="beer" data-beer={b.name}>
+              {b.easybeerImg && <img class="beer-img" src={`/api/beer-img/${b.easybeerId}?u=${b.easybeerImg}`} alt="" width="64" height="64" loading="lazy" />}
               <h3>{b.name}</h3>
               <span class="style">{b.style}</span>
               {b.abv && <span class="meta">{fmtAbv(b.abv)}</span>}
@@ -129,7 +130,7 @@ const gallery = [
       <div class="wrap">
         <div class="section-head">
           <h2>Au pub, cette semaine</h2>
-          <a href={site.instagramUrl || '#'}>Suivez-nous sur Instagram →</a>
+          <a href={site.instagramUrl} target="_blank" rel="noopener">Suivez-nous sur Instagram →</a>
         </div>
         <div class="insta-grid" id="insta-grid">
           {gallery.map((g) => (
@@ -171,7 +172,7 @@ const gallery = [
     </section>
 
     <section class="newsletter" aria-label="Newsletter">
-      <form class="wrap" onsubmit="return false">
+      <form class="wrap" id="newsletter-form">
         <div class="intro">
           <h2>Les soirées à venir, dans votre boîte mail</h2>
           <span>Un e-mail par mois, pas plus.</span>
@@ -180,11 +181,28 @@ const gallery = [
           <label>Votre e-mail
             <input type="email" name="email" placeholder="vous@exemple.fr" autocomplete="email" />
           </label>
+          <input class="hp" type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" />
           <button type="submit">S'inscrire</button>
         </div>
+        <p id="nl-status" role="status"></p>
       </form>
     </section>
   <script is:inline slot="scripts">
+    // Newsletter sign-up: the Worker validates the address and logs it (Sheet) until Brevo is set up.
+    const nl = document.getElementById('newsletter-form');
+    nl.addEventListener('submit', (ev) => {
+      ev.preventDefault();
+      const status = document.getElementById('nl-status');
+      const btn = nl.querySelector('button');
+      btn.disabled = true;
+      fetch('/api/newsletter', { method: 'POST', body: new FormData(nl) })
+        .then((r) => r.json()).then((d) => {
+          status.textContent = d.ok ? 'Merci ! Vous êtes inscrit(e).' : (d.error === 'email' ? 'Cette adresse e-mail ne semble pas valide.' : 'Désolé, l’inscription n’a pas fonctionné. Réessayez plus tard.');
+          if (d.ok) nl.reset();
+        })
+        .catch(() => { status.textContent = 'Désolé, l’inscription n’a pas fonctionné. Réessayez plus tard.'; })
+        .finally(() => { btn.disabled = false; });
+    });
     // Facebook events: real upcoming events replace the generic cards; "Ce soir" shows today's or the next one.
     fetch('/api/events').then((r) => r.ok ? r.json() : null).then((d) => {
       if (!d || !d.events || !d.events.length) return;
