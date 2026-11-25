@@ -308,7 +308,7 @@ async function setupCheck(env) {
     const probe = async (path) => {
       const d = await (await fetch('https://graph.facebook.com/' + path + (path.includes('?') ? '&' : '?') +
         'access_token=' + encodeURIComponent(igt))).json();
-      return d.error ? { error: d.error.message } : JSON.stringify(d).slice(0, 400);
+      return d.error ? { error: d.error.message } : JSON.stringify(d.data?.granular_scopes || d).slice(0, 1200);
     };
     out.instagramViaFacebook = {
       me: await probe('me?fields=id,name'),
