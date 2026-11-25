@@ -52,11 +52,11 @@ const gallery = [
         </div>
         <div class="item">
           <span class="label">Happy hour</span>
-          <span class="value" id="happy-hour">[HORAIRES À AJOUTER SUR GOOGLE]</span>
+          <span class="value" id="happy-hour">—</span>
         </div>
         <div class="item">
           <span class="label">Ce soir</span>
-          <span class="value">[ÉVÉNEMENT DU JOUR, depuis Facebook]</span>
+          <span class="value">[ÉVÉNEMENT DU JOUR]</span>
         </div>
         <div class="item">
           <span class="label">À la pression</span>
@@ -97,7 +97,7 @@ const gallery = [
         <div class="food-text">
           <h2>Cuisine de pub maison</h2>
           <p>Des plats faits maison, pensés pour aller avec nos bières. La carte en ligne est la même qu'au comptoir, prix compris.</p>
-          <span><strong>Cuisine :</strong> <span id="kitchen-hours">[HORAIRES À AJOUTER SUR GOOGLE]</span></span>
+          <span><strong>Cuisine :</strong> <span id="kitchen-hours">—</span></span>
           <a class="btn btn-green" href="#carte">Voir la carte complète</a>
         </div>
       </div>
@@ -107,7 +107,7 @@ const gallery = [
       <div class="wrap">
         <div class="section-head">
           <h2>Événements</h2>
-          <span class="note">Bientôt synchronisés depuis notre page Facebook</span>
+          
         </div>
         <div class="event-grid">
           {events.map((e) => (
@@ -148,7 +148,7 @@ const gallery = [
             <a href={`mailto:${site.email}`}>{site.email}</a>
           </div>
           <table class="hours">
-            <caption class="label">Horaires · repris de Google</caption>
+            <caption class="label">Horaires</caption>
             <tbody id="hours-body">
               {hours.map((h) => (
                 <tr><th scope="row">{h.day}</th><td>{h.time}</td></tr>
