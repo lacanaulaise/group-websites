@@ -46,7 +46,6 @@ const booking = site.bookingUrl || '/#infos';
       <div class="footer-top">
         <div>
           <strong>Une maison Les Brasseurs de l'Océan</strong>
-          <span>Brasserie La Canaulaise, Lacanau</span>
         </div>
         <nav aria-label="Nos autres adresses">
           {site.sisterVenues.map((v) => (v.url ? <a href={v.url}>{v.name}</a> : <span>{v.name}</span>))}
