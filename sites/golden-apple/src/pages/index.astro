@@ -75,16 +75,16 @@ const gallery = [
         </div>
         <div class="beers">
           {beers.map((b) => (
-            <article class="beer">
+            <article class="beer" data-beer={b.name}>
               <h3>{b.name}</h3>
               <span class="style">{b.style}</span>
               {b.abv && <span class="meta">{fmtAbv(b.abv)}</span>}
               <dl class="prices">
-                <div><dt>½ pinte</dt><dd>{eur(b.prices.demi)}</dd></div>
-                <div><dt>Pinte</dt><dd>{eur(b.prices.pinte)}</dd></div>
-                {b.prices.pichet && <div><dt>Pichet 1,5 L</dt><dd>{eur(b.prices.pichet)}</dd></div>}
+                <div><dt>½ pinte</dt><dd data-fmt="25 cl">{eur(b.prices.demi)}</dd></div>
+                <div><dt>Pinte</dt><dd data-fmt="50 cl">{eur(b.prices.pinte)}</dd></div>
+                {b.prices.pichet && <div><dt>Pichet 1,5 L</dt><dd data-fmt="1,5 L">{eur(b.prices.pichet)}</dd></div>}
               </dl>
-              {b.prices.pinteHH && <span class="hh">Happy hour : pinte à {eur(b.prices.pinteHH)}</span>}
+              {b.prices.pinteHH && <span class="hh" data-hh>Happy hour : pinte à {eur(b.prices.pinteHH)}</span>}
             </article>
           ))}
         </div>
@@ -184,6 +184,23 @@ const gallery = [
       </form>
     </section>
   <script is:inline slot="scripts">
+    // Draught prices: refresh from the live menu (till → Sheet) so they never drift.
+    fetch('/api/carte').then((r) => r.json()).then((d) => {
+      const sec = (d.sections || []).find((s) => s.title === 'Bières à la pression');
+      if (!sec) return;
+      const euro = (n) => (Number.isInteger(n) ? String(n) : n.toFixed(2).replace('.', ',')) + ' €';
+      for (const card of document.querySelectorAll('[data-beer]')) {
+        const item = sec.items.find((i) => i.name === card.dataset.beer);
+        if (!item) continue;
+        for (const dd of card.querySelectorAll('[data-fmt]')) {
+          const p = item.prices.find((x) => x.format === dd.dataset.fmt);
+          if (p) dd.textContent = euro(p.price);
+        }
+        const pint = item.prices.find((x) => x.format === '50 cl');
+        const hh = card.querySelector('[data-hh]');
+        if (hh && pint && pint.hh != null && pint.hh < pint.price) hh.textContent = 'Happy hour : pinte à ' + euro(pint.hh);
+      }
+    }).catch(() => {});
     document.getElementById('map-load')?.addEventListener('click', () => {
       const box = document.getElementById('map');
       const f = document.createElement('iframe');
