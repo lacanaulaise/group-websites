@@ -118,10 +118,10 @@
     }
   },
   {
-    "easybeerId": null,
-    "name": "Milkshake",
-    "style": "Bière spéciale",
-    "abv": null,
+    "easybeerId": 58717,
+    "name": "Milky Mango",
+    "style": "Bière spéciale · mangue",
+    "abv": 5.1,
     "till": {
       "demi": 151,
       "pinte": 152,
