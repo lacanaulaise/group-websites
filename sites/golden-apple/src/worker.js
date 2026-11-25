@@ -282,13 +282,15 @@ async function setupCheck(env) {
     },
   };
   if (env.IG_ACCESS_TOKEN) {
-    const r = await fetch('https://graph.facebook.com/me/accounts?fields=name,id,instagram_business_account{id,username}' +
-      '&limit=50&access_token=' + encodeURIComponent(env.IG_ACCESS_TOKEN));
-    const d = await r.json();
-    out.meta = d.error ? { error: d.error.message } : (d.data || []).map((p) => ({
-      page: p.name, pageId: p.id,
-      instagram: p.instagram_business_account ? { id: p.instagram_business_account.id, username: p.instagram_business_account.username } : null,
-    }));
+    const tok = encodeURIComponent(env.IG_ACCESS_TOKEN);
+    const ig = (p) => p.instagram_business_account
+      ? { id: p.instagram_business_account.id, username: p.instagram_business_account.username } : null;
+    // A Page token: "me" is the Page itself.
+    const me = await (await fetch('https://graph.facebook.com/me?fields=name,id,instagram_business_account{id,username}&access_token=' + tok)).json();
+    out.me = me.error ? { error: me.error.message } : { name: me.name, id: me.id, instagram: ig(me) };
+    // A user / system-user token: list the Pages it can read.
+    const acc = await (await fetch('https://graph.facebook.com/me/accounts?fields=name,id,instagram_business_account{id,username}&limit=50&access_token=' + tok)).json();
+    out.pages = acc.error ? { error: acc.error.message } : (acc.data || []).map((p) => ({ page: p.name, pageId: p.id, instagram: ig(p) }));
   }
   return json(out);
 }
