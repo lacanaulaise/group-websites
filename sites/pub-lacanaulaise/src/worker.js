@@ -478,7 +478,9 @@ async function events(request, env, ctx) {
   const upcoming = list
     .filter((e) => new Date(e.start).getTime() + (e.allDay ? 12 : 3) * 3600e3 > now)
     .sort((a, b) => (a.date + (a.time || '99')).localeCompare(b.date + (b.time || '99')));
-  return json({ fetchedAt: new Date().toISOString(), events: upcoming.slice(0, 40) }, 200, { 'Cache-Control': 'public, max-age=300' });
+  // facebook: how many upcoming Page events were read, or why not (no token value is ever returned).
+  const facebook = fb.error ? { error: String(fb.error).slice(0, 200) } : { events: (fb.events || []).length };
+  return json({ fetchedAt: new Date().toISOString(), facebook, events: upcoming.slice(0, 40) }, 200, { 'Cache-Control': 'public, max-age=300' });
 }
 
 async function eventImage(request, env, ctx, id) {
