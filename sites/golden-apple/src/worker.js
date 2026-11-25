@@ -365,7 +365,7 @@ async function eventsFeed(request, env, ctx) {
   const res = await fetch(`https://graph.facebook.com/${FB_PAGE_ID}/events?time_filter=upcoming&fields=${fields}` +
     `&limit=25&access_token=${encodeURIComponent(pageToken)}`);
   const data = await res.json();
-  if (data.error) return { error: data.error.message };
+  if (data.error) return { error: String(data.error.message || 'facebook error').replace(/EAA[A-Za-z0-9]+/g, '[token]') };
   const list = (data.data || [])
     .filter((e) => !e.is_canceled)
     .map((e) => ({
