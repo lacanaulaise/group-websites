@@ -134,7 +134,7 @@ function wmExportAll() {
 
 function wmExportSite_(ss, s, token) {
   var articles = wmFetchArticles_(s, token);
-  var reachable = wmReachable_(s, token);
+  var screen = wmScreen_(s, token);
   var sh = wmSheet_(ss, s.tab);
   var now = new Date();
 
@@ -156,7 +156,7 @@ function wmExportSite_(ss, s, token) {
     var fam = (a.family && a.family.title) || '';
     var sub = (a.subfamily && a.subfamily.title) || '';
     var title = String(a.title || '').trim();
-    var onScreen = !!reachable[String(a.posId)] || !!(a.keyboards && a.keyboards['Clavier']);
+    var onScreen = wmOnScreen_(a, screen);
     var format = wmFormat_(title);
     var rubrique = wmRubrique_(fam, sub, format, title);
     var prev = existing[key];
@@ -204,30 +204,28 @@ function wmGet_(s, token, path) {
   return JSON.parse(res.getContentText());
 }
 
-// posIds reachable from the till screen: keys, then folders (windows) on keys, recursively.
-function wmReachable_(s, token) {
-  var found = {}, windowsSeen = {}, queue = [];
+// What the till screen shows: articles with a key, and folders (windows) with a key.
+// (Personal tokens can't read folder contents, so each article's own `windows` list
+// is used instead: an article in a folder that has a key counts as on screen.)
+function wmScreen_(s, token) {
+  var articles = {}, windows = {};
   s.pages.forEach(function (pg) {
     var keys = wmGet_(s, token, 'keyboards/' + s.keyboard + '/pages/' + pg + '/keys');
     keys = Array.isArray(keys) ? keys : (keys.rowData || []);
     keys.forEach(function (k) {
-      if (k.posArticle) found[String(k.posArticle.posId)] = true;
-      if (k.posWindow) queue.push(k.posWindow.posId);
+      if (k.posArticle) articles[String(k.posArticle.posId)] = true;
+      if (k.posWindow) windows[String(k.posWindow.posId)] = true;
     });
   });
-  while (queue.length) {
-    var w = queue.shift();
-    if (windowsSeen[w]) continue;
-    windowsSeen[w] = true;
-    var win = wmGet_(s, token, 'pos-windows/' + w);
-    (win.items || []).forEach(function (it) {
-      if (it.article) found[String(it.article.posId)] = true;
-      var sub = it.window || it.subWindow || it.posWindow;
-      if (sub && sub.posId != null) queue.push(sub.posId);
-    });
-    Utilities.sleep(300);
-  }
-  return found;
+  return { articles: articles, windows: windows };
+}
+
+function wmOnScreen_(a, screen) {
+  if (screen.articles[String(a.posId)]) return true;
+  if (a.keyboards && a.keyboards['Clavier']) return true;
+  return (a.windows || []).some(function (w) {
+    return screen.windows[String(w.windowPosId != null ? w.windowPosId : (w.window && w.window.posId))];
+  });
 }
 
 function wmFetchArticles_(s, token) {
