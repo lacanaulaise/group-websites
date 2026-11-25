@@ -373,7 +373,7 @@ async function eventsFeed(request, env, ctx) {
   const cacheKey = new Request(new URL('/api/events-raw?v=1', request.url).toString());
   const cached = await cache.match(cacheKey);
   if (cached) return cached.json();
-  const token = env.META_TOKEN || env.IG_ACCESS_TOKEN;
+  const token = cleanToken(env.META_TOKEN || env.IG_ACCESS_TOKEN || '');
   if (!token) return { error: 'META_TOKEN not set' };
 
   // Page token for our Page (a user token lists the Pages it manages with their tokens).
@@ -387,7 +387,7 @@ async function eventsFeed(request, env, ctx) {
   const res = await fetch(`https://graph.facebook.com/${FB_PAGE_ID}/events?time_filter=upcoming&fields=${fields}` +
     `&limit=25&access_token=${encodeURIComponent(pageToken)}`);
   const data = await res.json();
-  if (data.error) return { error: data.error.message };
+  if (data.error) return { error: String(data.error.message || 'facebook error').replace(/EAA[A-Za-z0-9]+/g, '[token]') };
   const list = (data.data || [])
     .filter((e) => !e.is_canceled)
     .map((e) => ({
@@ -479,7 +479,7 @@ async function events(request, env, ctx) {
     .filter((e) => new Date(e.start).getTime() + (e.allDay ? 12 : 3) * 3600e3 > now)
     .sort((a, b) => (a.date + (a.time || '99')).localeCompare(b.date + (b.time || '99')));
   // facebook: how many upcoming Page events were read, or why not (no token value is ever returned).
-  const facebook = fb.error ? { error: String(fb.error).slice(0, 200) } : { events: (fb.events || []).length };
+  const facebook = fb.error ? { error: String(fb.error).replace(/EAA[A-Za-z0-9]+|IG[A-Za-z0-9]{20,}/g, '[token]').slice(0, 120) } : { events: (fb.events || []).length };
   return json({ fetchedAt: new Date().toISOString(), facebook, events: upcoming.slice(0, 40) }, 200, { 'Cache-Control': 'public, max-age=300' });
 }
 
