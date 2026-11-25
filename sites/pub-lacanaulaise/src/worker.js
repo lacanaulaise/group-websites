@@ -177,11 +177,11 @@ function json(data, status = 200, extra = {}) {
 // the sizes of one drink (25 cl / 50 cl / 1,5 L) into a single line. Cached 1 hour.
 const CARTE_TTL_SECONDS = 60 * 60;
 const CARTE_ORDER = [
-  'À partager', 'Burgers & plats', 'Desserts',
-  'Bières à la pression', 'Bières en bouteille', 'Cocktails', 'Sans alcool', 'Vins',
+  'Formules', 'À partager', 'Burgers & plats', 'Desserts',
+  'Bières à la pression', 'Bières en bouteille', 'Cocktails', 'Sans alcool', 'Apéritifs', 'Vins',
   'Spiritueux & long drinks', 'Digestifs', 'Softs', 'Boissons chaudes', 'À emporter',
 ];
-const FOOD = new Set(['À partager', 'Burgers & plats', 'Desserts']);
+const FOOD = new Set(['Formules', 'À partager', 'Burgers & plats', 'Desserts']);
 const FORMAT_ORDER = ['25 cl', '33 cl', '50 cl', '75 cl', '1 L', '1,5 L'];
 
 async function carte(request, env, ctx) {
