@@ -18,7 +18,7 @@ export default {
     if (url.pathname === '/api/instagram') return instagram(request, env, ctx);
     if (url.pathname === '/api/events') return events(request, env, ctx);
     if (url.pathname.startsWith('/api/ev-img/')) return eventImage(request, env, ctx, url.pathname.slice(12));
-    if (url.pathname === '/api/setup-check') return setupCheck(env); // TEMPORARY: remove once IG_USER_ID is set
+    if (url.pathname === '/api/setup-check') return setupCheck(env, request); // TEMPORARY: remove once IG_USER_ID is set
     if (url.pathname.startsWith('/api/ig-img/')) return instagramImage(request, env, ctx, url.pathname.slice(12));
     return env.ASSETS.fetch(request);
   },
@@ -290,7 +290,7 @@ async function instagramImage(request, env, ctx, id) {
 
 // TEMPORARY setup helper: shows which settings are present (never their values) and, with the
 // Meta token, lists the Facebook Pages it can read and their linked Instagram account IDs.
-async function setupCheck(env) {
+async function setupCheck(env, request) {
   const out = {
     settings: {
       GOOGLE_PLACES_KEY: !!env.GOOGLE_PLACES_KEY, CARTE_CSV_URL: !!env.CARTE_CSV_URL,
@@ -324,6 +324,19 @@ async function setupCheck(env) {
   }
   if (env.IG_ACCESS_TOKEN) {
     const tok = encodeURIComponent(env.IG_ACCESS_TOKEN);
+    // Instagram handle linked from the current Wix site, then Business Discovery through
+    // an Instagram account this token does manage (L'Australien) to read Golden Apple's public posts.
+    try {
+      const html = await (await fetch('https://www.golden-apple.fr/')).text();
+      out.wixInstagramLinks = [...new Set(html.match(/instagram\.com\/[A-Za-z0-9_.]+/g) || [])];
+    } catch (e) { out.wixInstagramLinks = String(e); }
+    const handle = new URL(request.url).searchParams.get('u') ||
+      ((out.wixInstagramLinks || [])[0] || '').split('/')[1];
+    if (handle) {
+      const bd = await (await fetch('https://graph.facebook.com/17841466753382868?fields=business_discovery.username(' +
+        encodeURIComponent(handle) + '){id,username,media_count,media.limit(2){id,media_type,permalink}}&access_token=' + tok)).json();
+      out.businessDiscovery = bd.error ? { handle, error: bd.error.message } : { handle, ...bd.business_discovery };
+    }
     const ig = (p) => p.instagram_business_account
       ? { id: p.instagram_business_account.id, username: p.instagram_business_account.username } : null;
     // A Page token: "me" is the Page itself.
