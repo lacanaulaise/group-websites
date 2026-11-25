@@ -1,10 +1,13 @@
 {
-  // Golden Apple site — static assets served by a Cloudflare Worker.
-  // Live data (Facebook/Instagram events, venue Sheet) will be added later as a scheduled Worker.
+  // Golden Apple site — static assets plus a small Worker for live data under /api/.
+  // Secret (set in the Cloudflare dashboard, never in this repo): GOOGLE_PLACES_KEY
   "name": "golden-apple",
+  "main": "src/worker.js",
   "compatibility_date": "2026-11-01",
   "assets": {
     "directory": "./dist",
-    "not_found_handling": "404-page"
+    "binding": "ASSETS",
+    "not_found_handling": "404-page",
+    "run_worker_first": ["/api/*"]
   }
 }

@@ -19,6 +19,12 @@ const title = 'The Golden Apple — Pub, Bordeaux';
       p { max-width: 32rem; margin: 1.5rem auto 0; line-height: 1.6; opacity: .85; }
       .tag { display: inline-block; margin-top: 2rem; padding: .4rem .9rem; border: 1px solid var(--brass);
              color: var(--brass); font-family: system-ui, sans-serif; font-size: .8rem; letter-spacing: .1em; }
+      .hours { margin-top: 2.5rem; font-family: system-ui, sans-serif; }
+      .hours h2 { font-family: Georgia, serif; font-size: 1.4rem; margin: 0 0 .5rem; }
+      .hours small { color: var(--brass); font-size: .8rem; font-family: system-ui, sans-serif; }
+      .hours ul { list-style: none; padding: 0; margin: .5rem auto; max-width: 22rem; text-align: left; line-height: 1.8; }
+      #open-now { color: var(--brass); margin: 0; }
+      #hours-extra { font-size: .9rem; }
     </style>
   </head>
   <body>
@@ -27,6 +33,27 @@ const title = 'The Golden Apple — Pub, Bordeaux';
       <h1>The Golden Apple</h1>
       <p>Nouveau site en construction. Le site actuel reste en ligne sur golden-apple.fr.</p>
       <span class="tag">PREVIEW</span>
+      <section class="hours" aria-label="Horaires">
+        <h2>Horaires <small>· depuis Google</small></h2>
+        <p id="open-now"></p>
+        <ul id="hours-list"><li>Chargement…</li></ul>
+        <p id="hours-extra"></p>
+      </section>
     </main>
+    <script>
+      fetch('/api/hours').then(r => r.json()).then(d => {
+        const list = document.getElementById('hours-list');
+        list.textContent = '';
+        if (d.error) { list.innerHTML = '<li>Horaires indisponibles</li>'; return; }
+        (d.thisWeek.length ? d.thisWeek : d.opening).forEach(line => {
+          const li = document.createElement('li'); li.textContent = line; list.appendChild(li);
+        });
+        if (d.openNow !== null) document.getElementById('open-now').textContent = d.openNow ? '● Ouvert maintenant' : '● Fermé pour le moment';
+        const extra = [];
+        if (d.happyHour.length) extra.push('Happy hour : ' + d.happyHour.join(' · '));
+        if (d.kitchen.length) extra.push('Cuisine : ' + d.kitchen.join(' · '));
+        document.getElementById('hours-extra').textContent = extra.join(' — ');
+      }).catch(() => {});
+    </script>
   </body>
 </html>
