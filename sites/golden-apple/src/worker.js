@@ -299,8 +299,11 @@ async function setupCheck(env) {
   };
   const igt = await instagramToken(env);
   if (igt) {
+    out.igTokenShape = { prefix: igt.slice(0, 4), length: igt.length, rawLength: (env.IG_LOGIN_TOKEN || '').length };
     const r = await (await fetch('https://graph.instagram.com/me?fields=user_id,username,account_type,media_count&access_token=' + encodeURIComponent(igt))).json();
     out.instagramLogin = r.error ? { error: r.error.message } : r;
+    const f = await (await fetch('https://graph.facebook.com/me?fields=id,name,username&access_token=' + encodeURIComponent(igt))).json();
+    out.instagramViaFacebook = f.error ? { error: f.error.message } : f;
   }
   if (env.IG_ACCESS_TOKEN) {
     const tok = encodeURIComponent(env.IG_ACCESS_TOKEN);
@@ -406,7 +409,12 @@ async function instagramToken(env) {
     const stored = await env.STATE.get('ig_login_token');
     if (stored) return stored;
   }
-  return env.IG_LOGIN_TOKEN || null;
+  return env.IG_LOGIN_TOKEN ? cleanToken(env.IG_LOGIN_TOKEN) : null;
+}
+
+// Copy/paste often brings spaces, line breaks or quotes along.
+function cleanToken(t) {
+  return String(t).trim().replace(/^["']|["']$/g, '').replace(/\s+/g, '');
 }
 
 async function refreshInstagramToken(env) {
