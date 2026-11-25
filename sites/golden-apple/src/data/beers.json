@@ -1,11 +1,11 @@
 [
-  { "easybeerId": 15051, "name": "Pils Session", "style": "Blonde · Kölsch", "abv": 4.4 },
-  { "easybeerId": 1369, "name": "Blanche", "style": "Witbier", "abv": 4.6 },
-  { "easybeerId": 43627, "name": "La Grimace", "style": "Sour ale", "abv": 3.8 },
-  { "easybeerId": 1367, "name": "Blonde", "style": "Pale ale", "abv": 6.2 },
-  { "easybeerId": 1368, "name": "English IPA", "style": "IPA ambrée", "abv": 6.1 },
-  { "easybeerId": 30275, "name": "Ouest Coast IPA", "style": "IPA blonde", "abv": 7.0 },
-  { "easybeerId": 5709, "name": "Saison", "style": "Saison", "abv": 5.0 },
-  { "easybeerId": 37687, "name": "Triple", "style": "Ale blonde", "abv": 7.8 },
-  { "easybeerId": 16015, "name": "Stout Orange", "style": "Stout", "abv": 4.5 }
+  { "easybeerId": 15051, "name": "Pils Session", "style": "Blonde · Kölsch", "abv": 4.4, "till": { "demi": 600, "pinte": 615, "pichet": 57 }, "prices": { "demi": 350, "pinte": 650, "pinteHH": 500, "pichet": 1800 } },
+  { "easybeerId": 1369, "name": "Blanche", "style": "Witbier", "abv": 4.6, "till": { "demi": 598, "pinte": 613, "pichet": 58 }, "prices": { "demi": 400, "pinte": 750, "pinteHH": 600, "pichet": 2000 } },
+  { "easybeerId": 43627, "name": "La Grimace", "style": "Sour ale", "abv": 3.8, "till": { "demi": 625, "pinte": 624, "pichet": 62 }, "prices": { "demi": 450, "pinte": 750, "pinteHH": 600, "pichet": 2000 } },
+  { "easybeerId": 1367, "name": "Blonde", "style": "Pale ale", "abv": 6.2, "till": { "demi": 596, "pinte": 611, "pichet": 56 }, "prices": { "demi": 400, "pinte": 750, "pinteHH": 600, "pichet": 2000 } },
+  { "easybeerId": 1368, "name": "English IPA", "style": "IPA ambrée", "abv": 6.1, "till": { "demi": 597, "pinte": 612, "pichet": 61 }, "prices": { "demi": 400, "pinte": 750, "pinteHH": 600, "pichet": 2000 } },
+  { "easybeerId": 30275, "name": "Ouest Coast IPA", "style": "IPA blonde", "abv": 7.0, "till": { "demi": 608, "pinte": 621, "pichet": 59 }, "prices": { "demi": 450, "pinte": 750, "pinteHH": 600, "pichet": 2000 } },
+  { "easybeerId": 46699, "name": "Scottish Ale", "style": "Ambrée · Scotch ale", "abv": 5.1, "till": { "demi": 599, "pinte": 614 }, "prices": { "demi": 450, "pinte": 700, "pinteHH": null, "pichet": null } },
+  { "easybeerId": 37687, "name": "Triple", "style": "Ale blonde", "abv": 7.8, "till": { "demi": 626, "pinte": 627, "pichet": 60 }, "prices": { "demi": 450, "pinte": 750, "pinteHH": 600, "pichet": 2000 } },
+  { "easybeerId": 16015, "name": "Stout Orange", "style": "Stout", "abv": 4.5, "till": { "demi": 170, "pinte": 171 }, "prices": { "demi": 450, "pinte": 800, "pinteHH": 700, "pichet": null } }
 ]
