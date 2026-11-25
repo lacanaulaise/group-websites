@@ -330,6 +330,13 @@ async function setupCheck(env, request) {
   }
   if (env.IG_ACCESS_TOKEN) {
     const tok = encodeURIComponent(env.IG_ACCESS_TOKEN);
+    // What this token was granted: permissions and the asset IDs (Pages, Instagram accounts) behind each.
+    const dbg = await (await fetch('https://graph.facebook.com/debug_token?input_token=' + tok + '&access_token=' + tok)).json();
+    out.tokenGrant = dbg.error ? { error: dbg.error.message } : {
+      type: dbg.data?.type, valid: dbg.data?.is_valid,
+      expires: dbg.data?.expires_at ? new Date(dbg.data.expires_at * 1000).toISOString().slice(0, 10) : 'never',
+      scopes: dbg.data?.scopes, granular: dbg.data?.granular_scopes,
+    };
     // Instagram handle linked from the current Wix site, then Business Discovery through
     // an Instagram account this token does manage (L'Australien) to read Golden Apple's public posts.
     try {
