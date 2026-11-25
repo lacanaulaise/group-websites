@@ -2,7 +2,8 @@
 // MONORA → CARTE SITE WEB
 // Fichier ADDITIONNEL du projet monora_pull. Ne modifie ni Code.gs ni Items.gs.
 // =============================================================================
-// Réutilise depuis Code.gs (ne pas redéfinir ici) : getToken_()  (token MonoraAuth partagé)
+// Autonome : n'utilise rien de Code.gs. Token Monora dédié (propriété MONORA_PROG_TOKEN,
+// portée read:programmation), distinct du token reporting de MonoraAuth.
 // Tous les noms de ce fichier sont préfixés wm / WM_ pour éviter tout conflit.
 //
 // Ce que fait le script : chaque matin, lit les articles de la caisse (API
@@ -18,6 +19,8 @@
 //   Les articles retirés ou bloqués en caisse passent en Statut « retiré » (le site les cache).
 //
 // MISE EN ROUTE (une fois)
+//   0. Monora > Integrations > My tokens : créer un token avec l'accès read:programmation,
+//      puis Paramètres du projet > Propriétés du script : MONORA_PROG_TOKEN = ce token.
 //   1. wmSetup()            -> crée le classeur « Carte site web » (ID gardé dans les
 //                              propriétés du script) et l'onglet GOLDEN APPLE.
 //   2. wmExportAll()        -> premier remplissage. Relire les colonnes H–K.
@@ -34,6 +37,7 @@ var WM_SITES = [
     keyboard: 1002, pages: [11339, 11341, 11343, 11344, 11345] }
 ];
 var WM_PROP_SHEET = 'WEB_MENU_SHEET_ID';
+var WM_PROP_TOKEN = 'MONORA_PROG_TOKEN';
 var WM_API = 'https://api.mypi.net/programmation/sites/';
 var WM_HEADERS = ['posId', 'Rubrique', 'Nom caisse', 'Prix TTC', 'Prix happy hour', 'Format',
                   "Sur l'écran", 'Nom site', 'Description', 'Afficher', 'Ordre', 'Statut', 'Mis à jour'];
@@ -115,8 +119,14 @@ function wmExportAll() {
   var id = PropertiesService.getScriptProperties().getProperty(WM_PROP_SHEET);
   if (!id) throw new Error('Lancez wmSetup() d\'abord.');
   var ss = SpreadsheetApp.openById(id);
-  var token = getToken_();
-  if (!token) throw new Error('Aucun token Monora (MonoraAuth).');
+  // Monora needs a token with the read:programmation scope for the article list.
+  // Created in Monora > Integrations > My tokens, stored by James in this project's
+  // Script Properties as MONORA_PROG_TOKEN (never in the code).
+  var token = (PropertiesService.getScriptProperties().getProperty(WM_PROP_TOKEN) || '').trim()
+              .replace(/^["']|["']$/g, '');
+  if (!token) throw new Error('Propriété ' + WM_PROP_TOKEN + ' absente : créez un token Monora ' +
+                              '(Integrations > My tokens, accès read:programmation) et collez-le ' +
+                              'dans Paramètres du projet > Propriétés du script.');
   WM_SITES.forEach(function (s) { wmExportSite_(ss, s, token); });
 }
 
