@@ -26,5 +26,34 @@
     "Délai : appelez-nous, on trouve une solution"
   ],
   "photo": "crowd",
-  "photoAlt": "Clients attablés autour de pintes au Golden Apple"
+  "photoAlt": "Clients attablés autour de pintes au Golden Apple",
+  "en": {
+    "intro": "Birthday, leaving drinks, company party or a match with friends: book an area or the whole pub, with our La Canaulaise beers on tap and homemade food.",
+    "spaces": [
+      {
+        "name": "The whole pub",
+        "capacity": "80 standing · 50 seated",
+        "text": "The Golden Apple all to yourselves, bar, room and darts corner included."
+      },
+      {
+        "name": "The Saloon",
+        "capacity": "20 standing · 10 seated",
+        "text": "A corner just for you, with its own tables, still close to the bar."
+      }
+    ],
+    "included": [
+      "Screens for your matches or a presentation",
+      "Darts boards",
+      "Music: your playlist or ours",
+      "Drinks by the keg, by the glass or open bar",
+      "Homemade sharing boards and finger food, or a buffet on request"
+    ],
+    "conditions": [
+      "Minimum spend: €1,000",
+      "30% deposit when booking",
+      "Hours: whenever suits you",
+      "Notice: give us a call, we'll find a way"
+    ],
+    "photoAlt": "Guests around pints at The Golden Apple"
+  }
 }

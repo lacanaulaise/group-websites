@@ -15,7 +15,8 @@
       "pinteHH": 500,
       "pichet": 1800
     },
-    "easybeerImg": "1769615614267"
+    "easybeerImg": "1769615614267",
+    "styleEn": "Blonde · Kölsch"
   },
   {
     "easybeerId": 1369,
@@ -33,7 +34,8 @@
       "pinteHH": 600,
       "pichet": 2000
     },
-    "easybeerImg": "1769615505574"
+    "easybeerImg": "1769615505574",
+    "styleEn": "Witbier"
   },
   {
     "easybeerId": 1367,
@@ -51,7 +53,8 @@
       "pinteHH": 600,
       "pichet": 2000
     },
-    "easybeerImg": "1769615533397"
+    "easybeerImg": "1769615533397",
+    "styleEn": "Pale ale"
   },
   {
     "easybeerId": 1368,
@@ -69,7 +72,8 @@
       "pinteHH": 600,
       "pichet": 2000
     },
-    "easybeerImg": "1769615558767"
+    "easybeerImg": "1769615558767",
+    "styleEn": "Amber IPA"
   },
   {
     "easybeerId": 30275,
@@ -87,7 +91,8 @@
       "pinteHH": 600,
       "pichet": 2000
     },
-    "easybeerImg": "1769615586423"
+    "easybeerImg": "1769615586423",
+    "styleEn": "Blonde IPA"
   },
   {
     "easybeerId": 37687,
@@ -105,7 +110,8 @@
       "pinteHH": 600,
       "pichet": 2000
     },
-    "easybeerImg": "1769615680646"
+    "easybeerImg": "1769615680646",
+    "styleEn": "Blonde ale"
   },
   {
     "easybeerId": 16015,
@@ -122,7 +128,8 @@
       "pinteHH": 700,
       "pichet": null
     },
-    "easybeerImg": "1769615478694"
+    "easybeerImg": "1769615478694",
+    "styleEn": "Stout"
   },
   {
     "easybeerId": 58717,
@@ -139,7 +146,8 @@
       "pinte": 750,
       "pinteHH": 600,
       "pichet": 2000
-    }
+    },
+    "styleEn": "Speciality beer · mango"
   },
   {
     "easybeerId": null,
@@ -156,6 +164,7 @@
       "pinte": 750,
       "pinteHH": 600,
       "pichet": 2000
-    }
+    },
+    "styleEn": "Draught cider"
   }
 ]

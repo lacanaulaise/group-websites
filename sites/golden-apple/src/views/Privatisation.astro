@@ -1,0 +1,108 @@
+---
+import Base from '../layouts/Base.astro';
+import site from '../data/site.json';
+import privData from '../data/privatisation.json';
+import { T } from '../i18n.js';
+
+interface Props { lang: 'fr' | 'en'; }
+const { lang } = Astro.props;
+const p = T[lang].priv;
+const priv = lang === 'en' ? { ...privData, ...privData.en } : privData;
+const phone = lang === 'en' ? '+33 5 56 79 03 85' : site.phone;
+const S = { sending: p.sending, ok: p.ok, fail: p.fail };
+---
+<Base title={p.title} description={p.description} lang={lang} page="/privatisation">
+  <section class="hero">
+    <div class="wrap">
+      <div class="hero-text">
+        <span class="label" style="color: var(--brass)">{p.label}</span>
+        <h1>{p.h1}</h1>
+        <p>{priv.intro}</p>
+        <div class="hero-actions">
+          <a class="btn btn-brass" href="#demande">{p.quote}</a>
+          <a class="btn btn-ghost" href={`tel:${site.phoneIntl}`}>{p.call} {phone}</a>
+        </div>
+      </div>
+      <img class="hero-photo" src={`/img/photos/${priv.photo}-card.webp`} alt={priv.photoAlt} width="640" height="400" />
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap">
+      <h2>{p.spaces}</h2>
+      <div class="beers" style="margin-top: 24px">
+        {priv.spaces.map((s) => (
+          <article class="beer">
+            <h3>{s.name}</h3>
+            <span class="meta">{s.capacity}</span>
+            <span class="style">{s.text}</span>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section food">
+    <div class="wrap split" style="align-items: flex-start">
+      <div>
+        <h2>{p.included}</h2>
+        <ul class="included">
+          {priv.included.map((i) => <li>{i}</li>)}
+        </ul>
+      </div>
+      <div class="food-text">
+        <h2>{p.conditions}</h2>
+        <ul class="included">
+          {priv.conditions.map((c) => <li>{c}</li>)}
+        </ul>
+        <a class="btn btn-green" href={`tel:${site.phoneIntl}`}>{p.call} {phone}</a>
+      </div>
+    </div>
+  </section>
+
+  <section id="demande" class="section">
+    <div class="wrap">
+      <h2>{p.form}</h2>
+      <p class="lead">{p.formIntro}</p>
+      <form class="priv-form" id="priv-form" method="post" action="/api/privatisation">
+        <label>{p.name}<input name="name" required autocomplete="name" /></label>
+        <label>{p.email}<input name="email" type="email" required autocomplete="email" /></label>
+        <label>{p.phone}<input name="phone" type="tel" autocomplete="tel" /></label>
+        <label>{p.date}<input name="date" type="date" required /></label>
+        <label>{p.guests}<input name="guests" type="number" min="1" required /></label>
+        <label>{p.type}
+          <select name="type">
+            {p.types.map((ty) => <option>{ty}</option>)}
+          </select>
+        </label>
+        <label>{p.budget}<input name="budget" placeholder={p.budgetPh} /></label>
+        <label class="full">{p.message}<textarea name="message" rows="5" placeholder={p.messagePh}></textarea></label>
+        <label class="hp" aria-hidden="true">{p.hp}<input name="website" tabindex="-1" autocomplete="off" /></label>
+        <input type="hidden" name="venue" value="golden-apple" />
+        <div class="full form-actions">
+          <button type="submit">{p.send}</button>
+          <p id="priv-status" role="status" aria-live="polite"></p>
+        </div>
+      </form>
+    </div>
+  </section>
+
+  <script is:inline slot="scripts" define:vars={{ S }}>
+    const form = document.getElementById('priv-form');
+    const status = document.getElementById('priv-status');
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const btn = form.querySelector('button');
+      btn.disabled = true; status.textContent = S.sending;
+      try {
+        const res = await fetch('/api/privatisation', { method: 'POST', body: new FormData(form) });
+        const data = await res.json().catch(() => ({}));
+        if (res.ok && data.ok) { form.reset(); status.textContent = S.ok; }
+        else status.textContent = S.fail;
+      } catch {
+        status.textContent = S.fail;
+      }
+      btn.disabled = false;
+    });
+  </script>
+</Base>

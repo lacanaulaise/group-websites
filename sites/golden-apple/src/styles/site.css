@@ -224,3 +224,4 @@ a.event:hover h3 { color: var(--brass); }
 .agenda-time { font-weight: 600; color: var(--brass); font-size: 13px; }
 .agenda-tag { font-size: 11px; text-transform: uppercase; letter-spacing: .06em; color: #9fb3a6; }
 .agenda-tag.tag-quiz, .agenda-tag.tag-soiree, .agenda-tag.tag-tournoi { color: var(--brass-light); }
+.carte-note { font-size: 15px; color: var(--brass-light); margin: 0; }
