@@ -60,7 +60,7 @@ const gallery = [
         </div>
         <div class="item">
           <span class="label">À la pression</span>
-          <a class="value" href="#pression">{beers.length} bières La Canaulaise →</a>
+          <a class="value" href="#pression">{beers.length} pressions →</a>
         </div>
       </div>
     </section>
@@ -70,7 +70,7 @@ const gallery = [
         <div class="section-head">
           <div>
             <h2>À la pression</h2>
-            <p>Brassées à Lacanau par La Canaulaise, notre brasserie. Prix TTC.</p>
+            <p>Nos bières La Canaulaise, brassées à Lacanau, et un cidre. Prix TTC.</p>
           </div>
         </div>
         <div class="beers">
@@ -78,7 +78,7 @@ const gallery = [
             <article class="beer">
               <h3>{b.name}</h3>
               <span class="style">{b.style}</span>
-              <span class="meta">{fmtAbv(b.abv)}</span>
+              {b.abv && <span class="meta">{fmtAbv(b.abv)}</span>}
               <dl class="prices">
                 <div><dt>½ pinte</dt><dd>{eur(b.prices.demi)}</dd></div>
                 <div><dt>Pinte</dt><dd>{eur(b.prices.pinte)}</dd></div>
