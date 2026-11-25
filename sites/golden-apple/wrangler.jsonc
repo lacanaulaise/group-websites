@@ -1,0 +1,10 @@
+{
+  // Golden Apple site — static assets served by a Cloudflare Worker.
+  // Live data (Facebook/Instagram events, venue Sheet) will be added later as a scheduled Worker.
+  "name": "golden-apple",
+  "compatibility_date": "2026-11-01",
+  "assets": {
+    "directory": "./dist",
+    "not_found_handling": "404-page"
+  }
+}
