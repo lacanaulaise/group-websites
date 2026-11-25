@@ -222,7 +222,10 @@ async function instagramFeed(request, env, ctx) {
   const fields = 'id,caption,media_type,media_url,thumbnail_url,permalink,timestamp';
   let api;
   const igToken = await instagramToken(env);
-  if (igToken) {
+  if (igToken && igToken.startsWith('EAA') && env.IG_USER_ID) {
+    // Unified login (Facebook Login for Business) → system user token, never expires.
+    api = `https://graph.facebook.com/${env.IG_USER_ID}/media?fields=${fields}&limit=24&access_token=${encodeURIComponent(igToken)}`;
+  } else if (igToken && !igToken.startsWith('EAA')) {
     // "Instagram API with Instagram Login": token from the Instagram professional account itself.
     api = `https://graph.instagram.com/me/media?fields=${fields}&limit=24&access_token=${encodeURIComponent(igToken)}`;
   } else if (env.IG_ACCESS_TOKEN && env.IG_USER_ID) {
@@ -313,6 +316,10 @@ async function setupCheck(env) {
       accounts: await probe('me/accounts?fields=name,instagram_business_account{id,username}'),
       igAccounts: await probe('me/instagram_accounts?fields=id,username'),
       businesses: await probe('me/businesses?fields=id,name'),
+      // granular_scopes lists the asset IDs (Instagram account, Pages) the token was granted on.
+      scopes: await probe('debug_token?input_token=' + encodeURIComponent(await instagramToken(env))),
+      bizIg: await probe('433750852766721/instagram_accounts?fields=id,username'),
+      bizOwnedIg: await probe('433750852766721/owned_instagram_accounts?fields=id,username'),
     };
   }
   if (env.IG_ACCESS_TOKEN) {
@@ -429,7 +436,7 @@ function cleanToken(t) {
 
 async function refreshInstagramToken(env) {
   const current = await instagramToken(env);
-  if (!current || !env.STATE) return;
+  if (!current || !env.STATE || current.startsWith('EAA')) return; // system user tokens never expire
   const r = await fetch('https://graph.instagram.com/refresh_access_token?grant_type=ig_refresh_token&access_token=' +
     encodeURIComponent(current));
   const d = await r.json();
