@@ -51,6 +51,7 @@ function doPost(e) {
   ];
   MailApp.sendEmail({
     to: d.to,
+    cc: d.cc || '',
     replyTo: d.email,
     name: venue + ' — site web',
     subject: 'Privatisation ' + d.date + ' · ' + d.guests + ' pers. · ' + d.name,
@@ -59,7 +60,7 @@ function doPost(e) {
 
   var sh = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(LOG_SHEET);
   if (sh) sh.appendRow([new Date(), venue, d.name, d.email, d.phone, d.date, d.guests,
-                        d.type, d.budget, d.message, d.to]);
+                        d.type, d.budget, d.message, d.to + (d.cc ? ', ' + d.cc : '')]);
   return out_({ ok: true });
 }
 

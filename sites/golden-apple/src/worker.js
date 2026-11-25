@@ -31,6 +31,8 @@ export default {
 // The recipient is fixed here per venue, never taken from the form.
 // Secrets (Cloudflare dashboard): FORM_RELAY_URL, FORM_RELAY_SECRET
 const PRIVATISATION_TO = { 'golden-apple': 'goldenapplebx@gmail.com' };
+// Copied on every privatisation request, all venues.
+const PRIVATISATION_CC = ['james@lacanaulaise.fr', 'celine@lacanaulaise.fr'];
 
 async function privatisation(request, env) {
   let form;
@@ -54,7 +56,7 @@ async function privatisation(request, env) {
   const res = await fetch(env.FORM_RELAY_URL, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ secret: env.FORM_RELAY_SECRET, kind: 'privatisation', to, ...data }),
+    body: JSON.stringify({ secret: env.FORM_RELAY_SECRET, kind: 'privatisation', to, cc: PRIVATISATION_CC.join(','), ...data }),
     redirect: 'follow',
   });
   const out = await res.json().catch(() => ({}));
