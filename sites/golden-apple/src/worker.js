@@ -291,6 +291,16 @@ async function setupCheck(env) {
     // A user / system-user token: list the Pages it can read.
     const acc = await (await fetch('https://graph.facebook.com/me/accounts?fields=name,id,instagram_business_account{id,username}&limit=50&access_token=' + tok)).json();
     out.pages = acc.error ? { error: acc.error.message } : (acc.data || []).map((p) => ({ page: p.name, pageId: p.id, instagram: ig(p) }));
+    // Events test for each Page, using that Page's own token (never returned).
+    const pt = await (await fetch('https://graph.facebook.com/me/accounts?fields=name,id,access_token,tasks&limit=50&access_token=' + tok)).json();
+    out.events = [];
+    for (const p of pt.data || []) {
+      const ev = await (await fetch('https://graph.facebook.com/' + p.id + '/events?time_filter=upcoming&fields=name,start_time&limit=3&access_token=' + encodeURIComponent(p.access_token || env.IG_ACCESS_TOKEN))).json();
+      const past = await (await fetch('https://graph.facebook.com/' + p.id + '/events?fields=name,start_time&limit=2&access_token=' + encodeURIComponent(p.access_token || env.IG_ACCESS_TOKEN))).json();
+      out.events.push({ page: p.name, tasks: p.tasks || null, hasPageToken: !!p.access_token,
+        upcoming: ev.error ? { error: ev.error.message } : (ev.data || []).map((e) => e.start_time.slice(0, 10) + ' ' + e.name),
+        recent: past.error ? { error: past.error.message } : (past.data || []).map((e) => e.start_time.slice(0, 10) + ' ' + e.name) });
+    }
   }
   return json(out);
 }
