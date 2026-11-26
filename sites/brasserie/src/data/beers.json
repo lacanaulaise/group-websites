@@ -4,80 +4,141 @@
     "name": "Pils Session",
     "style": "Blonde légère · Kölsch",
     "styleEn": "Light blonde · Kölsch",
-    "abv": 4.4, "ibu": 20, "temp": 5,
+    "abv": 4.4,
+    "ibu": 20,
+    "temp": 5,
     "desc": "Une bière blonde légère et florale. Une douceur maltée modérée avec un léger goût fruité ; peu de corps, très désaltérante.",
     "descEn": "A light, floral blonde. Gently malty with a hint of fruit; light-bodied and very refreshing.",
-    "easybeerId": 15051, "easybeerImg": "1769615614267"
+    "easybeerId": 15051,
+    "easybeerImg": "1769615614267",
+    "formats": [
+      "33",
+      "75",
+      "keg"
+    ]
   },
   {
     "slug": "blanche",
     "name": "Blanche Witbier",
     "style": "Blanche · Witbier",
     "styleEn": "Wheat beer · Witbier",
-    "abv": 4.6, "ibu": 11, "temp": 5,
+    "abv": 4.6,
+    "ibu": 11,
+    "temp": 5,
     "desc": "Bière légère à base de blé et d'avoine, subtile, de force modérée. Douceur maltée, légère acidité et goûts fruités, coriandre en arrière-plan.",
     "descEn": "A light wheat and oat beer, subtle and moderate in strength. Soft malt, a touch of acidity and fruit, with coriander in the background.",
-    "easybeerId": 1369, "easybeerImg": "1769615505574"
+    "easybeerId": 1369,
+    "easybeerImg": "1769615505574",
+    "formats": [
+      "33",
+      "75",
+      "keg"
+    ]
   },
   {
     "slug": "blonde",
     "name": "Blonde Pale Ale",
     "style": "Blonde · Pale ale belge",
     "styleEn": "Blonde · Belgian pale ale",
-    "abv": 6.2, "ibu": 20, "temp": 6,
+    "abv": 6.2,
+    "ibu": 20,
+    "temp": 6,
     "desc": "Une bière dorée de force modérée, à la subtile complexité de levure belge fruitée-épicée. Saveur légèrement maltée qui tend vers le biscuit et le caramel, finale sèche. Houblons Saaz et East Kent Goldings.",
     "descEn": "A golden beer of moderate strength with the subtle fruity, spicy character of Belgian yeast. Lightly malty, towards biscuit and caramel, with a dry finish. Saaz and East Kent Goldings hops.",
-    "easybeerId": 1367, "easybeerImg": "1769615533397"
+    "easybeerId": 1367,
+    "easybeerImg": "1769615533397",
+    "formats": [
+      "33",
+      "75",
+      "keg"
+    ]
   },
   {
     "slug": "english-ipa",
     "name": "English IPA Ambrée",
     "style": "Ambrée · IPA anglaise",
     "styleEn": "Amber · English IPA",
-    "abv": 6.1, "ibu": 53, "temp": 6,
+    "abv": 6.1,
+    "ibu": 53,
+    "temp": 6,
     "desc": "Pale ale britannique qui sublime les saveurs houblonnées. Florale, épicée-poivrée, avec un léger arôme caramélisé et caféiné ; corps modéré, finale sèche.",
     "descEn": "A British pale ale that puts the hops first. Floral, peppery and spicy, with light caramel and coffee notes; medium body, dry finish.",
-    "easybeerId": 1368, "easybeerImg": "1769615558767"
+    "easybeerId": 1368,
+    "easybeerImg": "1769615558767",
+    "formats": [
+      "33",
+      "75",
+      "keg"
+    ]
   },
   {
     "slug": "ouest-coast-ipa",
     "name": "Ouest Coast IPA",
     "style": "Blonde · West Coast IPA",
     "styleEn": "Blonde · West Coast IPA",
-    "abv": 7.0, "ibu": 65, "temp": 6,
+    "abv": 7.0,
+    "ibu": 65,
+    "temp": 6,
     "desc": "Blonde dorée au nez léger d'agrumes, texture douce et carbonatation modérée. En bouche, des vagues successives d'amertume et d'aromatiques fruités : fruits tropicaux, agrumes, vanille. Houblonnage à froid, houblons américains El Dorado et Trident.",
     "descEn": "A golden blonde with a light citrus nose, soft texture and moderate carbonation. Waves of bitterness and fruit follow: tropical fruit, citrus, vanilla. Dry-hopped with American El Dorado and Trident hops.",
-    "easybeerId": 30275, "easybeerImg": "1769615586423"
+    "easybeerId": 30275,
+    "easybeerImg": "1769615586423",
+    "formats": [
+      "33",
+      "75",
+      "keg"
+    ]
   },
   {
     "slug": "saison",
     "name": "Saison",
     "style": "Saison",
     "styleEn": "Saison",
-    "abv": 5.0, "ibu": 24, "temp": 4,
+    "abv": 5.0,
+    "ibu": 24,
+    "temp": 4,
     "desc": "Bière rafraîchissante, moyennement amère, à la finale très sèche. Pétillante et légèrement acide, aux arômes d'agrumes (écorces d'orange amère) et au goût léger de café.",
     "descEn": "A refreshing, moderately bitter beer with a very dry finish. Lively and slightly tart, with citrus (bitter orange peel) and a light coffee note.",
-    "easybeerId": 5709, "easybeerImg": "1769616112816"
+    "easybeerId": 5709,
+    "easybeerImg": "1769616112816",
+    "formats": [
+      "33"
+    ]
   },
   {
     "slug": "triple",
     "name": "Triple",
     "style": "Blonde · Triple d'abbaye",
     "styleEn": "Blonde · Abbey tripel",
-    "abv": 7.8, "ibu": 30, "temp": 6,
+    "abv": 7.8,
+    "ibu": 30,
+    "temp": 6,
     "desc": "Une blonde dorée toute en rondeur et en douceur, maltée, aux arômes d'une grande complexité : notes tropicales, épicées et de banane. Dans la lignée des bières d'abbaye.",
     "descEn": "A round, smooth, malty golden blonde with complex aromas: tropical fruit, spice and banana. In the abbey beer tradition.",
-    "easybeerId": 37687, "easybeerImg": "1769615680646"
+    "easybeerId": 37687,
+    "easybeerImg": "1769615680646",
+    "formats": [
+      "33",
+      "75",
+      "keg"
+    ]
   },
   {
     "slug": "stout-orange",
     "name": "Stout Orange",
     "style": "Brune · Stout",
     "styleEn": "Dark · Stout",
-    "abv": 4.5, "ibu": 35, "temp": 13,
+    "abv": 4.5,
+    "ibu": 35,
+    "temp": 13,
     "desc": "Robe ébène, mousse beige crémeuse, arômes torréfiés. Saveur de café grâce aux céréales grillées ; l'orange amère, très présente au nez, affine la fin de bouche. Sèche, corps moyen.",
     "descEn": "Ebony colour, creamy tan head and roasted aromas. Coffee flavours from toasted grain; bitter orange, strong on the nose, lifts the finish. Dry, medium-bodied.",
-    "easybeerId": 16015, "easybeerImg": "1769615478694"
+    "easybeerId": 16015,
+    "easybeerImg": "1769615478694",
+    "formats": [
+      "33",
+      "keg"
+    ]
   },
   {
     "slug": "la-grimace",
@@ -87,6 +148,10 @@
     "abv": 3.8,
     "desc": "Notre bière acidulée, légère et vive.",
     "descEn": "Our sour beer: light and zingy.",
-    "easybeerId": 43627, "easybeerImg": "1769616048790"
+    "easybeerId": 43627,
+    "easybeerImg": "1769616048790",
+    "formats": [
+      "keg"
+    ]
   }
 ]

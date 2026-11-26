@@ -84,8 +84,9 @@ export const T = {
     beers: {
       title: 'Nos bières — La Canaulaise, brasserie artisanale de Lacanau',
       description: 'La gamme La Canaulaise : Pils Session, Blanche Witbier, Blonde Pale Ale, English IPA, Ouest Coast IPA, Saison, Triple, Stout Orange, La Grimace. Degrés, amertume, notes de dégustation.',
-      h1: 'Nos bières', intro: 'Toutes nos bières sont brassées à Lacanau, en bouteilles de 33 cl et en fûts. Retrouvez-les à la boutique, dans nos pubs et chez nos partenaires.',
+      h1: 'Nos bières', intro: 'Toutes nos bières sont brassées à Lacanau, en bouteilles de 33 cl et 75 cl et en fûts de 20 L. Retrouvez-les à la boutique, dans nos pubs et chez nos partenaires.',
       toShop: 'Acheter en ligne', toFind: 'Où les trouver', temp: '°C',
+      formats: 'Formats', fmt: { '33': '33 cl', '75': '75 cl', keg: 'Fût 20 L' },
     },
     shop: {
       title: 'Boutique — La Canaulaise, bières artisanales de Lacanau',
@@ -177,8 +178,9 @@ export const T = {
     beers: {
       title: 'Our beers — La Canaulaise, craft brewery in Lacanau',
       description: 'The La Canaulaise range: Pils Session, Blanche Witbier, Blonde Pale Ale, English IPA, Ouest Coast IPA, Saison, Triple, Stout Orange, La Grimace. Strength, bitterness and tasting notes.',
-      h1: 'Our beers', intro: 'All our beers are brewed in Lacanau, in 33 cl bottles and in kegs. Find them in the shop, in our pubs and at our partners.',
+      h1: 'Our beers', intro: 'All our beers are brewed in Lacanau, in 33 cl and 75 cl bottles and 20-litre kegs. Find them in the shop, in our pubs and at our partners.',
       toShop: 'Buy online', toFind: 'Where to find them', temp: '°C',
+      formats: 'Formats', fmt: { '33': '33 cl', '75': '75 cl', keg: '20 L keg' },
     },
     shop: {
       title: 'Shop — La Canaulaise craft beer from Lacanau',

@@ -39,6 +39,7 @@ const num = (n) => n.toLocaleString(t.locale);
             {b.temp && <span>{t.serve} {b.temp} °C</span>}
           </div>
           <p>{EN ? b.descEn : b.desc}</p>
+          <div class="formats"><span class="label">{p.formats}</span>{b.formats.map((f) => <span class={f === 'keg' ? 'fmt keg' : 'fmt'}>{p.fmt[f]}</span>)}</div>
         </article>
       ))}
     </div>

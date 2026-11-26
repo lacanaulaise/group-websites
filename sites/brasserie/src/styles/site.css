@@ -332,3 +332,8 @@ a.venue:hover strong { color: var(--brass); }
 .stockists strong { display: block; }
 .stockists span { font-size: 13px; color: var(--muted); }
 @media (max-width: 700px) { .facts { grid-template-columns: repeat(2, 1fr); } }
+.beer-card .formats { grid-column: 1 / -1; display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--line); }
+.beer-card .formats .label { margin-right: 4px; }
+.beer-card .fmt { font-size: 13px; border: 1px solid var(--green); color: var(--green); border-radius: 4px; padding: 3px 8px; }
+.beer-card .fmt.keg { border-color: var(--burgundy); color: var(--label); }
+.beer-card { grid-template-rows: auto auto auto 1fr auto; }
