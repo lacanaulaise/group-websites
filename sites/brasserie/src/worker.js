@@ -246,11 +246,22 @@ async function partners(request, env, ctx) {
   const head = (rows.shift() || []).map((h) => h.trim());
   const col = (n) => head.indexOf(n);
   const c = { name: col('Nom EasyBeer'), site: col('Nom site'), type: col('Type'), addr: col('Adresse'), cp: col('Code postal'),
-    city: col('Ville'), lat: col('Latitude'), lng: col('Longitude'), show: col('Afficher') };
+    city: col('Ville'), lat: col('Latitude'), lng: col('Longitude'), show: col('Afficher'), last: col('Dernière commande') };
   const num = (s) => { const n = parseFloat(String(s || '').replace(/\s/g, '').replace(',', '.')); return Number.isFinite(n) ? n : null; };
+  // A partner stays listed for 12 months after its last order (column "Dernière commande",
+  // yyyy-mm-dd or dd/mm/yyyy); rows are never deleted from the Sheet.
+  const cutoff = Date.now() - 365 * 86400000;
+  const date = (v) => {
+    const t = String(v || '').trim(); let m;
+    if ((m = t.match(/^(\d{4})-(\d{2})-(\d{2})/))) return Date.UTC(+m[1], m[2] - 1, +m[3]);
+    if ((m = t.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/))) return Date.UTC(+m[3], m[2] - 1, +m[1]);
+    return null;
+  };
   const list = [];
   for (const r of rows) {
     if ((r[c.show] || '').trim().toLowerCase() !== 'oui') continue;
+    const last = c.last >= 0 ? date(r[c.last]) : null;
+    if (last != null && last < cutoff) continue;
     const name = ((r[c.site] || '').trim() || (r[c.name] || '').trim());
     if (!name) continue;
     list.push({
