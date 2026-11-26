@@ -35,7 +35,7 @@ export const T = {
       draughtIntro: 'Nos bières La Canaulaise, brassées à Lacanau. Prix TTC.',
       half: '½ pinte', pint: 'Pinte', jug: 'Pichet 1,5 L', hhPint: 'Happy hour : pinte à',
       foodTitle: 'Craft Burgers', foodText: "Nos burgers faits maison et de quoi partager, pensés pour aller avec nos bières. La carte en ligne est la même qu'au comptoir, prix compris.",
-      kitchen: 'Cuisine :', fullMenu: 'Voir la carte complète', foodAlt: 'Beignets maison et frites sur une table en bois',
+      kitchen: 'Cuisine :', fullMenu: 'Voir la carte complète', foodAlt: 'Un burger maison tenu à deux mains',
       events: 'Événements', week: 'Cette semaine au pub', today: "Aujourd'hui", tonightShort: 'Ce soir',
       allDay: 'toute la journée', allDayShort: 'Journée', next: 'Prochain :',
       fallbackEvents: [
@@ -102,7 +102,7 @@ export const T = {
       draughtIntro: 'Our La Canaulaise beers, brewed in Lacanau. Prices include VAT.',
       half: '½ pint', pint: 'Pint', jug: 'Jug 1.5 L', hhPint: 'Happy hour: pint at',
       foodTitle: 'Craft Burgers', foodText: 'Our homemade burgers and sharing plates, made to go with our beers. The online menu is the same as at the bar, prices included.',
-      kitchen: 'Kitchen:', fullMenu: 'See the full menu', foodAlt: 'Homemade fritters and chips on a wooden table',
+      kitchen: 'Kitchen:', fullMenu: 'See the full menu', foodAlt: 'A homemade burger held in both hands',
       events: 'Events', week: 'This week at the pub', today: 'Today', tonightShort: 'Tonight',
       allDay: 'all day', allDayShort: 'All day', next: 'Next:',
       fallbackEvents: [
