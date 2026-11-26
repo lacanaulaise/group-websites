@@ -29,7 +29,7 @@ export default {
 // The Worker validates and hands the request to tools/form-relay.gs (kind "demande"), which
 // emails the team with Reply-To = the customer and logs it in the tab "Demandes brasserie".
 // Secrets (Cloudflare dashboard): FORM_RELAY_URL, FORM_RELAY_SECRET
-const DEMANDE_TO = 'info@lacanaulaise.fr';
+const DEMANDE_TO = 'benoit@lacanaulaise.fr';
 const DEMANDE_CC = ['james@lacanaulaise.fr', 'celine@lacanaulaise.fr'];
 const KINDS = {
   visite: { label: 'Visite de la brasserie', required: ['name', 'email', 'date', 'people'],
