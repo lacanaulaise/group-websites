@@ -57,6 +57,9 @@ const S = {
           <h1>{h.h1}</h1>
           <span class="hand">{h.since}</span>
           <p>{h.intro}</p>
+          <ul class="hero-tags">
+            {h.tags.map((tag) => <li><a href="#evenements">{tag}</a></li>)}
+          </ul>
           <div class="hero-actions">
             <a class="btn btn-brass" href={booking}>{h.bookTable}</a>
             <a class="btn btn-ghost" href={path(lang, '/carte')}>{h.seeMenu}</a>

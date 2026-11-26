@@ -225,3 +225,8 @@ a.event:hover h3 { color: var(--brass); }
 .agenda-tag { font-size: 11px; text-transform: uppercase; letter-spacing: .06em; color: #9fb3a6; }
 .agenda-tag.tag-quiz, .agenda-tag.tag-soiree, .agenda-tag.tag-tournoi { color: var(--brass-light); }
 .carte-note { font-size: 15px; color: var(--brass-light); margin: 0; }
+
+/* Hero: ce qu'on vient faire au pub */
+.hero-tags { list-style: none; margin: -4px 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
+.hero-tags a { display: inline-block; padding: 6px 14px; border: 1px solid var(--brass); border-radius: 999px; color: var(--brass); text-decoration: none; font-family: var(--subtitle); font-size: 12px; font-weight: 600; letter-spacing: .075em; text-transform: uppercase; }
+.hero-tags a:hover { background: var(--brass); color: var(--green-dark); }
