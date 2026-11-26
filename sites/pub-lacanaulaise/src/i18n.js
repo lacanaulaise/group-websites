@@ -24,7 +24,7 @@ export const T = {
     home: {
       title: 'Pub La Canaulaise — bières artisanales, concerts et grand jardin à Lacanau',
       description: "Le pub de la brasserie La Canaulaise, en plein centre de Lacanau : bières à la pression, tapas et burgers, concerts, terrasse et grand jardin avec pétanque.",
-      logoAlt: 'Pub La Canaulaise, Lacanau Océan',
+      logoAlt: 'Pub La Canaulaise',
       h1: 'Le pub de la brasserie, au cœur de Lacanau', since: 'depuis 2022',
       intro: 'Nos bières La Canaulaise à la pression, tapas et burgers maison, concerts toute l’année, une terrasse et un grand jardin avec pétanque et fléchettes.',
       bookTable: 'Réserver une table', seeMenu: 'Voir la carte', privatise: 'Privatiser le pub',
@@ -91,7 +91,7 @@ export const T = {
     home: {
       title: 'Pub La Canaulaise — craft beer, live music and a big garden in Lacanau',
       description: 'The La Canaulaise brewery pub, in the centre of Lacanau: beer on tap, tapas and burgers, live music, a terrace and a big garden with pétanque.',
-      logoAlt: 'Pub La Canaulaise, Lacanau Océan',
+      logoAlt: 'Pub La Canaulaise',
       h1: 'The brewery pub in the heart of Lacanau', since: 'since 2022',
       intro: 'Our La Canaulaise beers on tap, homemade tapas and burgers, live music all year round, a terrace and a big garden with pétanque and darts.',
       bookTable: 'Book a table', seeMenu: 'See the menu', privatise: 'Hire the pub',
