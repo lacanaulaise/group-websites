@@ -14,7 +14,7 @@ export const PAGES = {
 export const T = {
   fr: {
     htmlLang: 'fr', locale: 'fr-FR', other: 'en', otherLabel: 'EN', otherAria: 'English version',
-    nav: { tonight: 'Ce soir', draught: 'À la pression', menu: 'La carte', events: 'Événements', private: 'Privatisation', info: 'Infos', book: 'Réserver' },
+    nav: { tonight: 'Ce soir', draught: 'À la pression', menu: 'La carte', events: 'Événements', private: 'Privatisation', gallery: 'Galerie', info: 'Infos', book: 'Réserver' },
     footer: {
       house: "Une maison Les Brasseurs de l'Océan",
       sisters: ['La Canaulaise, la brasserie', 'The Golden Apple, Bordeaux', "L'Australien, Hourtin-Plage", 'Buvette de la Gaîté'],
@@ -77,11 +77,33 @@ export const T = {
       send: 'Envoyer la demande', sending: 'Envoi en cours…', ok: 'Merci ! Votre demande est bien partie, nous revenons vers vous rapidement.',
       fail: "L'envoi n'a pas fonctionné. Écrivez-nous à info@lacanaulaise.fr ou appelez le 05 40 43 00 16.",
     },
+    gallery: {
+      title: 'Galerie photos — Pub La Canaulaise, Lacanau',
+      description: 'Le bar, la salle, la terrasse couverte et le grand jardin du Pub La Canaulaise, les concerts et les soirées d’été, en photos.',
+      label: 'Galerie',
+      h1: 'Le pub en photos',
+      intro: 'Le bar, la salle, la terrasse couverte et le grand jardin, les soirs de concert et les tablées entre amis.',
+      all: 'Tout',
+      cats: { lieu: 'Le lieu', concerts: 'Concerts', ambiance: 'Ambiance', table: 'À table', privat: 'Privatisations' },
+      close: 'Fermer', prev: 'Photo précédente', next: 'Photo suivante', open: 'Agrandir la photo',
+      privCta: 'Privatiser le pub',
+    },
+    place: {
+      title: 'Le lieu',
+      text: 'Un bar, une salle, une terrasse couverte et un grand jardin : il y a toujours une place pour vous.',
+      more: 'Voir la galerie',
+      spaces: [
+        { name: 'Le bar', slug: 'bar' },
+        { name: 'La salle', slug: 'salle' },
+        { name: 'La terrasse couverte', slug: 'terrasse-couverte' },
+        { name: 'Le jardin', slug: 'jardin-soiree' },
+      ],
+    },
   },
 
   en: {
     htmlLang: 'en', locale: 'en-GB', other: 'fr', otherLabel: 'FR', otherAria: 'Version française',
-    nav: { tonight: 'Tonight', draught: 'On tap', menu: 'Menu', events: 'Events', private: 'Private hire', info: 'Visit', book: 'Book' },
+    nav: { tonight: 'Tonight', draught: 'On tap', menu: 'Menu', events: 'Events', private: 'Private hire', gallery: 'Gallery', info: 'Visit', book: 'Book' },
     footer: {
       house: "A Les Brasseurs de l'Océan house",
       sisters: ['La Canaulaise, the brewery', 'The Golden Apple, Bordeaux', "L'Australien, Hourtin-Plage", 'Buvette de la Gaîté'],
@@ -148,6 +170,28 @@ export const T = {
       message: 'Your message', messagePh: 'Times, drinks package, food, music…', hp: 'Leave empty',
       send: 'Send request', sending: 'Sending…', ok: "Thanks! Your request has been sent, we'll be in touch shortly.",
       fail: "Sending didn't work. Email us at info@lacanaulaise.fr or call +33 5 40 43 00 16.",
+    },
+    gallery: {
+      title: 'Photo gallery — Pub La Canaulaise, Lacanau',
+      description: 'The bar, the room, the covered terrace and the big garden at Pub La Canaulaise, live music and summer evenings, in pictures.',
+      label: 'Gallery',
+      h1: 'The pub in pictures',
+      intro: 'The bar, the room, the covered terrace and the big garden, gig nights and long tables with friends.',
+      all: 'All',
+      cats: { lieu: 'The place', concerts: 'Live music', ambiance: 'Atmosphere', table: 'Food', privat: 'Private events' },
+      close: 'Close', prev: 'Previous photo', next: 'Next photo', open: 'Enlarge photo',
+      privCta: 'Hire the pub',
+    },
+    place: {
+      title: 'The place',
+      text: 'A bar, a room, a covered terrace and a big garden: there is always a spot for you.',
+      more: 'See the gallery',
+      spaces: [
+        { name: 'The bar', slug: 'bar' },
+        { name: 'The room', slug: 'salle' },
+        { name: 'The covered terrace', slug: 'terrasse-couverte' },
+        { name: 'The garden', slug: 'jardin-soiree' },
+      ],
     },
   },
 };

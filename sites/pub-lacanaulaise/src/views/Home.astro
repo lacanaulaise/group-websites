@@ -2,6 +2,7 @@
 import Base from '../layouts/Base.astro';
 import site from '../data/site.json';
 import beers from '../data/beers.json';
+import galleryPhotos from '../data/gallery.json';
 import { T, path } from '../i18n.js';
 
 interface Props { lang: 'fr' | 'en'; }
@@ -135,6 +136,29 @@ const S = {
           <a class="btn btn-green" href={path(lang, '/privatisation')}>{h.gardenCta}</a>
         </div>
         <img class="food-photo" src="/img/photos/garden.webp" alt={h.gardenAlt} width="1000" height="800" loading="lazy" />
+      </div>
+    </section>
+
+    <section id="lieu" class="section">
+      <div class="wrap">
+        <div class="section-head">
+          <div>
+            <h2>{T[lang].place.title}</h2>
+            <p>{T[lang].place.text}</p>
+          </div>
+          <a class="btn btn-green" href={path(lang, '/galerie')}>{T[lang].place.more}</a>
+        </div>
+        <div class="place-grid">
+          {T[lang].place.spaces.map((sp) => {
+            const ph = galleryPhotos.find((g) => g.slug === sp.slug);
+            return (
+              <a class="place-card" href={path(lang, '/galerie') + '#lieu'}>
+                <img src={`/img/gallery/${sp.slug}-sm.webp`} alt={lang === 'en' ? ph.altEn : ph.alt} width={ph.tw} height={ph.th} loading="lazy" />
+                <span>{sp.name}</span>
+              </a>
+            );
+          })}
+        </div>
       </div>
     </section>
 

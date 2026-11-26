@@ -1,0 +1,101 @@
+---
+import Base from '../layouts/Base.astro';
+import photos from '../data/gallery.json';
+import { T, path } from '../i18n.js';
+
+interface Props { lang: 'fr' | 'en'; }
+const { lang } = Astro.props;
+const g = T[lang].gallery;
+const en = lang === 'en';
+const cats = Object.keys(g.cats);
+const items = photos.map((p) => ({ ...p, label: en ? p.altEn : p.alt }));
+const S = { close: g.close, prev: g.prev, next: g.next };
+---
+<Base title={g.title} description={g.description} lang={lang} page="/galerie">
+  <section class="hero hero-slim">
+    <div class="wrap">
+      <div class="hero-text">
+        <span class="label" style="color: var(--brass)">{g.label}</span>
+        <h1>{g.h1}</h1>
+        <p>{g.intro}</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap">
+      <div class="gal-filters" role="group" aria-label={g.label}>
+        <button type="button" class="chip is-on" data-cat="all" aria-pressed="true">{g.all}</button>
+        {cats.map((c) => <button type="button" class="chip" data-cat={c} aria-pressed="false">{g.cats[c]}</button>)}
+      </div>
+
+      <div class="gal-grid" id="gal-grid">
+        {items.map((p, i) => (
+          <a class="gal-item" id={p.slug} href={`/img/gallery/${p.slug}.webp`} data-cat={p.cat} data-i={i} data-w={p.w} data-h={p.h} aria-label={`${g.open} : ${p.label}`}>
+            <img src={`/img/gallery/${p.slug}-sm.webp`} alt={p.label} width={p.tw} height={p.th} loading={i < 8 ? 'eager' : 'lazy'} decoding="async" />
+          </a>
+        ))}
+      </div>
+
+      <p style="margin-top: 32px"><a class="btn btn-green" href={path(lang, '/privatisation')}>{g.privCta}</a></p>
+    </div>
+  </section>
+
+  <dialog class="lightbox" id="lightbox" aria-label={g.label}>
+    <figure>
+      <img id="lb-img" alt="" />
+      <figcaption id="lb-cap"></figcaption>
+    </figure>
+    <button type="button" class="lb-btn lb-close" id="lb-close" aria-label={g.close}>×</button>
+    <button type="button" class="lb-btn lb-prev" id="lb-prev" aria-label={g.prev}>‹</button>
+    <button type="button" class="lb-btn lb-next" id="lb-next" aria-label={g.next}>›</button>
+  </dialog>
+
+  <script is:inline slot="scripts" define:vars={{ S }}>
+    (function () {
+      var grid = document.getElementById('gal-grid');
+      var items = Array.prototype.slice.call(grid.querySelectorAll('.gal-item'));
+      var chips = Array.prototype.slice.call(document.querySelectorAll('.gal-filters .chip'));
+      var dlg = document.getElementById('lightbox');
+      var img = document.getElementById('lb-img');
+      var cap = document.getElementById('lb-cap');
+      var current = 0;
+
+      function visible() { return items.filter(function (a) { return !a.hidden; }); }
+
+      function setCat(cat) {
+        chips.forEach(function (c) { var on = c.dataset.cat === cat; c.classList.toggle('is-on', on); c.setAttribute('aria-pressed', on ? 'true' : 'false'); });
+        items.forEach(function (a) { a.hidden = !(cat === 'all' || a.dataset.cat === cat); });
+      }
+      chips.forEach(function (c) { c.addEventListener('click', function () { setCat(c.dataset.cat); }); });
+
+      function show(a) {
+        var list = visible(); current = list.indexOf(a);
+        var t = a.querySelector('img');
+        img.src = a.getAttribute('href'); img.alt = t.alt;
+        img.width = +a.dataset.w; img.height = +a.dataset.h;
+        cap.textContent = t.alt;
+      }
+      function step(d) { var list = visible(); if (!list.length) return; show(list[(current + d + list.length) % list.length]); }
+
+      items.forEach(function (a) {
+        a.addEventListener('click', function (e) {
+          if (!dlg.showModal) return; // very old browsers: follow the link to the photo
+          e.preventDefault(); show(a); dlg.showModal();
+        });
+      });
+      document.getElementById('lb-close').addEventListener('click', function () { dlg.close(); });
+      document.getElementById('lb-prev').addEventListener('click', function () { step(-1); });
+      document.getElementById('lb-next').addEventListener('click', function () { step(1); });
+      dlg.addEventListener('click', function (e) { if (e.target === dlg) dlg.close(); });
+      dlg.addEventListener('keydown', function (e) { if (e.key === 'ArrowLeft') step(-1); if (e.key === 'ArrowRight') step(1); });
+      var x0 = null;
+      dlg.addEventListener('touchstart', function (e) { x0 = e.touches[0].clientX; }, { passive: true });
+      dlg.addEventListener('touchend', function (e) { if (x0 === null) return; var dx = e.changedTouches[0].clientX - x0; if (Math.abs(dx) > 40) step(dx < 0 ? 1 : -1); x0 = null; });
+
+      // open a category from the URL, e.g. /galerie#privat
+      var h = location.hash.slice(1);
+      if (h && chips.some(function (c) { return c.dataset.cat === h; })) setCat(h);
+    })();
+  </script>
+</Base>

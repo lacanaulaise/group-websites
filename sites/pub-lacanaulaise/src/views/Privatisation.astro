@@ -2,7 +2,7 @@
 import Base from '../layouts/Base.astro';
 import site from '../data/site.json';
 import privData from '../data/privatisation.json';
-import { T } from '../i18n.js';
+import { T, path } from '../i18n.js';
 
 interface Props { lang: 'fr' | 'en'; }
 const { lang } = Astro.props;
@@ -39,6 +39,7 @@ const S = { sending: p.sending, ok: p.ok, fail: p.fail };
           </article>
         ))}
       </div>
+      <p style="margin-top: 20px"><a class="btn btn-green" href={path(lang, '/galerie') + '#privat'}>{lang === 'en' ? 'See photos of past events' : 'Voir les photos d’événements'}</a></p>
     </div>
   </section>
 
