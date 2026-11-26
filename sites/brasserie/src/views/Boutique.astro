@@ -20,7 +20,7 @@ const pic = (x) => {
   if (x.img === 'beer') { const b = beers[2]; return { src: `/api/beer-img/${b.easybeerId}?u=${b.easybeerImg}`, cls: 'round' }; }
   if (x.img && x.img.startsWith('beer:')) { const [, id, u] = x.img.split(':'); return { src: `/api/beer-img/${id}?u=${u}`, cls: 'round' }; }
   if (x.img) return { src: x.img, cls: '' };
-  return { src: '/img/mark.png', cls: 'mark' };
+  return { src: '/img/mark.svg', cls: 'mark' };
 };
 const anyFallback = products.some((x) => !x.stripe && !x.link);
 ---

@@ -30,7 +30,7 @@ const otherHref = path(t.other, page);
 <body>
   <header class="site-header">
     <div class="wrap">
-      <a class="brand" href={home}><img src="/img/mark.png" alt="" width="28" height="34" /><span class="hand">la Canaulaise</span></a>
+      <a class="brand" href={home} aria-label="La Canaulaise"><img src="/img/mark.svg" alt="" width="26" height="35" /><img class="wordmark" src="/img/wordmark.svg" alt="La Canaulaise" width="140" height="30" /></a>
       <nav class="site-nav" aria-label={lang === 'en' ? 'Main navigation' : 'Navigation principale'}>
         <a href={path(lang, '/bieres')} aria-current={page === '/bieres' ? 'page' : undefined}>{t.nav.beers}</a>
         <a href={path(lang, '/visites')} aria-current={page === '/visites' ? 'page' : undefined}>{t.nav.visits}</a>
