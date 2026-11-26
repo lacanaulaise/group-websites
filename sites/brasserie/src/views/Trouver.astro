@@ -1,7 +1,6 @@
 ---
 import Base from '../layouts/Base.astro';
 import site from '../data/site.json';
-import stockists from '../data/stockists.json';
 import { T, path } from '../i18n.js';
 
 interface Props { lang: 'fr' | 'en'; }
@@ -9,7 +8,7 @@ const { lang } = Astro.props;
 const t = T[lang];
 const p = t.find;
 const EN = lang === 'en';
-const types = Object.keys(p.types).filter((k) => stockists.list.some((s) => s.type === k));
+const S = { types: p.types, all: p.all, count: p.count, directions: p.directions, locale: t.locale };
 ---
 <Base page="/ou-nous-trouver" lang={lang} title={p.title} description={p.description}>
   <section class="page-hero">
@@ -46,19 +45,77 @@ const types = Object.keys(p.types).filter((k) => stockists.list.some((s) => s.ty
     </div>
   </section>
 
-  <section class="section" style="padding-top: 0">
+  <section class="section" style="padding-top: 0" id="partenaires">
     <div class="wrap">
-      <div class="section-head"><h2>{p.partnersTitle}</h2></div>
-      {types.length ? types.map((k) => (
-        <>
-          <h3 style="margin: 24px 0 8px">{p.types[k]}</h3>
-          <ul class="stockists">
-            {stockists.list.filter((s) => s.type === k).map((s) => <li><strong>{s.name}</strong><span>{s.city}</span></li>)}
-          </ul>
-        </>
-      )) : (
-        <p class="lead">{p.partnersSoon} <a href={path(lang, '/pros')}>{p.becomePartner}</a></p>
-      )}
+      <div class="section-head">
+        <div>
+          <h2>{p.partnersTitle}</h2>
+          <p>{p.partnersIntro}</p>
+        </div>
+        <a href={path(lang, '/pros')}>{p.becomePartner}</a>
+      </div>
+      <div class="filters" id="filters" role="group" aria-label={p.partnersTitle}></div>
+      <div class="map partners-map" id="pmap">
+        <img src="/img/photos/map-bg.webp" alt="" class="map-bg" loading="lazy" />
+        <div class="map-cta">
+          <button type="button" id="pmap-load">{p.showMap}</button>
+          <small>{p.mapNote}</small>
+        </div>
+      </div>
+      <div class="partners" id="plist"><p class="lead">{p.partnersSoon} <a href={path(lang, '/pros')}>{p.becomePartner}</a></p></div>
     </div>
   </section>
+
+  <script is:inline slot="scripts" define:vars={{ S }}>
+    let all = [], current = '', map = null, layer = null;
+    const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+    const shown = () => all.filter((x) => !current || x.type === current);
+    function renderList() {
+      const box = document.getElementById('plist');
+      const byCity = new Map();
+      for (const x of shown()) { if (!byCity.has(x.city)) byCity.set(x.city, []); byCity.get(x.city).push(x); }
+      box.innerHTML = [...byCity].map(([city, xs]) =>
+        '<div class="city"><h3>' + esc(city) + ' <span>' + xs.length + '</span></h3><ul>' +
+        xs.map((x) => '<li><strong>' + esc(x.name) + '</strong><span>' + esc(S.types[x.type] || '') +
+          (x.address ? ' · ' + esc(x.address) : '') + '</span></li>').join('') + '</ul></div>').join('');
+      if (map) drawMarkers();
+    }
+    function renderFilters() {
+      const f = document.getElementById('filters');
+      const counts = {}; all.forEach((x) => { counts[x.type] = (counts[x.type] || 0) + 1; });
+      const opts = [['', S.all + ' (' + all.length + ')']].concat(Object.keys(S.types).filter((k) => counts[k]).map((k) => [k, S.types[k] + ' (' + counts[k] + ')']));
+      f.innerHTML = opts.map(([k, l]) => '<button type="button" data-t="' + k + '" aria-pressed="' + (k === current) + '">' + esc(l) + '</button>').join('');
+      f.querySelectorAll('button').forEach((b) => b.addEventListener('click', () => { current = b.dataset.t; renderFilters(); renderList(); }));
+    }
+    const COLORS = { bar: '#f0674e', cave: '#2b2747', camping: '#2f9e8f', gms: '#d9a400' };
+    function drawMarkers() {
+      layer.clearLayers();
+      const pts = [];
+      for (const x of shown()) {
+        if (x.lat == null || x.lng == null) continue;
+        pts.push([x.lat, x.lng]);
+        const url = 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(x.name + ', ' + (x.address ? x.address + ', ' : '') + x.cp + ' ' + x.city);
+        L.circleMarker([x.lat, x.lng], { radius: 7, weight: 2, color: '#fff', fillColor: COLORS[x.type] || '#f0674e', fillOpacity: 1 })
+          .bindPopup('<strong>' + esc(x.name) + '</strong><br>' + esc(x.address || '') + '<br>' + esc(x.cp + ' ' + x.city) + '<br><a href="' + url + '" target="_blank" rel="noopener">' + esc(S.directions) + '</a>')
+          .addTo(layer);
+      }
+      if (pts.length) map.fitBounds(pts, { padding: [24, 24], maxZoom: 13 });
+    }
+    document.getElementById('pmap-load').addEventListener('click', () => {
+      const css = document.createElement('link'); css.rel = 'stylesheet'; css.href = '/vendor/leaflet/leaflet.css'; document.head.appendChild(css);
+      const js = document.createElement('script'); js.src = '/vendor/leaflet/leaflet.js';
+      js.onload = () => {
+        const box = document.getElementById('pmap'); box.innerHTML = '<div id="pmap-canvas"></div>';
+        map = L.map('pmap-canvas', { scrollWheelZoom: false }).setView([45.0, -1.1], 9);
+        L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 18, attribution: '&copy; OpenStreetMap' }).addTo(map);
+        layer = L.layerGroup().addTo(map);
+        drawMarkers();
+      };
+      document.head.appendChild(js);
+    });
+    fetch('/api/partners').then((r) => r.ok ? r.json() : null).then((d) => {
+      if (!d || !d.partners || !d.partners.length) return;
+      all = d.partners; renderFilters(); renderList();
+    }).catch(() => {});
+  </script>
 </Base>

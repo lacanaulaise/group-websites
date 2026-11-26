@@ -10,7 +10,9 @@
   //   META_TOKEN (same Facebook user token as the pub, for the @biere.lacanaulaise Instagram feed).
   "vars": {
     // @biere.lacanaulaise, linked to the Facebook Page
-    "IG_USER_ID": "17841414626793223"
+    "IG_USER_ID": "17841414626793223",
+    // Tab PARTENAIRES of "Carte site web" (stockists from EasyBeer; Afficher / Nom site set by James)
+    "PARTNERS_CSV_URL": "https://docs.google.com/spreadsheets/d/e/2PACX-1vRRO1Z3SSvCM-4lIhzsdQXXCctkZupkQyUnrP6VwTyesFzqKSC5zBCF8DbWGAXPZXonURsmIVvRzE_-/pub?gid=1047531972&single=true&output=csv"
   },
   "assets": {
     "directory": "./dist",

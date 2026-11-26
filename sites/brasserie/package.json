@@ -12,7 +12,8 @@
     "@fontsource/bebas-neue": "^5.3.0",
     "@fontsource/roboto": "^5.3.0",
     "@fontsource/satisfy": "^5.3.0",
-    "astro": "^7.4.13"
+    "astro": "^7.4.13",
+    "leaflet": "^1.9.4"
   },
   "devDependencies": {
     "wrangler": "^4.168.0"

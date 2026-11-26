@@ -337,3 +337,18 @@ a.venue:hover strong { color: var(--brass); }
 .beer-card .fmt { font-size: 13px; border: 1px solid var(--green); color: var(--green); border-radius: 4px; padding: 3px 8px; }
 .beer-card .fmt.keg { border-color: var(--burgundy); color: var(--label); }
 .beer-card { grid-template-rows: auto auto auto 1fr auto; }
+.filters { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+.filters:empty { display: none; }
+.filters button { font: inherit; font-size: 14px; padding: 8px 14px; border-radius: 20px; border: 1px solid var(--green); background: #fff; color: var(--green); cursor: pointer; }
+.filters button[aria-pressed="true"] { background: var(--green); color: var(--cream); }
+.partners-map { min-height: 420px; margin-bottom: 28px; }
+#pmap-canvas { width: 100%; height: 460px; }
+.partners { columns: 3 280px; column-gap: 32px; }
+.partners .lead { column-span: all; }
+.partners .city { break-inside: avoid; margin-bottom: 24px; }
+.partners h3 { font-size: 22px; border-bottom: 2px solid var(--brass); padding-bottom: 4px; margin-bottom: 6px; }
+.partners h3 span { font-family: var(--body); font-size: 13px; color: var(--muted); }
+.partners ul { list-style: none; margin: 0; padding: 0; }
+.partners li { padding: 6px 0; border-bottom: 1px solid var(--line); font-size: 15px; }
+.partners li strong { display: block; font-weight: 600; }
+.partners li span { font-size: 13px; color: var(--muted); }

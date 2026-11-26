@@ -1,6 +1,7 @@
 // La Canaulaise brewery Worker: serves the static site, plus small JSON endpoints under /api/.
 // /api/demande   — visit booking, event quote, trade enquiry, shop order → Apps Script relay (email + Sheet)
 // /api/newsletter — sign-ups, logged by the same relay until Brevo
+// /api/partners   — stockists from the PARTENAIRES tab of "Carte site web" (Afficher = oui)
 // /api/instagram  — latest @biere.lacanaulaise posts (images re-served from /api/ig-img/<id>)
 // /api/beer-img/<id>?u=<uid> — EasyBeer label images, cached 30 days
 
@@ -15,6 +16,7 @@ export default {
     const url = new URL(request.url);
     if (url.pathname === '/api/demande' && request.method === 'POST') return demande(request, env);
     if (url.pathname === '/api/newsletter' && request.method === 'POST') return newsletter(request, env);
+    if (url.pathname === '/api/partners') return partners(request, env, ctx);
     if (url.pathname === '/api/instagram') return instagram(request, env, ctx);
     if (url.pathname.startsWith('/api/ig-img/')) return instagramImage(request, env, ctx, url.pathname.slice(12));
     if (url.pathname.startsWith('/api/beer-img/')) return beerImage(request, ctx, url.pathname.slice(14));
@@ -219,4 +221,65 @@ async function refreshInstagramToken(env) {
     await env.STATE.put('ig_login_token', d.access_token);
     await env.STATE.put('ig_login_token_refreshed', new Date().toISOString());
   }
+}
+
+// --- Partners (stockists) -------------------------------------------------------
+// Tab PARTENAIRES of "Carte site web", published as CSV (PARTNERS_CSV_URL). Rows come from
+// EasyBeer (customers who ordered in the last 12 months); James's columns K–M (Nom site,
+// Afficher, Note) decide what is shown. Cached 1 hour, last good copy kept 30 days.
+const PARTNERS_TTL_SECONDS = 60 * 60;
+
+async function partners(request, env, ctx) {
+  const cache = caches.default;
+  const cacheKey = new Request(new URL('/api/partners?v=1', request.url).toString());
+  const cached = await cache.match(cacheKey);
+  if (cached) return cached;
+  if (!env.PARTNERS_CSV_URL) return json({ error: 'PARTNERS_CSV_URL is not set' }, 500);
+  const lastKey = new Request(new URL('/api/partners-last?v=1', request.url).toString());
+  const res = await fetch(env.PARTNERS_CSV_URL, { redirect: 'follow' });
+  if (!res.ok) {
+    const last = await cache.match(lastKey);
+    if (last) return new Response(last.body, { headers: { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'public, max-age=300' } });
+    return json({ error: 'partners sheet unavailable', status: res.status }, 502);
+  }
+  const rows = parseCsv(await res.text());
+  const head = (rows.shift() || []).map((h) => h.trim());
+  const col = (n) => head.indexOf(n);
+  const c = { name: col('Nom EasyBeer'), site: col('Nom site'), type: col('Type'), addr: col('Adresse'), cp: col('Code postal'),
+    city: col('Ville'), lat: col('Latitude'), lng: col('Longitude'), show: col('Afficher') };
+  const num = (s) => { const n = parseFloat(String(s || '').replace(/\s/g, '').replace(',', '.')); return Number.isFinite(n) ? n : null; };
+  const list = [];
+  for (const r of rows) {
+    if ((r[c.show] || '').trim().toLowerCase() !== 'oui') continue;
+    const name = ((r[c.site] || '').trim() || (r[c.name] || '').trim());
+    if (!name) continue;
+    list.push({
+      name, type: (r[c.type] || '').trim(), address: (r[c.addr] || '').trim(), cp: (r[c.cp] || '').trim(),
+      city: (r[c.city] || '').trim(), lat: num(r[c.lat]), lng: num(r[c.lng]),
+    }); // column Note is internal and never published
+  }
+  // Lacanau (home) first, then towns alphabetically.
+  const home = (x) => (/^lacanau/i.test(x.city) ? 0 : 1);
+  list.sort((a, b) => home(a) - home(b) || a.city.localeCompare(b.city, 'fr') || a.name.localeCompare(b.name, 'fr'));
+  const body = JSON.stringify({ fetchedAt: new Date().toISOString(), partners: list });
+  const response = new Response(body, { headers: { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': `public, max-age=${PARTNERS_TTL_SECONDS}` } });
+  ctx.waitUntil(cache.put(cacheKey, response.clone()));
+  ctx.waitUntil(cache.put(lastKey, new Response(body, { headers: { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'public, max-age=2592000' } })));
+  return response;
+}
+
+function parseCsv(text) {
+  const rows = []; let row = []; let field = ''; let q = false;
+  for (let i = 0; i < text.length; i++) {
+    const ch = text[i];
+    if (q) {
+      if (ch === '"') { if (text[i + 1] === '"') { field += '"'; i++; } else q = false; }
+      else field += ch;
+    } else if (ch === '"') q = true;
+    else if (ch === ',') { row.push(field); field = ''; }
+    else if (ch === '\n') { row.push(field); rows.push(row); row = []; field = ''; }
+    else if (ch !== '\r') field += ch;
+  }
+  if (field !== '' || row.length) { row.push(field); rows.push(row); }
+  return rows;
 }
