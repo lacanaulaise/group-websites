@@ -10,5 +10,11 @@
   "email": "info@lacanaulaise.fr",
   "publisher": "James Anderson, Président",
   "host": "Cloudflare, Inc., 101 Townsend Street, San Francisco, CA 94107, États-Unis — cloudflare.com",
-  "retentionRequests": "3 ans après notre dernier échange"
+  "retentionRequests": "3 ans après notre dernier échange",
+  "mediator": {
+    "name": "CM2C — Centre de la Médiation de la Consommation de Conciliateurs de Justice",
+    "address": "49 rue de Ponthieu, 75008 Paris",
+    "url": "https://www.cm2c.net",
+    "email": "secretariat@cm2c.net"
+  }
 }

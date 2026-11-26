@@ -24,6 +24,9 @@ import legal from '../data/legal.json';
         Téléphone : <a href={`tel:${site.phoneIntl}`}>{site.phone}</a> · E-mail : <a href={`mailto:${site.email}`}>{site.email}</a>
       </p>
 
+      <h2>Médiation de la consommation</h2>
+      <p>Conformément aux articles L612-1 et suivants du Code de la consommation, en cas de litige non résolu directement avec nous, vous pouvez recourir gratuitement au médiateur de la consommation dont nous relevons : {legal.mediator.name}, {legal.mediator.address}, <a href={legal.mediator.url} target="_blank" rel="noopener">{legal.mediator.url.replace('https://', '')}</a>. La saisine se fait en ligne sur ce site ou par courrier, après une réclamation écrite adressée à {legal.company} (<a href={`mailto:${legal.email}`}>{legal.email}</a>) restée sans réponse satisfaisante.</p>
+
       <h2>Hébergement</h2>
       <p>{legal.host}</p>
 

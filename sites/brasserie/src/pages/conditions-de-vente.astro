@@ -8,7 +8,6 @@ import legal from '../data/legal.json';
   <section class="section">
     <div class="wrap legal">
       <h1>Conditions générales de vente</h1>
-      <p><em>Version à valider avant l'ouverture du paiement en ligne.</em></p>
 
       <h2>1. Vendeur</h2>
       <p>{legal.company}, {legal.form} au capital de {legal.capital}, {legal.rcs}, SIRET {legal.siret}, TVA {legal.vat}. Siège : {legal.address}. Contact : <a href={`mailto:${site.email}`}>{site.email}</a>, {site.phone}.</p>
@@ -35,7 +34,7 @@ import legal from '../data/legal.json';
       <p>Toute réclamation peut être adressée à <a href={`mailto:${site.email}`}>{site.email}</a>. Les produits bénéficient des garanties légales de conformité (articles L217-3 et suivants du Code de la consommation) et des vices cachés (articles 1641 et suivants du Code civil).</p>
 
       <h2>9. Médiation et litiges</h2>
-      <p>En cas de litige, l'acheteur peut recourir gratuitement à un médiateur de la consommation. Coordonnées du médiateur : <em>à compléter</em>. Les présentes conditions sont soumises au droit français.</p>
+      <p>En cas de litige, l'acheteur adresse d'abord une réclamation écrite à {legal.company} (<a href={`mailto:${site.email}`}>{site.email}</a>). À défaut de solution amiable, il peut recourir gratuitement, conformément aux articles L612-1 et suivants du Code de la consommation, au médiateur de la consommation dont nous relevons : {legal.mediator.name}, {legal.mediator.address}, <a href={legal.mediator.url} target="_blank" rel="noopener">{legal.mediator.url.replace('https://', '')}</a> (saisine en ligne ou par courrier, dans un délai d'un an à compter de la réclamation écrite). Les présentes conditions sont soumises au droit français.</p>
     </div>
   </section>
 </Base>
