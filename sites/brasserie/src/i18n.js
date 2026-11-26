@@ -62,7 +62,7 @@ export const T = {
       h1: 'Bières artisanales brassées à Lacanau', since: 'depuis 2018',
       intro: "Nous brassons à Lacanau, en petites séries, des bières locales pour la fraîcheur et la qualité : blondes, blanche, ambrée, IPA, saison, stout. Des recettes authentiques, accessibles et équilibrées, à boire près de chez vous.",
       ctaShop: 'La boutique', ctaBeers: 'Découvrir nos bières', ctaVisit: 'Visiter la brasserie',
-      heroAlt: 'Un brasseur nettoie la cuve d’empâtage de la brasserie',
+      heroAlt: 'La salle de brassage de la brasserie La Canaulaise à Lacanau',
       rangeTitle: 'La gamme', rangeIntro: 'Nos bières à l’année, et des éphémères au fil des saisons.', rangeAll: 'Toute la gamme →',
       tiles: [
         { key: 'shop', title: 'Boutique', text: 'Packs de 12 et 24, coffrets, affiches et tee-shirts. Paiement en ligne, retrait à Lacanau.', img: '/img/photos/sixpack-card.webp', alt: 'Un pack de six bouteilles La Canaulaise', href: '/boutique' },
@@ -159,7 +159,7 @@ export const T = {
       h1: 'Craft beer brewed in Lacanau', since: 'since 2018',
       intro: 'We brew local beer in small batches in Lacanau, for freshness and quality: blondes, a wheat beer, an amber, IPAs, a saison and a stout. Honest, easy-drinking, balanced recipes, brewed close to home.',
       ctaShop: 'Shop', ctaBeers: 'Discover our beers', ctaVisit: 'Visit the brewery',
-      heroAlt: 'A brewer cleaning the mash tun at the brewery',
+      heroAlt: 'The brewhouse at La Canaulaise brewery in Lacanau',
       rangeTitle: 'The range', rangeIntro: 'Our year-round beers, plus seasonal specials.', rangeAll: 'See all our beers →',
       tiles: [
         { key: 'shop', title: 'Shop', text: '12 and 24-bottle packs, gift packs, posters and T-shirts. Pay online, collect in Lacanau.', img: '/img/photos/sixpack-card.webp', alt: 'A six-pack of La Canaulaise bottles', href: '/boutique' },
