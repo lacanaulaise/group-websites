@@ -53,7 +53,7 @@ h1, h2, h3 { text-wrap: balance; }
 .hero { background: var(--green); color: var(--cream); }
 .hero .wrap { display: flex; flex-wrap: wrap; align-items: center; gap: 40px 56px; padding-top: 56px; padding-bottom: 56px; }
 .hero-text { flex: 1 1 420px; display: flex; flex-direction: column; gap: 18px; align-items: flex-start; }
-.hero-text img.hero-logo { width: min(440px, 100%); height: auto; }
+.hero-text img.hero-logo { width: 200px; height: auto; }
 .hero h1 { color: var(--cream); font-size: clamp(32px, 4.2vw, 54px); line-height: 1.1; }
 .hero p { margin: 0; font-size: 18px; line-height: 1.6; max-width: 520px; color: #ddd5c0; }
 .hero .hand { font-size: 32px; color: var(--brass); margin-top: -6px; }
@@ -154,6 +154,7 @@ h1, h2, h3 { text-wrap: balance; }
 
 @media (max-width: 640px) {
   .brand img { width: 160px; }
+  .hero-text img.hero-logo { width: 160px; }
   .site-header { position: static; }
   .section { padding: 56px 0; }
   .hero .wrap { padding-top: 48px; padding-bottom: 48px; }
