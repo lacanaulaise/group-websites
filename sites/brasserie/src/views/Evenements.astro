@@ -1,0 +1,56 @@
+---
+import Base from '../layouts/Base.astro';
+import { T } from '../i18n.js';
+
+interface Props { lang: 'fr' | 'en'; }
+const { lang } = Astro.props;
+const t = T[lang];
+const e = t.events;
+const f = t.form;
+---
+<Base page="/evenements" lang={lang} title={e.title} description={e.description}>
+  <section class="page-hero">
+    <div class="wrap">
+      <div class="text">
+        <span class="label">Gironde</span>
+        <h1>{e.h1}</h1>
+        <p>{e.intro}</p>
+        <a class="btn btn-brass" href="#devis">{e.quoteTitle}</a>
+      </div>
+      <img src="/img/photos/pints-live-card.webp" alt="" width="640" height="400" />
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap cards3">
+      {e.cards.map((c) => <div class="card"><h3>{c.title}</h3><p>{c.text}</p></div>)}
+    </div>
+  </section>
+
+  <section class="section form-section" id="devis">
+    <div class="wrap">
+      <h2>{e.quoteTitle}</h2>
+      <p class="lead">{e.quoteIntro}</p>
+      <p class="req">{f.required}</p>
+      <form class="priv-form" data-form="evenement" action="/api/demande" data-ok={f.ok} data-fail={f.fail} data-sending={f.sending}>
+        <input type="hidden" name="kind" value="evenement" />
+        <input type="hidden" name="lang" value={lang} />
+        <label>{f.name} *<input name="name" required autocomplete="name" /></label>
+        <label>{f.email} *<input type="email" name="email" required autocomplete="email" /></label>
+        <label>{f.phone} *<input type="tel" name="phone" required autocomplete="tel" /></label>
+        <label>{e.date} *<input type="date" name="date" required /></label>
+        <label>{e.place} *<input name="place" required /></label>
+        <label>{e.guests} *<input type="number" name="guests" min="1" max="5000" required /></label>
+        <label>{e.kind}<select name="type">{e.kindOptions.map((o) => <option>{o}</option>)}</select></label>
+        <label>{e.need}<select name="need">{e.needOptions.map((o) => <option>{o}</option>)}</select></label>
+        <label class="full">{f.message}<textarea name="message" rows="4"></textarea></label>
+        <input class="hp" type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" />
+        <div class="form-actions full">
+          <button type="submit">{f.send}</button>
+          <p class="form-note">{f.privacy}</p>
+          <p class="form-status" role="status"></p>
+        </div>
+      </form>
+    </div>
+  </section>
+</Base>

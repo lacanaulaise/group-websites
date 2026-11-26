@@ -1,0 +1,29 @@
+{
+  "key": "brasserie",
+  "name": "La Canaulaise",
+  "address": "43 rue du Général de Gaulle, 33680 Lacanau",
+  "phone": "05 40 43 00 09",
+  "phoneIntl": "+33540430009",
+  "phoneEn": "+33 5 40 43 00 09",
+  "visitPhone": "05 40 43 00 16",
+  "visitPhoneIntl": "+33540430016",
+  "email": "info@lacanaulaise.fr",
+  "mapsUrl": "https://www.google.com/maps/search/?api=1&query=Brasserie+La+Canaulaise+Lacanau",
+  "mapQuery": "Brasserie+La+Canaulaise,+33680+Lacanau",
+  "mapLabel": "Lacanau, Gironde",
+  "instagramUrl": "https://www.instagram.com/biere.lacanaulaise/",
+  "facebookUrl": "https://www.facebook.com/Bi%C3%A8re-La-Canaulaise-156975361826333/",
+  "linkedinUrl": "https://fr.linkedin.com/company/les-brasseurs-de-l-oc%C3%A9an",
+  "venues": [
+    { "name": "Pub La Canaulaise", "place": "Lacanau", "url": "https://pub-lacanaulaise.james-552.workers.dev/", "address": "7-9 rue du Maréchal Leclerc, 33680 Lacanau", "img": "/img/photos/terrace-card.webp" },
+    { "name": "The Golden Apple", "place": "Bordeaux · Chartrons", "url": "https://www.golden-apple.fr", "address": "46 rue Borie, 33300 Bordeaux", "img": "" },
+    { "name": "L'Australien", "place": "Hourtin-Plage", "url": "", "address": "Hourtin-Plage", "seasonal": true, "img": "" },
+    { "name": "Buvette de la Gaîté", "place": "", "url": "", "address": "", "img": "" }
+  ],
+  "sisterVenues": [
+    { "name": "Pub La Canaulaise, Lacanau", "url": "https://pub-lacanaulaise.james-552.workers.dev/" },
+    { "name": "The Golden Apple, Bordeaux", "url": "https://www.golden-apple.fr" },
+    { "name": "L'Australien, Hourtin-Plage", "url": "" },
+    { "name": "Buvette de la Gaîté", "url": "" }
+  ]
+}

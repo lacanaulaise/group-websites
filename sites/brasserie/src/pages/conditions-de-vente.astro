@@ -1,0 +1,41 @@
+---
+import Base from '../layouts/Base.astro';
+import site from '../data/site.json';
+import shop from '../data/shop.json';
+import legal from '../data/legal.json';
+---
+<Base page="/" title="Conditions générales de vente — La Canaulaise" description="Conditions générales de vente de la boutique en ligne de la brasserie La Canaulaise, Lacanau.">
+  <section class="section">
+    <div class="wrap legal">
+      <h1>Conditions générales de vente</h1>
+      <p><em>Version à valider avant l'ouverture du paiement en ligne.</em></p>
+
+      <h2>1. Vendeur</h2>
+      <p>{legal.company}, {legal.form} au capital de {legal.capital}, {legal.rcs}, SIRET {legal.siret}, TVA {legal.vat}. Siège : {legal.address}. Contact : <a href={`mailto:${site.email}`}>{site.email}</a>, {site.phone}.</p>
+
+      <h2>2. Champ d'application</h2>
+      <p>Les présentes conditions s'appliquent aux ventes conclues sur ce site (bières, coffrets, visites de la brasserie, affiches et textiles) entre {legal.company} et tout acheteur consommateur. Passer commande vaut acceptation de ces conditions.</p>
+
+      <h2>3. Vente d'alcool</h2>
+      <p>La vente de boissons alcoolisées est interdite aux mineurs (article L3342-1 du Code de la santé publique). En commandant, l'acheteur certifie avoir 18 ans ou plus. Une pièce d'identité peut être demandée lors du retrait ; la commande ne sera pas remise à une personne mineure. L'abus d'alcool est dangereux pour la santé, à consommer avec modération.</p>
+
+      <h2>4. Prix et paiement</h2>
+      <p>Les prix sont indiqués en euros toutes taxes comprises. Le paiement s'effectue en ligne par carte bancaire via notre prestataire Stripe, ou au retrait pour les commandes passées par formulaire. La commande est ferme à réception du paiement ou de notre confirmation.</p>
+
+      <h2>5. Retrait des commandes</h2>
+      <p>{shop.pickup}. Nous vous prévenons par e-mail ou par téléphone dès que votre commande est prête. Elle est conservée 30 jours ; au-delà, nous vous contactons.</p>
+
+      <h2>6. Visites de la brasserie</h2>
+      <p>Les visites ont lieu sur rendez-vous, dans la limite de 12 personnes par visite. Une visite réservée peut être reportée à une autre date en nous prévenant au moins 48 heures à l'avance.</p>
+
+      <h2>7. Droit de rétractation</h2>
+      <p>Conformément à l'article L221-28 du Code de la consommation, le droit de rétractation ne s'applique pas aux denrées susceptibles de se détériorer rapidement ni aux prestations de loisirs fournies à une date déterminée (visites). Pour les affiches et textiles, vous disposez de 14 jours à compter du retrait pour nous faire part de votre volonté de vous rétracter ; le produit doit être rapporté neuf, dans son emballage, et vous êtes remboursé sous 14 jours.</p>
+
+      <h2>8. Conformité et réclamations</h2>
+      <p>Toute réclamation peut être adressée à <a href={`mailto:${site.email}`}>{site.email}</a>. Les produits bénéficient des garanties légales de conformité (articles L217-3 et suivants du Code de la consommation) et des vices cachés (articles 1641 et suivants du Code civil).</p>
+
+      <h2>9. Médiation et litiges</h2>
+      <p>En cas de litige, l'acheteur peut recourir gratuitement à un médiateur de la consommation. Coordonnées du médiateur : <em>à compléter</em>. Les présentes conditions sont soumises au droit français.</p>
+    </div>
+  </section>
+</Base>

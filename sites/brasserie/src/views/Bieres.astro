@@ -1,0 +1,46 @@
+---
+import Base from '../layouts/Base.astro';
+import beers from '../data/beers.json';
+import { T, path } from '../i18n.js';
+
+interface Props { lang: 'fr' | 'en'; }
+const { lang } = Astro.props;
+const t = T[lang];
+const p = t.beers;
+const EN = lang === 'en';
+const num = (n) => n.toLocaleString(t.locale);
+---
+<Base page="/bieres" lang={lang} title={p.title} description={p.description}>
+  <section class="page-hero">
+    <div class="wrap">
+      <div class="text">
+        <span class="label">La Canaulaise</span>
+        <h1>{p.h1}</h1>
+        <p>{p.intro}</p>
+        <div class="hero-actions">
+          <a class="btn btn-brass" href={path(lang, '/boutique')}>{p.toShop}</a>
+          <a class="btn btn-ghost" href={path(lang, '/ou-nous-trouver')}>{p.toFind}</a>
+        </div>
+      </div>
+      <img src="/img/photos/tripack.webp" alt="" width="1000" height="800" />
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap beer-list">
+      {beers.map((b) => (
+        <article class="beer-card" id={b.slug}>
+          <img src={`/api/beer-img/${b.easybeerId}?u=${b.easybeerImg}`} alt="" width="96" height="96" loading="lazy" />
+          <h2>{b.name}</h2>
+          <span class="style">{EN ? b.styleEn : b.style}</span>
+          <div class="stats">
+            <span>{t.abv} {num(b.abv)} %</span>
+            {b.ibu && <span>{b.ibu} {t.ibu}</span>}
+            {b.temp && <span>{t.serve} {b.temp} °C</span>}
+          </div>
+          <p>{EN ? b.descEn : b.desc}</p>
+        </article>
+      ))}
+    </div>
+  </section>
+</Base>

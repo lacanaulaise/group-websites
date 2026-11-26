@@ -1,7 +1,8 @@
 // =============================================================================
 // FORM RELAY — Les Brasseurs de l'Océan websites
-// Receives form submissions from the Cloudflare Workers (privatisation requests for now),
-// emails the pub and logs each request in this spreadsheet; also logs newsletter sign-ups.
+// Receives form submissions from the Cloudflare Workers: pub privatisation requests, brewery
+// requests (visit, event quote, trade, shop order: kind "demande") and newsletter sign-ups.
+// Emails the right team (Reply-To = the customer) and logs each request in this spreadsheet.
 //
 // SETUP (once):
 //   1. Create a Google Sheet "Demandes sites web" in the Brasseurs Drive, then
@@ -18,7 +19,8 @@
 var LOG_SHEET = 'Privatisations';
 var HEADERS = ['Reçu le', 'Pub', 'Nom', 'E-mail', 'Téléphone', 'Date souhaitée',
                'Personnes', 'Type', 'Budget', 'Message', 'Envoyé à'];
-var VENUE_NAMES = { 'golden-apple': 'The Golden Apple', 'la-canaulaise': 'Pub La Canaulaise' };
+var VENUE_NAMES = { 'golden-apple': 'The Golden Apple', 'la-canaulaise': 'Pub La Canaulaise', 'brasserie': 'La Canaulaise (brasserie)' };
+var DEMANDES_SHEET = 'Demandes brasserie';
 
 function setup() {
   var ss = SpreadsheetApp.getActiveSpreadsheet();
@@ -34,6 +36,7 @@ function doPost(e) {
   var secret = PropertiesService.getScriptProperties().getProperty('FORM_RELAY_SECRET');
   if (!secret || d.secret !== secret) return out_({ ok: false, error: 'forbidden' });
   if (d.kind === 'newsletter') return newsletter_(d);
+  if (d.kind === 'demande') return demande_(d);
   if (d.kind !== 'privatisation' || !d.to) return out_({ ok: false, error: 'bad request' });
 
   var venue = VENUE_NAMES[d.venue] || d.venue;
@@ -61,6 +64,33 @@ function doPost(e) {
   var sh = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(LOG_SHEET);
   if (sh) sh.appendRow([new Date(), venue, d.name, d.email, d.phone, d.date, d.guests,
                         d.type, d.budget, d.message, d.to + (d.cc ? ', ' + d.cc : '')]);
+  return out_({ ok: true });
+}
+
+// Brewery site requests: the Worker sends the subject, the fixed recipient and the details as
+// [label, value] pairs, so a new form needs no change here.
+function demande_(d) {
+  if (!d.to) return out_({ ok: false, error: 'bad request' });
+  var details = (d.details || []).filter(function (x) { return x[1]; });
+  var lines = [d.subject + ' — site ' + (VENUE_NAMES[d.venue] || d.venue), '',
+    'Nom : ' + d.name, 'E-mail : ' + d.email, 'Téléphone : ' + (d.phone || '—')];
+  details.forEach(function (x) { lines.push(x[0] + ' : ' + x[1]); });
+  lines.push('', 'Message :', d.message || '—', '', 'Langue du site : ' + (d.lang || 'fr'),
+    'Répondez directement à ce mail pour écrire au client.');
+  MailApp.sendEmail({
+    to: d.to, cc: d.cc || '', replyTo: d.email,
+    name: 'La Canaulaise — site web',
+    subject: d.subject + ' · ' + d.name + (details.length ? ' · ' + details[0][1] : ''),
+    body: lines.join('\n')
+  });
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var sh = ss.getSheetByName(DEMANDES_SHEET) || ss.insertSheet(DEMANDES_SHEET);
+  if (sh.getLastRow() === 0) {
+    sh.appendRow(['Reçu le', 'Type', 'Nom', 'E-mail', 'Téléphone', 'Détails', 'Message', 'Envoyé à']);
+    sh.getRange(1, 1, 1, 8).setFontWeight('bold'); sh.setFrozenRows(1);
+  }
+  sh.appendRow([new Date(), d.subject, d.name, d.email, d.phone,
+    details.map(function (x) { return x[0] + ' : ' + x[1]; }).join(' · '), d.message, d.to + (d.cc ? ', ' + d.cc : '')]);
   return out_({ ok: true });
 }
 

@@ -1,0 +1,27 @@
+---
+import Base from '../layouts/Base.astro';
+import legal from '../data/legal.json';
+---
+<Base page="/" title="Confidentialité — La Canaulaise" description="Comment le site de la brasserie La Canaulaise traite vos données personnelles.">
+  <section class="section">
+    <div class="wrap legal">
+      <h1>Confidentialité</h1>
+      <p>Ce site est édité par {legal.company} ({legal.address}), responsable du traitement des données collectées. Nous ne collectons que ce dont nous avons besoin pour vous répondre et ne vendons aucune donnée.</p>
+
+      <h2>Ce que nous collectons</h2>
+      <ul>
+        <li><strong>Demandes et commandes</strong> (visite, devis événement, demande professionnelle, commande) : nom, e-mail, téléphone, les informations de votre demande et votre message. Ils servent à vous répondre et à traiter votre demande, et sont conservés {legal.retentionRequests}.</li>
+        <li><strong>Paiement en ligne</strong> : les paiements sont traités par Stripe ; nous ne voyons ni ne conservons vos données de carte. Stripe nous transmet votre nom, votre e-mail et le détail de la commande.</li>
+        <li><strong>Newsletter</strong> : votre adresse e-mail, pour vous envoyer nos nouveautés et événements. Elle est conservée jusqu'à votre désinscription ; chaque e-mail contient un lien pour vous désinscrire.</li>
+      </ul>
+      <p>Ces données sont accessibles uniquement à l'équipe de {legal.company}, et stockées chez nos prestataires (Google Workspace pour les e-mails et le suivi des demandes, Cloudflare pour l'hébergement du site).</p>
+
+      <h2>Cookies</h2>
+      <p>Le site ne dépose aucun cookie publicitaire ni de mesure d'audience. Les photos Instagram et les étiquettes de nos bières sont affichées depuis notre propre serveur : votre navigateur ne contacte pas Meta.</p>
+      <p>La carte Google Maps n'est chargée que si vous cliquez sur « Afficher la carte » ; Google peut alors déposer ses propres cookies. Les polices de caractères sont hébergées sur ce site.</p>
+
+      <h2>Vos droits</h2>
+      <p>Vous pouvez demander l'accès, la rectification ou la suppression de vos données, ou vous opposer à leur utilisation, en écrivant à <a href={`mailto:${legal.email}`}>{legal.email}</a>. Si vous estimez que vos droits ne sont pas respectés, vous pouvez saisir la CNIL (<a href="https://www.cnil.fr" target="_blank" rel="noopener">cnil.fr</a>).</p>
+    </div>
+  </section>
+</Base>

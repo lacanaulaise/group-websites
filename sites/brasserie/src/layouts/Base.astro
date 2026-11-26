@@ -1,0 +1,80 @@
+---
+import '@fontsource/bebas-neue/400.css';
+import '@fontsource/roboto/400.css';
+import '@fontsource/roboto/500.css';
+import '@fontsource/roboto/700.css';
+import '@fontsource/satisfy/400.css';
+import '../styles/site.css';
+import site from '../data/site.json';
+import { T, path } from '../i18n.js';
+
+interface Props { title: string; description: string; lang?: 'fr' | 'en'; page?: string; }
+const { title, description, lang = 'fr', page = '/' } = Astro.props;
+const t = T[lang];
+const home = path(lang, '/');
+const otherHref = path(t.other, page);
+---
+<!doctype html>
+<html lang={t.htmlLang}>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>{title}</title>
+  <meta name="description" content={description} />
+  <link rel="alternate" hreflang="fr" href={path('fr', page)} />
+  <link rel="alternate" hreflang="en" href={path('en', page)} />
+  <link rel="icon" type="image/png" href="/favicon.png" />
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="wrap">
+      <a class="brand" href={home}><img src="/img/mark.png" alt="" width="28" height="34" /><span class="hand">la Canaulaise</span></a>
+      <nav class="site-nav" aria-label={lang === 'en' ? 'Main navigation' : 'Navigation principale'}>
+        <a href={path(lang, '/bieres')} aria-current={page === '/bieres' ? 'page' : undefined}>{t.nav.beers}</a>
+        <a href={path(lang, '/visites')} aria-current={page === '/visites' ? 'page' : undefined}>{t.nav.visits}</a>
+        <a href={path(lang, '/evenements')} aria-current={page === '/evenements' ? 'page' : undefined}>{t.nav.events}</a>
+        <a href={path(lang, '/pros')} aria-current={page === '/pros' ? 'page' : undefined}>{t.nav.pros}</a>
+        <a href={path(lang, '/ou-nous-trouver')} aria-current={page === '/ou-nous-trouver' ? 'page' : undefined}>{t.nav.find}</a>
+        <a class="lang" href={otherHref} hreflang={t.other} lang={t.other} aria-label={t.otherAria}>{t.otherLabel}</a>
+        <a class="btn btn-brass" href={path(lang, '/boutique')}>{t.nav.shop}</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <slot />
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <div class="footer-top">
+        <div>
+          <strong>{t.footer.house}</strong>
+          <div class="social">
+            {site.instagramUrl && <a href={site.instagramUrl} target="_blank" rel="noopener" aria-label="Instagram"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.2c3.2 0 3.6 0 4.8.1 1.2.1 1.8.2 2.2.4.6.2 1 .5 1.4.9.4.4.7.8.9 1.4.2.4.4 1.1.4 2.2.1 1.3.1 1.6.1 4.8s0 3.6-.1 4.8c-.1 1.2-.2 1.8-.4 2.2-.2.6-.5 1-.9 1.4-.4.4-.8.7-1.4.9-.4.2-1.1.4-2.2.4-1.3.1-1.6.1-4.8.1s-3.6 0-4.8-.1c-1.2-.1-1.8-.2-2.2-.4-.6-.2-1-.5-1.4-.9-.4-.4-.7-.8-.9-1.4-.2-.4-.4-1.1-.4-2.2C2.2 15.6 2.2 15.2 2.2 12s0-3.6.1-4.8c.1-1.2.2-1.8.4-2.2.2-.6.5-1 .9-1.4.4-.4.8-.7 1.4-.9.4-.2 1.1-.4 2.2-.4C8.4 2.2 8.8 2.2 12 2.2zm0 1.8c-3.1 0-3.5 0-4.7.1-1.1.1-1.7.2-2.1.4-.5.2-.9.4-1.3.8-.4.4-.6.8-.8 1.3-.2.4-.3 1-.4 2.1C2.6 9.9 2.6 10.3 2.6 12s0 3.5.1 4.7c.1 1.1.2 1.7.4 2.1.2.5.4.9.8 1.3.4.4.8.6 1.3.8.4.2 1 .3 2.1.4 1.2.1 1.6.1 4.7.1s3.5 0 4.7-.1c1.1-.1 1.7-.2 2.1-.4.5-.2.9-.4 1.3-.8.4-.4.6-.8.8-1.3.2-.4.3-1 .4-2.1.1-1.2.1-1.6.1-4.7s0-3.5-.1-4.7c-.1-1.1-.2-1.7-.4-2.1-.2-.5-.4-.9-.8-1.3-.4-.4-.8-.6-1.3-.8-.4-.2-1-.3-2.1-.4C15.5 4 15.1 4 12 4zm0 3.1a4.9 4.9 0 110 9.8 4.9 4.9 0 010-9.8zm0 8a3.1 3.1 0 100-6.2 3.1 3.1 0 000 6.2zm6.2-8.2a1.2 1.2 0 11-2.4 0 1.2 1.2 0 012.4 0z"/></svg></a>}
+            {site.linkedinUrl && <a href={site.linkedinUrl} target="_blank" rel="noopener" aria-label="LinkedIn"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.98 3.5a2.5 2.5 0 11-.01 5 2.5 2.5 0 01.01-5zM3 9h4v12H3zM9.5 9h3.8v1.7h.1c.5-1 1.8-2 3.8-2 4 0 4.8 2.6 4.8 6V21h-4v-5.6c0-1.3 0-3-1.9-3s-2.1 1.4-2.1 2.9V21h-4z"/></svg></a>}
+            {site.facebookUrl && <a href={site.facebookUrl} target="_blank" rel="noopener" aria-label="Facebook"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13.5 21.9v-8h2.7l.4-3.1h-3.1v-2c0-.9.3-1.5 1.6-1.5h1.6V4.5c-.3 0-1.3-.1-2.4-.1-2.4 0-4 1.4-4 4.1v2.3H7.6v3.1h2.7v8z"/></svg></a>}
+          </div>
+        </div>
+        <div class="footer-contact">
+          <span>{site.address}</span>
+          <a href={`tel:${site.phoneIntl}`}>{lang === 'en' ? site.phoneEn : site.phone}</a>
+          <a href={`mailto:${site.email}`}>{site.email}</a>
+        </div>
+        <nav aria-label={t.footer.sistersAria}>
+          <strong>{t.footer.sistersTitle}</strong>
+          {site.sisterVenues.map((v) => (v.url ? <a href={v.url}>{v.name}</a> : <span>{v.name}</span>))}
+        </nav>
+      </div>
+      <div class="footer-bottom">
+        <span>{t.footer.evin}</span>
+        <span><a href="/conditions-de-vente" hreflang="fr">{t.footer.cgv}</a><a href="/mentions-legales" hreflang="fr">{t.footer.legal}</a><a href="/confidentialite" hreflang="fr">{t.footer.privacy}</a></span>
+      </div>
+    </div>
+  </footer>
+  <script src="/js/forms.js" defer></script>
+  <slot name="scripts" />
+</body>
+</html>

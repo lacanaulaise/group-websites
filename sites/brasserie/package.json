@@ -1,0 +1,20 @@
+{
+  "name": "brasserie-lacanaulaise",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro build && wrangler dev",
+    "deploy": "astro build && wrangler deploy"
+  },
+  "dependencies": {
+    "@fontsource/bebas-neue": "^5.3.0",
+    "@fontsource/roboto": "^5.3.0",
+    "@fontsource/satisfy": "^5.3.0",
+    "astro": "^7.4.13"
+  },
+  "devDependencies": {
+    "wrangler": "^4.168.0"
+  }
+}

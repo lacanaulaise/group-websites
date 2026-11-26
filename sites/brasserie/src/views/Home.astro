@@ -1,0 +1,154 @@
+---
+import Base from '../layouts/Base.astro';
+import Newsletter from '../components/Newsletter.astro';
+import site from '../data/site.json';
+import beers from '../data/beers.json';
+import { T, path } from '../i18n.js';
+
+interface Props { lang: 'fr' | 'en'; }
+const { lang } = Astro.props;
+const t = T[lang];
+const h = t.home;
+const EN = lang === 'en';
+const img = (b) => `/api/beer-img/${b.easybeerId}?u=${b.easybeerImg}`;
+const gallery = ['brewhouse', 'sixpack', 'boards', 'brewers', 'garden', 'pints-live'];
+const galleryImg = (g) => (g === 'garden' ? '/img/photos/garden.webp' : `/img/photos/${g}-card.webp`);
+const S = { instaAlt: h.instaAlt, instaAria: h.instaAria };
+---
+<Base page="/" lang={lang} title={h.title} description={h.description}>
+  <section class="hero">
+    <div class="wrap">
+      <div class="hero-text">
+        <img src="/img/logo.png" alt={h.logoAlt} width="150" height="152" />
+        <h1>{h.h1}</h1>
+        <span class="hand">{h.since}</span>
+        <p>{h.intro}</p>
+        <div class="hero-actions">
+          <a class="btn btn-brass" href={path(lang, '/boutique')}>{h.ctaShop}</a>
+          <a class="btn btn-ghost" href={path(lang, '/bieres')}>{h.ctaBeers}</a>
+          <a class="btn btn-ghost" href={path(lang, '/visites')}>{h.ctaVisit}</a>
+        </div>
+      </div>
+      <img class="hero-photo" src="/img/photos/hero.webp" alt={h.heroAlt} width="1200" height="1500" />
+    </div>
+  </section>
+
+  <section class="section" id="gamme">
+    <div class="wrap">
+      <div class="section-head">
+        <div>
+          <h2>{h.rangeTitle}</h2>
+          <p>{h.rangeIntro}</p>
+        </div>
+        <a href={path(lang, '/bieres')}>{h.rangeAll}</a>
+      </div>
+      <div class="range">
+        {beers.map((b) => (
+          <a href={path(lang, '/bieres') + '#' + b.slug}>
+            <img src={img(b)} alt="" width="84" height="84" loading="lazy" />
+            <strong>{b.name}</strong>
+            <span>{b.abv.toLocaleString(t.locale)} %</span>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section" style="padding-top: 0">
+    <div class="wrap tiles">
+      {h.tiles.map((x) => (
+        <a class="tile" href={path(lang, x.href)}>
+          <img src={x.img} alt={x.alt} width="640" height="400" loading="lazy" />
+          <div>
+            <h3>{x.title}</h3>
+            <p>{x.text}</p>
+          </div>
+        </a>
+      ))}
+    </div>
+  </section>
+
+  <section class="section story" id="brasserie">
+    <div class="wrap split">
+      <div class="text">
+        <span class="label">{h.storyLabel}</span>
+        <h2>{h.storyTitle}</h2>
+        {h.story.map((p) => <p>{p}</p>)}
+      </div>
+      <img src="/img/photos/brewers.webp" alt={h.storyAlt} width="1000" height="800" loading="lazy" />
+    </div>
+  </section>
+
+  <section class="section dark" id="pubs">
+    <div class="wrap">
+      <div class="section-head">
+        <div>
+          <h2>{h.venuesTitle}</h2>
+          <p>{h.venuesIntro}</p>
+        </div>
+      </div>
+      <div class="venues">
+        {site.venues.map((v) => {
+          const body = (
+            <>
+              <strong>{v.name}</strong>
+              {v.place && <span>{v.place}</span>}
+              {v.seasonal && <em>{h.seasonal}</em>}
+            </>
+          );
+          return v.url ? <a class="venue" href={v.url}>{body}</a> : <div class="venue">{body}</div>;
+        })}
+      </div>
+    </div>
+  </section>
+
+  <section class="section" aria-label="Instagram">
+    <div class="wrap">
+      <div class="section-head">
+        <h2>{h.insta}</h2>
+        <a href={site.instagramUrl} target="_blank" rel="noopener">{h.follow}</a>
+      </div>
+      <div class="insta-grid" id="insta-grid">
+        {gallery.map((g) => <img src={galleryImg(g)} alt="" width="500" height="500" loading="lazy" />)}
+      </div>
+    </div>
+  </section>
+
+  <Newsletter lang={lang} />
+
+  <section class="section visit" id="contact">
+    <div class="wrap split">
+      <div>
+        <h2>{h.contactTitle}</h2>
+        <div class="contact">
+          <span>Les Brasseurs de l'Océan — {site.address}</span>
+          <a href={`tel:${site.phoneIntl}`}>{EN ? site.phoneEn : site.phone}</a>
+          <a href={`mailto:${site.email}`}>{site.email}</a>
+        </div>
+        <div class="hero-actions">
+          <a class="btn btn-green" href={path(lang, '/pros')}>{t.nav.pros}</a>
+          <a class="btn btn-line" href={path(lang, '/evenements')}>{t.nav.events}</a>
+        </div>
+      </div>
+      <img class="food-photo" src="/img/photos/brewhouse.webp" alt="" width="1000" height="800" loading="lazy" />
+    </div>
+  </section>
+
+  <script is:inline slot="scripts" define:vars={{ S }}>
+    // Instagram: replace the shoot photos with the latest posts when the feed is available.
+    fetch('/api/instagram').then((r) => r.ok ? r.json() : null).then((d) => {
+      if (!d || !d.posts || d.posts.length < 3) return;
+      const grid = document.getElementById('insta-grid');
+      grid.textContent = '';
+      for (const p of d.posts) {
+        const a = document.createElement('a');
+        a.href = p.permalink; a.target = '_blank'; a.rel = 'noopener';
+        a.setAttribute('aria-label', S.instaAria + (p.caption ? ' : ' + p.caption : ''));
+        const img = document.createElement('img');
+        img.src = p.img; img.alt = p.caption || S.instaAlt;
+        img.loading = 'lazy'; img.width = 500; img.height = 500;
+        a.appendChild(img); grid.appendChild(a);
+      }
+    }).catch(() => {});
+  </script>
+</Base>

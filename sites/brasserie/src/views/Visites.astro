@@ -1,0 +1,65 @@
+---
+import Base from '../layouts/Base.astro';
+import site from '../data/site.json';
+import { T } from '../i18n.js';
+
+interface Props { lang: 'fr' | 'en'; }
+const { lang } = Astro.props;
+const t = T[lang];
+const v = t.visits;
+const f = t.form;
+---
+<Base page="/visites" lang={lang} title={v.title} description={v.description}>
+  <section class="page-hero">
+    <div class="wrap">
+      <div class="text">
+        <span class="label">Lacanau</span>
+        <h1>{v.h1}</h1>
+        <p>{v.intro}</p>
+        <ul class="facts">
+          {v.facts.map(([a, b]) => <li><strong>{a}</strong><span>{b}</span></li>)}
+        </ul>
+      </div>
+      <img src="/img/photos/brewhouse.webp" alt="" width="1000" height="800" />
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap split">
+      <div class="food-text">
+        <p>{v.who}</p>
+        <h2>{v.plusTitle}</h2>
+        <ul class="ticks">{v.plus.map((x) => <li>{x}</li>)}</ul>
+        <a class="btn btn-coral" href="#reserver">{v.bookTitle}</a>
+      </div>
+      <img class="food-photo" src="/img/photos/boards.webp" alt={v.boardsAlt} width="1000" height="800" loading="lazy" />
+    </div>
+  </section>
+
+  <section class="section form-section" id="reserver">
+    <div class="wrap">
+      <h2>{v.bookTitle}</h2>
+      <p class="lead">{v.bookIntro}</p>
+      <p class="req">{f.required}</p>
+      <form class="priv-form" data-form="visite" action="/api/demande" data-ok={f.ok} data-fail={f.fail} data-sending={f.sending}>
+        <input type="hidden" name="kind" value="visite" />
+        <input type="hidden" name="lang" value={lang} />
+        <label>{f.name} *<input name="name" required autocomplete="name" /></label>
+        <label>{f.email} *<input type="email" name="email" required autocomplete="email" /></label>
+        <label>{f.phone}<input type="tel" name="phone" autocomplete="tel" /></label>
+        <label>{v.date} *<input type="date" name="date" required /></label>
+        <label>{v.time}<select name="time">{v.timeOptions.map((o) => <option>{o}</option>)}</select></label>
+        <label>{v.people} *<input type="number" name="people" min="1" max="60" value="2" required /></label>
+        <label>{v.groupType}<select name="group">{v.groupOptions.map((o) => <option>{o}</option>)}</select></label>
+        <label class="full">{f.message}<textarea name="message" rows="3"></textarea></label>
+        <input class="hp" type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" />
+        <div class="form-actions full">
+          <button type="submit">{f.send}</button>
+          <a href={`tel:${site.visitPhoneIntl}`}>{site.visitPhone}</a>
+          <p class="form-note">{f.privacy}</p>
+          <p class="form-status" role="status"></p>
+        </div>
+      </form>
+    </div>
+  </section>
+</Base>

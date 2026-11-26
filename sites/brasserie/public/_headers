@@ -1,0 +1,3 @@
+# Preview phase: keep the new site out of search engines until the DNS switch.
+/*
+  X-Robots-Tag: noindex, nofollow

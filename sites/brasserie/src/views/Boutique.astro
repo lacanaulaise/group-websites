@@ -1,0 +1,122 @@
+---
+import Base from '../layouts/Base.astro';
+import shop from '../data/shop.json';
+import beers from '../data/beers.json';
+import { T, path } from '../i18n.js';
+
+interface Props { lang: 'fr' | 'en'; }
+const { lang } = Astro.props;
+const t = T[lang];
+const s = t.shop;
+const f = t.form;
+const EN = lang === 'en';
+const euro = (c) => { const v = (c / 100).toFixed(c % 100 ? 2 : 0); return EN ? '€' + v : v.replace('.', ',') + ' €'; };
+const products = shop.products.filter((x) => x.show !== false);
+const cats = Object.keys(s.cats).filter((c) => products.some((x) => x.cat === c));
+const name = (x) => (EN && x.nameEn) || x.name;
+const choices = (x) => (EN && x.choiceEn) || x.choice || [];
+// Product picture: a photo, an EasyBeer label ("beer:<id>:<uid>"), the first beer of the choice ("beer"), or the brand mark.
+const pic = (x) => {
+  if (x.img === 'beer') { const b = beers[2]; return { src: `/api/beer-img/${b.easybeerId}?u=${b.easybeerImg}`, cls: 'round' }; }
+  if (x.img && x.img.startsWith('beer:')) { const [, id, u] = x.img.split(':'); return { src: `/api/beer-img/${id}?u=${u}`, cls: 'round' }; }
+  if (x.img) return { src: x.img, cls: '' };
+  return { src: '/img/mark.png', cls: 'mark' };
+};
+const anyFallback = products.some((x) => !x.stripe && !x.link);
+---
+<Base page="/boutique" lang={lang} title={s.title} description={s.description}>
+  <section class="page-hero">
+    <div class="wrap">
+      <div class="text">
+        <span class="label">{EN ? shop.pickupEn : shop.pickup}</span>
+        <h1>{s.h1}</h1>
+        <p>{s.intro}</p>
+      </div>
+      <img src="/img/photos/sixpack.webp" alt="" width="1000" height="800" />
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap">
+      <p class="age-note">{s.age}</p>
+      {cats.map((c) => (
+        <div class="shop-cat">
+          <h2>{s.cats[c]}</h2>
+          <div class="products">
+            {products.filter((x) => x.cat === c).map((x) => {
+              const im = pic(x);
+              return (
+                <article class="product" data-product={name(x)}>
+                  <div class="ph"><img class={im.cls} src={im.src} alt="" loading="lazy" width="500" height="500" /></div>
+                  <div class="body">
+                    <h3>{name(x)}</h3>
+                    <p>{EN ? x.descEn : x.desc}</p>
+                    {!x.stripe && !x.link && choices(x).length > 0 && (
+                      <select aria-label={s.choose} data-choice>
+                        {choices(x).map((o) => <option>{o}</option>)}
+                      </select>
+                    )}
+                    <div class="buy">
+                      <span class="price">{euro(x.price)}<small>{s.ttc}</small></span>
+                      {x.stripe ? <a class="btn btn-coral" href={x.stripe} target="_blank" rel="noopener">{s.buy}</a>
+                        : x.link ? <a class="btn btn-green" href={path(lang, x.link)}>{s.seeVisit}</a>
+                        : <button type="button" class="btn btn-coral" data-order>{s.order}</button>}
+                    </div>
+                  </div>
+                </article>
+              );
+            })}
+          </div>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  {anyFallback && (
+    <section class="section form-section" id="commande">
+      <div class="wrap">
+        <h2>{s.orderTitle}</h2>
+        <p class="lead">{s.orderIntro}</p>
+        <p class="req">{f.required}</p>
+        <form class="priv-form" data-form="commande" action="/api/demande" data-ok={f.ok} data-fail={f.fail} data-sending={f.sending}>
+          <input type="hidden" name="kind" value="commande" />
+          <input type="hidden" name="lang" value={lang} />
+          <label>{s.orderProduct} *
+            <select name="product" required id="order-product">
+              {products.filter((x) => !x.stripe && !x.link).map((x) => <option>{name(x)}</option>)}
+            </select>
+          </label>
+          <label>{s.orderChoice}<input name="choice" id="order-choice" /></label>
+          <label>{s.orderQty} *<input type="number" name="qty" min="1" max="50" value="1" required /></label>
+          <label>{s.orderWhere} *
+            <select name="where" required>{s.whereOptions.map((o) => <option>{o}</option>)}</select>
+          </label>
+          <label>{f.name} *<input name="name" required autocomplete="name" /></label>
+          <label>{f.email} *<input type="email" name="email" required autocomplete="email" /></label>
+          <label>{f.phone} *<input type="tel" name="phone" required autocomplete="tel" /></label>
+          <label class="full">{f.message}<textarea name="message" rows="3"></textarea></label>
+          <label class="full check"><input type="checkbox" name="adult" value="oui" required /> {s.orderAge} *</label>
+          <input class="hp" type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" />
+          <div class="form-actions full">
+            <button type="submit">{f.send}</button>
+            <p class="form-note">{f.privacy}</p>
+            <p class="form-status" role="status"></p>
+          </div>
+        </form>
+      </div>
+    </section>
+  )}
+
+  <script is:inline slot="scripts">
+    // "Commander" fills in the order form with the product (and the chosen beer) and scrolls to it.
+    document.querySelectorAll('[data-order]').forEach((b) => b.addEventListener('click', () => {
+      const card = b.closest('[data-product]');
+      const sel = document.getElementById('order-product');
+      sel.value = card.dataset.product;
+      const ch = card.querySelector('[data-choice]');
+      document.getElementById('order-choice').value = ch ? ch.value : '';
+      document.getElementById('commande').scrollIntoView({ behavior: 'smooth' });
+      setTimeout(() => sel.focus({ preventScroll: true }), 400);
+    }));
+  </script>
+</Base>

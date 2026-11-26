@@ -1,0 +1,22 @@
+{
+  // La Canaulaise brewery website — static Astro site + Worker for /api/*.
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "brasserie-lacanaulaise",
+  "main": "src/worker.js",
+  "compatibility_date": "2026-11-01",
+  // Keep variables and secrets set in the Cloudflare dashboard when deploying from GitHub.
+  "keep_vars": true,
+  // Secrets (Cloudflare dashboard): FORM_RELAY_URL, FORM_RELAY_SECRET (same as the pubs),
+  //   META_TOKEN (same Facebook user token as the pub, for the @biere.lacanaulaise Instagram feed).
+  "vars": {
+    // @biere.lacanaulaise, linked to the Facebook Page
+    "IG_USER_ID": "17841414626793223"
+  },
+  "assets": {
+    "directory": "./dist",
+    "binding": "ASSETS",
+    "not_found_handling": "404-page",
+    "run_worker_first": ["/api/*"]
+  },
+  "observability": { "enabled": true }
+}

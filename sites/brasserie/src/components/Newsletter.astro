@@ -1,0 +1,23 @@
+---
+import { T } from '../i18n.js';
+interface Props { lang: 'fr' | 'en'; }
+const { lang } = Astro.props;
+const n = T[lang].nl;
+---
+<section class="newsletter" aria-label="Newsletter">
+  <form class="wrap" data-form="newsletter" action="/api/newsletter" data-ok={n.ok} data-fail={n.fail} data-bad={n.bad}>
+    <div class="intro">
+      <h2>{n.title}</h2>
+      <span>{n.sub}</span>
+    </div>
+    <div class="fields">
+      <label>{n.label}
+        <input type="email" name="email" placeholder={n.placeholder} autocomplete="email" required />
+      </label>
+      <input class="hp" type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" />
+      <input type="hidden" name="lang" value={lang} />
+      <button type="submit">{n.button}</button>
+    </div>
+    <p class="form-status" role="status"></p>
+  </form>
+</section>

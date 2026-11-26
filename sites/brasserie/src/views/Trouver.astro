@@ -1,0 +1,64 @@
+---
+import Base from '../layouts/Base.astro';
+import site from '../data/site.json';
+import stockists from '../data/stockists.json';
+import { T, path } from '../i18n.js';
+
+interface Props { lang: 'fr' | 'en'; }
+const { lang } = Astro.props;
+const t = T[lang];
+const p = t.find;
+const EN = lang === 'en';
+const types = Object.keys(p.types).filter((k) => stockists.list.some((s) => s.type === k));
+---
+<Base page="/ou-nous-trouver" lang={lang} title={p.title} description={p.description}>
+  <section class="page-hero">
+    <div class="wrap">
+      <div class="text">
+        <h1>{p.h1}</h1>
+        <p>{p.intro}</p>
+        <a class="btn btn-brass" href={path(lang, '/boutique')}>{p.shopCta}</a>
+      </div>
+      <img src="/img/photos/terrace-card.webp" alt="" width="640" height="400" />
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap">
+      <div class="section-head"><h2>{p.venuesTitle}</h2></div>
+      <div class="venues">
+        {site.venues.map((v) => {
+          const body = (
+            <>
+              <strong>{v.name}</strong>
+              {v.address && <span>{v.address}</span>}
+              {v.seasonal && <em>{t.home.seasonal}</em>}
+            </>
+          );
+          return v.url ? <a class="venue" href={v.url}>{body}</a> : <div class="venue">{body}</div>;
+        })}
+        <div class="venue">
+          <strong>{p.brewery}</strong>
+          <span>{site.address}</span>
+          <span>{EN ? site.phoneEn : site.phone}</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" style="padding-top: 0">
+    <div class="wrap">
+      <div class="section-head"><h2>{p.partnersTitle}</h2></div>
+      {types.length ? types.map((k) => (
+        <>
+          <h3 style="margin: 24px 0 8px">{p.types[k]}</h3>
+          <ul class="stockists">
+            {stockists.list.filter((s) => s.type === k).map((s) => <li><strong>{s.name}</strong><span>{s.city}</span></li>)}
+          </ul>
+        </>
+      )) : (
+        <p class="lead">{p.partnersSoon} <a href={path(lang, '/pros')}>{p.becomePartner}</a></p>
+      )}
+    </div>
+  </section>
+</Base>
