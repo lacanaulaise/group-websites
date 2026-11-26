@@ -172,11 +172,18 @@ h1, h2, h3 { text-wrap: balance; }
 .form-actions button:disabled { opacity: .6; cursor: wait; }
 #priv-status { margin: 0; font-size: 15px; color: var(--green); }
 
-.prices { margin: 10px 0 0; display: flex; flex-wrap: wrap; gap: 6px 18px; }
+.prices { margin: 0; display: flex; flex-wrap: wrap; }
 .prices div { display: flex; flex-direction: column; }
 .prices dt { font-size: 12px; color: var(--label); text-transform: uppercase; letter-spacing: .08em; }
-.prices dd { margin: 0; font-size: 18px; font-weight: 600; color: var(--green); }
-.beer .hh { margin-top: 6px; font-size: 13px; color: var(--burgundy); }
+.prices dd { margin: 0; font-weight: 600; color: var(--green); }
+.prices-main { margin-top: 12px; gap: 6px 28px; }
+.prices-main dd { font-size: 26px; line-height: 1.15; }
+.prices-main .hh dd { color: var(--burgundy); }
+.prices [hidden] { display: none; }
+.prices-small { margin-top: 8px; gap: 4px 18px; }
+.prices-small div { flex-direction: row; align-items: baseline; gap: 6px; }
+.prices-small dt { font-size: 11px; }
+.prices-small dd { font-size: 14px; color: var(--muted); }
 
 /* La carte */
 .carte-hero .wrap { padding-top: 56px; padding-bottom: 56px; }

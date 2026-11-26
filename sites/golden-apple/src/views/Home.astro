@@ -106,12 +106,14 @@ const S = {
               <h3>{b.name}</h3>
               <span class="style">{en ? b.styleEn : b.style}</span>
               {b.abv && <span class="meta">{fmtAbv(b.abv)}</span>}
-              <dl class="prices">
-                <div><dt>{h.half}</dt><dd data-fmt="25 cl">{eur(b.prices.demi)}</dd></div>
+              <dl class="prices prices-main">
                 <div><dt>{h.pint}</dt><dd data-fmt="50 cl">{eur(b.prices.pinte)}</dd></div>
+                <div class="hh" data-hh-wrap hidden={!b.prices.pinteHH}><dt>{h.happyHour}</dt><dd data-hh>{eur(b.prices.pinteHH)}</dd></div>
+              </dl>
+              <dl class="prices prices-small">
+                <div><dt>{h.half}</dt><dd data-fmt="25 cl">{eur(b.prices.demi)}</dd></div>
                 {b.prices.pichet && <div><dt>{h.jug}</dt><dd data-fmt="1,5 L">{eur(b.prices.pichet)}</dd></div>}
               </dl>
-              {b.prices.pinteHH && <span class="hh" data-hh>{h.hhPint} {eur(b.prices.pinteHH)}</span>}
             </article>
           ))}
         </div>
@@ -335,7 +337,8 @@ const S = {
         }
         const pint = item.prices.find((x) => x.format === '50 cl');
         const hh = card.querySelector('[data-hh]');
-        if (hh && pint && pint.hh != null && pint.hh < pint.price) hh.textContent = S.hhPint + ' ' + euro(pint.hh);
+        const hhWrap = card.querySelector('[data-hh-wrap]');
+        if (hh && pint && pint.hh != null && pint.hh < pint.price) { hh.textContent = euro(pint.hh); hhWrap.hidden = false; }
       }
     }).catch(() => {});
 
