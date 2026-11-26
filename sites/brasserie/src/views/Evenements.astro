@@ -21,6 +21,16 @@ const f = t.form;
     </div>
   </section>
 
+  <section class="loan-band">
+    <div class="wrap">
+      <div>
+        <p class="loan-title">{e.loan.title}</p>
+        <p>{e.loan.text}</p>
+      </div>
+      <a class="btn btn-dark" href="#devis">{e.quoteTitle}</a>
+    </div>
+  </section>
+
   <section class="section">
     <div class="wrap cards3">
       {e.cards.map((c) => <div class="card"><h3>{c.title}</h3><p>{c.text}</p></div>)}

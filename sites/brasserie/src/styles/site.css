@@ -352,3 +352,16 @@ a.venue:hover strong { color: var(--brass); }
 .partners li { padding: 6px 0; border-bottom: 1px solid var(--line); font-size: 15px; }
 .partners li strong { display: block; font-weight: 600; }
 .partners li span { font-size: 13px; color: var(--muted); }
+
+/* Prêt de tireuse */
+.btn-dark { background: var(--green); color: var(--cream); }
+.btn-dark:hover { background: var(--green-soft); }
+.loan-band { background: var(--brass); color: var(--green-dark); }
+.loan-band .wrap { display: flex; align-items: center; gap: 20px 28px; padding-top: 28px; padding-bottom: 28px; flex-wrap: wrap; }
+.loan-band .wrap > div { flex: 1 1 420px; }
+.loan-icon { width: 56px; height: 56px; flex: 0 0 auto; }
+.loan-band p { margin: 0; font-size: 16px; line-height: 1.5; }
+.loan-band .loan-title { font-family: var(--display); font-size: 34px; line-height: 1.05; letter-spacing: .01em; margin-bottom: 6px; }
+@media (max-width: 560px) { .loan-band .loan-title { font-size: 28px; } .loan-icon { display: none; } }
+.tile { position: relative; }
+.tile-badge { position: absolute; top: 12px; left: 12px; background: var(--brass); color: var(--green-dark); font-family: var(--display); font-size: 18px; letter-spacing: .03em; padding: 5px 10px 3px; border-radius: 4px; box-shadow: 0 2px 6px rgba(0,0,0,.2); }

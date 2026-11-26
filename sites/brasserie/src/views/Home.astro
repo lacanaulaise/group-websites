@@ -59,6 +59,7 @@ const S = { instaAlt: h.instaAlt, instaAria: h.instaAria };
       {h.tiles.map((x) => (
         <a class="tile" href={path(lang, x.href)}>
           <img src={x.img} alt={x.alt} width="640" height="400" loading="lazy" />
+          {x.key === 'events' && <span class="tile-badge">{t.events.loan.badge}</span>}
           <div>
             <h3>{x.title}</h3>
             <p>{x.text}</p>
