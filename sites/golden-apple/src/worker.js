@@ -344,7 +344,7 @@ async function instagramImage(request, env, ctx, id) {
 // IG_ACCESS_TOKEN) is a user token that can see the Page; the Page token is derived from it.
 // Cover images are re-served from this site (/api/ev-img/<id>). Cached 1 hour.
 const FB_PAGE_ID = '32013519230'; // The Golden Apple Craft Beer House
-const EV_TTL_SECONDS = 60 * 60;
+const EV_TTL_SECONDS = 15 * 60;
 
 async function eventsFeed(request, env, ctx) {
   const cache = caches.default;
